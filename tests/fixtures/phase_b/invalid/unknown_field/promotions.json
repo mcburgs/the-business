@@ -1,0 +1,15 @@
+[
+  {
+    "id": "promotion_seed.fixture.alpha",
+    "display_name": "Fixture Promotion",
+    "owner_person_seed_id": "person_seed.fixture.owner",
+    "booker_person_seed_id": "person_seed.fixture.booker",
+    "home_market_ids": [
+      "market.fixture.alpha"
+    ],
+    "strategy_profile_id": "strategy.balanced",
+    "tags": [
+      "fixture"
+    ]
+  }
+]

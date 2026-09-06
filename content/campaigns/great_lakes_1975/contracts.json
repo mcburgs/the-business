@@ -1,0 +1,122 @@
+[
+  {
+    "id": "contract_seed.great_lakes.alpha.c01",
+    "person_seed_id": "person_seed.great_lakes.owner_alpha",
+    "promotion_seed_id": "promotion_seed.great_lakes.alpha",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.alpha.c02",
+    "person_seed_id": "person_seed.great_lakes.booker_alpha",
+    "promotion_seed_id": "promotion_seed.great_lakes.alpha",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.alpha.c03",
+    "person_seed_id": "person_seed.great_lakes.wrestler_alpha_1",
+    "promotion_seed_id": "promotion_seed.great_lakes.alpha",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.alpha.c04",
+    "person_seed_id": "person_seed.great_lakes.wrestler_alpha_2",
+    "promotion_seed_id": "promotion_seed.great_lakes.alpha",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.alpha.c05",
+    "person_seed_id": "person_seed.great_lakes.wrestler_alpha_3",
+    "promotion_seed_id": "promotion_seed.great_lakes.alpha",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.beta.c01",
+    "person_seed_id": "person_seed.great_lakes.owner_beta",
+    "promotion_seed_id": "promotion_seed.great_lakes.beta",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.beta.c02",
+    "person_seed_id": "person_seed.great_lakes.booker_beta",
+    "promotion_seed_id": "promotion_seed.great_lakes.beta",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.beta.c03",
+    "person_seed_id": "person_seed.great_lakes.wrestler_beta_1",
+    "promotion_seed_id": "promotion_seed.great_lakes.beta",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.beta.c04",
+    "person_seed_id": "person_seed.great_lakes.wrestler_beta_2",
+    "promotion_seed_id": "promotion_seed.great_lakes.beta",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.beta.c05",
+    "person_seed_id": "person_seed.great_lakes.wrestler_beta_3",
+    "promotion_seed_id": "promotion_seed.great_lakes.beta",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.gamma.c01",
+    "person_seed_id": "person_seed.great_lakes.owner_gamma",
+    "promotion_seed_id": "promotion_seed.great_lakes.gamma",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.gamma.c02",
+    "person_seed_id": "person_seed.great_lakes.booker_gamma",
+    "promotion_seed_id": "promotion_seed.great_lakes.gamma",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.gamma.c03",
+    "person_seed_id": "person_seed.great_lakes.wrestler_gamma_1",
+    "promotion_seed_id": "promotion_seed.great_lakes.gamma",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.gamma.c04",
+    "person_seed_id": "person_seed.great_lakes.wrestler_gamma_2",
+    "promotion_seed_id": "promotion_seed.great_lakes.gamma",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  },
+  {
+    "id": "contract_seed.great_lakes.gamma.c05",
+    "person_seed_id": "person_seed.great_lakes.wrestler_gamma_3",
+    "promotion_seed_id": "promotion_seed.great_lakes.gamma",
+    "start_date": "1975-01-01",
+    "end_date": null,
+    "placeholder": true
+  }
+]

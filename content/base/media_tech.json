@@ -1,0 +1,13 @@
+[
+  {
+    "id": "tech.media.local_tv",
+    "display_name": "Local Television",
+    "medium_id": "medium.television",
+    "available_from": "1948-01-01",
+    "available_until": null,
+    "tags": [
+      "local",
+      "broadcast"
+    ]
+  }
+]

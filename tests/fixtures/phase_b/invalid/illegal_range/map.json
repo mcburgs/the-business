@@ -1,0 +1,27 @@
+{
+  "id": "map.fixture_mini",
+  "display_name": "Fixture Mini Map",
+  "region_ids": [
+    "region.fixture.alpha"
+  ],
+  "market_ids": [
+    "market.fixture.alpha",
+    "market.fixture.beta"
+  ],
+  "connections": [
+    {
+      "from_market_id": "market.fixture.alpha",
+      "to_market_id": "market.fixture.beta",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": -1,
+      "base_time_minutes": 75,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    }
+  ],
+  "media_adjacency_rule_ids": [],
+  "visual_geometry_ref": null
+}

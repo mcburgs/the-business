@@ -1,0 +1,58 @@
+[
+  {
+    "id": "media_outlet.great_lakes.toronto.local_tv_placeholder",
+    "display_name": "Toronto Local TV Placeholder",
+    "medium_id": "medium.television",
+    "tech_id": "tech.media.local_tv",
+    "market_ids": [
+      "market.great_lakes.toronto"
+    ],
+    "tags": [
+      "placeholder",
+      "local_tv",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "media_outlet.great_lakes.detroit.local_tv_placeholder",
+    "display_name": "Detroit Local TV Placeholder",
+    "medium_id": "medium.television",
+    "tech_id": "tech.media.local_tv",
+    "market_ids": [
+      "market.great_lakes.detroit"
+    ],
+    "tags": [
+      "placeholder",
+      "local_tv",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "media_outlet.great_lakes.cleveland.local_tv_placeholder",
+    "display_name": "Cleveland Local TV Placeholder",
+    "medium_id": "medium.television",
+    "tech_id": "tech.media.local_tv",
+    "market_ids": [
+      "market.great_lakes.cleveland"
+    ],
+    "tags": [
+      "placeholder",
+      "local_tv",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "media_outlet.great_lakes.chicago.local_tv_placeholder",
+    "display_name": "Chicago Local TV Placeholder",
+    "medium_id": "medium.television",
+    "tech_id": "tech.media.local_tv",
+    "market_ids": [
+      "market.great_lakes.chicago"
+    ],
+    "tags": [
+      "placeholder",
+      "local_tv",
+      "phase_b_skeleton"
+    ]
+  }
+]

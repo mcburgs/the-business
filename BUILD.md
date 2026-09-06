@@ -10,9 +10,9 @@ Verify the executable first:
 godot --version
 ```
 
-The expected engine line is `4.7.2.stable` / `4.7.2-stable` depending on platform output formatting.
+The expected engine line is `4.7.2.stable` / `4.7.2-stable` depending on platform output formatting. The Phase A verified official build was `4.7.2.stable.official.ed1daf0bf`.
 
-## Phase A static check
+## Static repository/content check
 
 From the repository root:
 
@@ -20,11 +20,9 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-A passing static check establishes repository shape and dependency-guard prerequisites. It does not replace an engine run.
+For Phase B this checks repository shape, the engine pin, architecture/special-case guards, JSON readability, schema reconstruction metadata, safe pack-file references, required validation fixtures, and the Great Lakes skeleton envelope. It does not replace an engine run.
 
-## Phase A headless gate
-
-Canonical command:
+## Canonical headless gate
 
 ```text
 godot --headless --path . --script res://tests/runner.gd
@@ -34,6 +32,7 @@ The runner:
 
 - boots under stock Godot without an editor plugin;
 - recursively discovers `test_*.gd` scripts under `tests/unit/` and `tests/integration/`;
+- executes the retained Phase A architecture/bootstrap tests and Phase B content/schema/fixture tests;
 - emits JSON-line diagnostics prefixed `WE_DIAG`;
 - emits one machine-readable summary prefixed `WE_TEST_SUMMARY`;
 - writes a JSON result artifact to `user://diagnostics/headless-results.json` by default;
@@ -47,29 +46,39 @@ godot --headless --path . --script res://tests/runner.gd -- --output=res://tests
 
 `tests/output/*.json` is intentionally ignored by Git.
 
+## Phase B acceptance evidence
+
+A candidate is not complete merely because content files exist. `docs/PHASE_B_ACCEPTANCE.md` is the controlling implementation checklist for this phase. In particular, the same generic loader must load both the Great Lakes skeleton and a fixture with different entity counts, malformed packs must fail with specific codes, unsafe file references must be rejected, and no Great Lakes/1975 conditional may exist in application/domain code.
+
+The reconstructed `content/schemas/we.phase0.schema.json` is explicitly a controlled static-content replacement derived from the governing prose because the referenced original machine package was not supplied. See `content/schemas/DERIVATION.md`.
+
+The recorded verified Phase B runtime/editor result is in `docs/PHASE_B_RUNTIME_RESULT.md`.
+
 ## Parse-only checks
 
-Godot also supports `--check-only` for scripts. The full headless runner is the acceptance command because it exercises discovery and runtime behavior, but parse-only checks can isolate a syntax failure:
+The full headless runner is the acceptance command because it exercises discovery and runtime behavior, but parse-only checks can isolate syntax failures:
 
 ```text
 godot --headless --path . --script res://tests/runner.gd --check-only
 ```
 
-## Launch shell
+## Fresh-clone editor import
 
-To launch the minimal Phase A project shell:
-
-```text
-godot --path .
-```
-
-To import/open in the editor:
+After headless tests pass, verify a clean clone/import under the pinned engine:
 
 ```text
 godot --editor --path .
 ```
 
-The launch shell must not become an owner of domain state. Real presentation work begins later.
+Phase B requires no parser/import warnings attributable to retained source/content. Generated `.godot/` cache data remains ignored.
+
+## Launch shell
+
+```text
+godot --path .
+```
+
+The launch shell remains deliberately minimal and must not become an owner of domain state.
 
 ## Windows note
 
@@ -81,29 +90,15 @@ If Godot is not on PATH, invoke the pinned console executable directly. Example 
 
 Use the actual local filename/path rather than changing repository files to match one workstation.
 
-## Git handoff
+## Phase boundary
 
-The repository is initialized with `origin` pointing to:
+Not part of Phase B:
 
-```text
-https://github.com/mcburgs/the-business.git
-```
-
-After engine-backed verification and any retained fixes:
-
-```text
-git status
-git add -A
-git commit -m "Verify Phase A under Godot 4.7.2"
-git push -u origin main
-```
-
-Do not preserve a Work/editor-only fix outside source control.
-
-## Not part of Phase A
-
-- Gameplay formulas
-- Great Lakes production content
-- Domain schema reinvention
-- Android export configuration beyond later environment sanity work
-- Production UI or map implementation
+- mutable CampaignState or runtime entity stores;
+- command/result mutation architecture;
+- RandomService and gameplay simulation formulas;
+- current-state save codecs/migrations;
+- knowledge projection implementation;
+- Chronicle runtime capture/reconstruction;
+- deep historical content accuracy or completed roster population;
+- final names, portraits, visual assets, full international map, or custom-map editor.

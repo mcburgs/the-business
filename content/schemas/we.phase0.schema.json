@@ -1,0 +1,804 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:the-business:schemas:we.phase0.schema.json",
+  "title": "Controlled reconstruction of the Phase 0 schema package, Phase B static-content subset",
+  "description": "This is not the missing original machine-readable Phase 0 package. It is a controlled Phase B replacement derived from Canonical Data Schemas and Domain Contracts v0.1 plus Technical Architecture v0.2 and Development and Build Plan v0.1.",
+  "x-we-derivation-status": "controlled_reconstruction",
+  "x-we-original-artifact-status": "not_supplied",
+  "x-we-scope": "Phase B static content only; runtime CampaignState, command, save, RNG, knowledge and Chronicle definitions remain governed by prose contracts and are intentionally not reconstructed here.",
+  "x-we-contract-version": "0.1.0",
+  "$defs": {
+    "ContentId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$"
+    },
+    "Date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "SemVer": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "DependencySpec": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+(?:>=|<=|==|=|>|<)(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "NarrativeContext": {
+      "enum": [
+        "public_kayfabe",
+        "backstage_business",
+        "system_neutral"
+      ]
+    },
+    "Coordinates": {
+      "type": "object",
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PackFiles": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "roles",
+          "rulesets",
+          "media_mediums",
+          "media_tech",
+          "map",
+          "regions",
+          "markets",
+          "venues",
+          "people",
+          "promotion_strategies",
+          "promotions",
+          "media_outlets",
+          "championships",
+          "contracts",
+          "history_hooks"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "PackManifest": {
+      "type": "object",
+      "required": [
+        "pack_id",
+        "schema_version",
+        "pack_version",
+        "requires",
+        "files",
+        "localization"
+      ],
+      "properties": {
+        "pack_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "schema_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pack_version": {
+          "$ref": "#/$defs/SemVer"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DependencySpec"
+          },
+          "uniqueItems": true
+        },
+        "files": {
+          "$ref": "#/$defs/PackFiles"
+        },
+        "localization": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2,3}(?:[-_][A-Za-z0-9]{2,8})*$"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "CampaignPackManifest": {
+      "type": "object",
+      "required": [
+        "pack_id",
+        "schema_version",
+        "pack_version",
+        "requires",
+        "map_id",
+        "start_date",
+        "ruleset_id",
+        "files",
+        "localization"
+      ],
+      "properties": {
+        "pack_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "schema_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pack_version": {
+          "$ref": "#/$defs/SemVer"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DependencySpec"
+          },
+          "uniqueItems": true
+        },
+        "files": {
+          "$ref": "#/$defs/PackFiles"
+        },
+        "localization": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2,3}(?:[-_][A-Za-z0-9]{2,8})*$"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "map_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "start_date": {
+          "$ref": "#/$defs/Date"
+        },
+        "ruleset_id": {
+          "$ref": "#/$defs/ContentId"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RoleDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "RulesetDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "MediaMediumDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "MediaTechDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "medium_id",
+        "available_from",
+        "available_until",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "medium_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "available_from": {
+          "$ref": "#/$defs/Date"
+        },
+        "available_until": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "TravelConnection": {
+      "type": "object",
+      "required": [
+        "from_market_id",
+        "to_market_id",
+        "modes",
+        "base_distance_km",
+        "base_time_minutes",
+        "base_cost_index",
+        "available_from",
+        "available_until"
+      ],
+      "properties": {
+        "from_market_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "to_market_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "base_distance_km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "base_time_minutes": {
+          "type": "number",
+          "minimum": 0
+        },
+        "base_cost_index": {
+          "type": "number",
+          "minimum": 0
+        },
+        "available_from": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available_until": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "MapDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "region_ids",
+        "market_ids",
+        "connections",
+        "media_adjacency_rule_ids"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "region_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "market_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "connections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TravelConnection"
+          }
+        },
+        "media_adjacency_rule_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "visual_geometry_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "RegionDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "market_ids",
+        "culture_tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "market_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "culture_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MarketDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "region_id",
+        "coordinates",
+        "venue_ids",
+        "culture_tags",
+        "infrastructure_tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "region_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "coordinates": {
+          "$ref": "#/$defs/Coordinates"
+        },
+        "venue_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "culture_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "infrastructure_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "VenueDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "market_id",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "market_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PersonSeedDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "role_ids",
+        "home_market_id",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "home_market_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PromotionSeedDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "owner_person_seed_id",
+        "booker_person_seed_id",
+        "home_market_ids",
+        "strategy_profile_id",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner_person_seed_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "booker_person_seed_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "home_market_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "strategy_profile_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MediaOutletDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "medium_id",
+        "tech_id",
+        "market_ids",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "medium_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "tech_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "market_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ChampionshipSeedDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "promotion_seed_id",
+        "holder_person_seed_ids",
+        "recognition_market_ids",
+        "placeholder"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promotion_seed_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "holder_person_seed_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "recognition_market_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "placeholder": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ContractSeedDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "person_seed_id",
+        "promotion_seed_id",
+        "start_date",
+        "end_date",
+        "placeholder"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "person_seed_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "promotion_seed_id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "start_date": {
+          "$ref": "#/$defs/Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "placeholder": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SeededHistoryHook": {
+      "type": "object",
+      "required": [
+        "id",
+        "date",
+        "hook_type",
+        "subject_ids",
+        "market_id",
+        "narrative_context",
+        "narrative_key",
+        "placeholder"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "date": {
+          "$ref": "#/$defs/Date"
+        },
+        "hook_type": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "subject_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContentId"
+          },
+          "uniqueItems": true
+        },
+        "market_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "narrative_context": {
+          "$ref": "#/$defs/NarrativeContext"
+        },
+        "narrative_key": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "placeholder": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PromotionStrategyDefinition": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ContentId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

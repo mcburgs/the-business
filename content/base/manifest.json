@@ -1,0 +1,16 @@
+{
+  "pack_id": "wrestling_empire.base",
+  "schema_version": 1,
+  "pack_version": "0.1.0",
+  "requires": [],
+  "files": {
+    "roles": "roles.json",
+    "rulesets": "rulesets.json",
+    "media_mediums": "media_mediums.json",
+    "media_tech": "media_tech.json",
+    "promotion_strategies": "promotion_strategies.json"
+  },
+  "localization": [
+    "en"
+  ]
+}

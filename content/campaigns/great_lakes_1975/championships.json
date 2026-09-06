@@ -1,0 +1,38 @@
+[
+  {
+    "id": "championship_seed.great_lakes.alpha.primary",
+    "display_name": "Promotion Alpha Primary Championship (Placeholder)",
+    "promotion_seed_id": "promotion_seed.great_lakes.alpha",
+    "holder_person_seed_ids": [],
+    "recognition_market_ids": [
+      "market.great_lakes.toronto",
+      "market.great_lakes.hamilton",
+      "market.great_lakes.london_on"
+    ],
+    "placeholder": true
+  },
+  {
+    "id": "championship_seed.great_lakes.beta.primary",
+    "display_name": "Promotion Beta Primary Championship (Placeholder)",
+    "promotion_seed_id": "promotion_seed.great_lakes.beta",
+    "holder_person_seed_ids": [],
+    "recognition_market_ids": [
+      "market.great_lakes.detroit",
+      "market.great_lakes.grand_rapids",
+      "market.great_lakes.windsor"
+    ],
+    "placeholder": true
+  },
+  {
+    "id": "championship_seed.great_lakes.gamma.primary",
+    "display_name": "Promotion Gamma Primary Championship (Placeholder)",
+    "promotion_seed_id": "promotion_seed.great_lakes.gamma",
+    "holder_person_seed_ids": [],
+    "recognition_market_ids": [
+      "market.great_lakes.cleveland",
+      "market.great_lakes.toledo",
+      "market.great_lakes.columbus"
+    ],
+    "placeholder": true
+  }
+]

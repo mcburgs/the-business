@@ -1,0 +1,71 @@
+[
+  {
+    "id": "region.great_lakes.ontario",
+    "display_name": "Ontario",
+    "market_ids": [
+      "market.great_lakes.toronto",
+      "market.great_lakes.hamilton",
+      "market.great_lakes.london_on",
+      "market.great_lakes.windsor"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ]
+  },
+  {
+    "id": "region.great_lakes.michigan",
+    "display_name": "Michigan",
+    "market_ids": [
+      "market.great_lakes.detroit",
+      "market.great_lakes.grand_rapids"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ]
+  },
+  {
+    "id": "region.great_lakes.ohio",
+    "display_name": "Ohio",
+    "market_ids": [
+      "market.great_lakes.cleveland",
+      "market.great_lakes.toledo",
+      "market.great_lakes.columbus"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ]
+  },
+  {
+    "id": "region.great_lakes.new_york",
+    "display_name": "New York",
+    "market_ids": [
+      "market.great_lakes.buffalo",
+      "market.great_lakes.rochester",
+      "market.great_lakes.syracuse"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ]
+  },
+  {
+    "id": "region.great_lakes.pennsylvania",
+    "display_name": "Pennsylvania",
+    "market_ids": [
+      "market.great_lakes.erie",
+      "market.great_lakes.pittsburgh"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ]
+  },
+  {
+    "id": "region.great_lakes.illinois",
+    "display_name": "Illinois",
+    "market_ids": [
+      "market.great_lakes.chicago"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ]
+  }
+]

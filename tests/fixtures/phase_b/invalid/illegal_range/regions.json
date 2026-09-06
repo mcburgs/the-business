@@ -1,0 +1,13 @@
+[
+  {
+    "id": "region.fixture.alpha",
+    "display_name": "Fixture Region",
+    "market_ids": [
+      "market.fixture.alpha",
+      "market.fixture.beta"
+    ],
+    "culture_tags": [
+      "fixture"
+    ]
+  }
+]

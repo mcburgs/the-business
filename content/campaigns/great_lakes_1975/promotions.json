@@ -1,0 +1,50 @@
+[
+  {
+    "id": "promotion_seed.great_lakes.alpha",
+    "display_name": "Promotion Alpha (Placeholder)",
+    "owner_person_seed_id": "person_seed.great_lakes.owner_alpha",
+    "booker_person_seed_id": "person_seed.great_lakes.booker_alpha",
+    "home_market_ids": [
+      "market.great_lakes.toronto",
+      "market.great_lakes.hamilton",
+      "market.great_lakes.london_on"
+    ],
+    "strategy_profile_id": "strategy.balanced",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "promotion_seed.great_lakes.beta",
+    "display_name": "Promotion Beta (Placeholder)",
+    "owner_person_seed_id": "person_seed.great_lakes.owner_beta",
+    "booker_person_seed_id": "person_seed.great_lakes.booker_beta",
+    "home_market_ids": [
+      "market.great_lakes.detroit",
+      "market.great_lakes.grand_rapids",
+      "market.great_lakes.windsor"
+    ],
+    "strategy_profile_id": "strategy.expansion",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "promotion_seed.great_lakes.gamma",
+    "display_name": "Promotion Gamma (Placeholder)",
+    "owner_person_seed_id": "person_seed.great_lakes.owner_gamma",
+    "booker_person_seed_id": "person_seed.great_lakes.booker_gamma",
+    "home_market_ids": [
+      "market.great_lakes.cleveland",
+      "market.great_lakes.toledo",
+      "market.great_lakes.columbus"
+    ],
+    "strategy_profile_id": "strategy.market_defense",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  }
+]

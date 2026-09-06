@@ -1,0 +1,182 @@
+[
+  {
+    "id": "person_seed.great_lakes.owner_alpha",
+    "display_name": "Owner Alpha (Placeholder)",
+    "role_ids": [
+      "role.owner"
+    ],
+    "home_market_id": "market.great_lakes.toronto",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.booker_alpha",
+    "display_name": "Booker Alpha (Placeholder)",
+    "role_ids": [
+      "role.booker"
+    ],
+    "home_market_id": "market.great_lakes.toronto",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_alpha_1",
+    "display_name": "Wrestler Alpha 1 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.toronto",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_alpha_2",
+    "display_name": "Wrestler Alpha 2 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.hamilton",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_alpha_3",
+    "display_name": "Wrestler Alpha 3 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.london_on",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.owner_beta",
+    "display_name": "Owner Beta (Placeholder)",
+    "role_ids": [
+      "role.owner"
+    ],
+    "home_market_id": "market.great_lakes.detroit",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.booker_beta",
+    "display_name": "Booker Beta (Placeholder)",
+    "role_ids": [
+      "role.booker"
+    ],
+    "home_market_id": "market.great_lakes.detroit",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_beta_1",
+    "display_name": "Wrestler Beta 1 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.detroit",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_beta_2",
+    "display_name": "Wrestler Beta 2 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.grand_rapids",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_beta_3",
+    "display_name": "Wrestler Beta 3 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.windsor",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.owner_gamma",
+    "display_name": "Owner Gamma (Placeholder)",
+    "role_ids": [
+      "role.owner"
+    ],
+    "home_market_id": "market.great_lakes.cleveland",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.booker_gamma",
+    "display_name": "Booker Gamma (Placeholder)",
+    "role_ids": [
+      "role.booker"
+    ],
+    "home_market_id": "market.great_lakes.cleveland",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_gamma_1",
+    "display_name": "Wrestler Gamma 1 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.cleveland",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_gamma_2",
+    "display_name": "Wrestler Gamma 2 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.toledo",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "person_seed.great_lakes.wrestler_gamma_3",
+    "display_name": "Wrestler Gamma 3 (Placeholder)",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.great_lakes.columbus",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  }
+]

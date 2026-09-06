@@ -1,0 +1,22 @@
+{
+  "pack_id": "campaign.fixture_mini",
+  "schema_version": 1,
+  "pack_version": "0.1.0",
+  "requires": [
+    "wrestling_empire.base>=0.1.0"
+  ],
+  "map_id": "map.fixture_mini",
+  "start_date": "1975-06-01",
+  "ruleset_id": "ruleset.standard",
+  "files": {
+    "map": "map.json",
+    "regions": "regions.json",
+    "markets": "https://example.invalid/markets.json",
+    "venues": "venues.json",
+    "people": "people.json",
+    "promotions": "promotions.json"
+  },
+  "localization": [
+    "en"
+  ]
+}

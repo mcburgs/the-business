@@ -1,0 +1,26 @@
+[
+  {
+    "id": "strategy.balanced",
+    "display_name": "Balanced",
+    "tags": [
+      "generic",
+      "placeholder"
+    ]
+  },
+  {
+    "id": "strategy.expansion",
+    "display_name": "Expansion-oriented",
+    "tags": [
+      "generic",
+      "placeholder"
+    ]
+  },
+  {
+    "id": "strategy.market_defense",
+    "display_name": "Market-defense-oriented",
+    "tags": [
+      "generic",
+      "placeholder"
+    ]
+  }
+]

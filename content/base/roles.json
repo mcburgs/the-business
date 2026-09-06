@@ -1,0 +1,46 @@
+[
+  {
+    "id": "role.owner",
+    "display_name": "Owner"
+  },
+  {
+    "id": "role.wrestler",
+    "display_name": "Wrestler"
+  },
+  {
+    "id": "role.booker",
+    "display_name": "Booker"
+  },
+  {
+    "id": "role.road_agent",
+    "display_name": "Road Agent"
+  },
+  {
+    "id": "role.scout",
+    "display_name": "Scout"
+  },
+  {
+    "id": "role.talent_agent",
+    "display_name": "Talent Agent"
+  },
+  {
+    "id": "role.manager",
+    "display_name": "Manager"
+  },
+  {
+    "id": "role.announcer",
+    "display_name": "Announcer"
+  },
+  {
+    "id": "role.referee",
+    "display_name": "Referee"
+  },
+  {
+    "id": "role.trainer",
+    "display_name": "Trainer"
+  },
+  {
+    "id": "role.executive",
+    "display_name": "Executive"
+  }
+]

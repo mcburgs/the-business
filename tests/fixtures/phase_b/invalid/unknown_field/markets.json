@@ -1,0 +1,35 @@
+[
+  {
+    "id": "market.fixture.alpha",
+    "display_name": "Alpha",
+    "region_id": "region.fixture.alpha",
+    "coordinates": {
+      "x": 0.2,
+      "y": 0.5
+    },
+    "venue_ids": [
+      "venue.fixture.alpha"
+    ],
+    "culture_tags": [
+      "fixture"
+    ],
+    "infrastructure_tags": [],
+    "mystery_engine_hint": 3
+  },
+  {
+    "id": "market.fixture.beta",
+    "display_name": "Beta",
+    "region_id": "region.fixture.alpha",
+    "coordinates": {
+      "x": 0.8,
+      "y": 0.5
+    },
+    "venue_ids": [
+      "venue.fixture.beta"
+    ],
+    "culture_tags": [
+      "fixture"
+    ],
+    "infrastructure_tags": []
+  }
+]

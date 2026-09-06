@@ -1,0 +1,309 @@
+{
+  "id": "map.great_lakes",
+  "display_name": "Great Lakes Skeleton Map",
+  "region_ids": [
+    "region.great_lakes.ontario",
+    "region.great_lakes.michigan",
+    "region.great_lakes.ohio",
+    "region.great_lakes.new_york",
+    "region.great_lakes.pennsylvania",
+    "region.great_lakes.illinois"
+  ],
+  "market_ids": [
+    "market.great_lakes.toronto",
+    "market.great_lakes.hamilton",
+    "market.great_lakes.london_on",
+    "market.great_lakes.windsor",
+    "market.great_lakes.detroit",
+    "market.great_lakes.grand_rapids",
+    "market.great_lakes.cleveland",
+    "market.great_lakes.toledo",
+    "market.great_lakes.columbus",
+    "market.great_lakes.buffalo",
+    "market.great_lakes.rochester",
+    "market.great_lakes.syracuse",
+    "market.great_lakes.erie",
+    "market.great_lakes.pittsburgh",
+    "market.great_lakes.chicago"
+  ],
+  "connections": [
+    {
+      "from_market_id": "market.great_lakes.toronto",
+      "to_market_id": "market.great_lakes.hamilton",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 70,
+      "base_time_minutes": 60,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.hamilton",
+      "to_market_id": "market.great_lakes.london_on",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 130,
+      "base_time_minutes": 95,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.london_on",
+      "to_market_id": "market.great_lakes.windsor",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 190,
+      "base_time_minutes": 135,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.windsor",
+      "to_market_id": "market.great_lakes.detroit",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 10,
+      "base_time_minutes": 25,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.detroit",
+      "to_market_id": "market.great_lakes.toledo",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 95,
+      "base_time_minutes": 75,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.toledo",
+      "to_market_id": "market.great_lakes.cleveland",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 185,
+      "base_time_minutes": 130,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.cleveland",
+      "to_market_id": "market.great_lakes.erie",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 165,
+      "base_time_minutes": 115,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.erie",
+      "to_market_id": "market.great_lakes.buffalo",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 150,
+      "base_time_minutes": 105,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.buffalo",
+      "to_market_id": "market.great_lakes.rochester",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 120,
+      "base_time_minutes": 90,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.rochester",
+      "to_market_id": "market.great_lakes.syracuse",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 140,
+      "base_time_minutes": 100,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.cleveland",
+      "to_market_id": "market.great_lakes.pittsburgh",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 215,
+      "base_time_minutes": 150,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.pittsburgh",
+      "to_market_id": "market.great_lakes.erie",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 205,
+      "base_time_minutes": 145,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.toledo",
+      "to_market_id": "market.great_lakes.columbus",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 195,
+      "base_time_minutes": 135,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.columbus",
+      "to_market_id": "market.great_lakes.pittsburgh",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 300,
+      "base_time_minutes": 200,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.detroit",
+      "to_market_id": "market.great_lakes.grand_rapids",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 255,
+      "base_time_minutes": 175,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.grand_rapids",
+      "to_market_id": "market.great_lakes.chicago",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 285,
+      "base_time_minutes": 195,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.detroit",
+      "to_market_id": "market.great_lakes.chicago",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 455,
+      "base_time_minutes": 300,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.hamilton",
+      "to_market_id": "market.great_lakes.buffalo",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 115,
+      "base_time_minutes": 95,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.toronto",
+      "to_market_id": "market.great_lakes.buffalo",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 160,
+      "base_time_minutes": 130,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.london_on",
+      "to_market_id": "market.great_lakes.detroit",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 200,
+      "base_time_minutes": 145,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.cleveland",
+      "to_market_id": "market.great_lakes.columbus",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 230,
+      "base_time_minutes": 155,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.syracuse",
+      "to_market_id": "market.great_lakes.pittsburgh",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 520,
+      "base_time_minutes": 340,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    },
+    {
+      "from_market_id": "market.great_lakes.chicago",
+      "to_market_id": "market.great_lakes.toledo",
+      "modes": [
+        "road"
+      ],
+      "base_distance_km": 390,
+      "base_time_minutes": 255,
+      "base_cost_index": 1.0,
+      "available_from": null,
+      "available_until": null
+    }
+  ],
+  "media_adjacency_rule_ids": [],
+  "visual_geometry_ref": null
+}

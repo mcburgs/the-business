@@ -2,6 +2,18 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-b - 2026-09-06
+
+- Added generic content discovery, dependency resolution, schema-backed structural validation, semantic reference validation, safe data-only path enforcement, immutable-by-copy content registry, and deterministic SHA-256 content fingerprinting.
+- Added a controlled reconstruction of the missing Phase 0 machine schema limited to the Phase B static-content surface, with explicit derivation metadata and documentation.
+- Added a skeletal Great Lakes 1975 campaign containing 15 markets, six regions, three promotions, placeholder people/staff, local-TV outlets, venue/title/contract placeholders, and seeded-history hooks.
+- Added generic Alpha/Beta variable-count campaign fixtures and malformed fixtures covering duplicate IDs, missing references, illegal ranges, dependency failures, path traversal, remote references, executable references, invalid NarrativeContext values, and unknown fields.
+- Added Phase B unit/integration gates and a scenario-special-case guard.
+- Promoted project build-phase metadata to verified Phase B after the pinned-engine acceptance gate passed.
+- Corrected Phase B JSON Schema integer handling for Godot JSON parsing, which materializes integral JSON numbers as floats.
+- Verified Phase B under Godot `4.7.2.stable.official.ed1daf0bf`: static gate PASS; 10/10 headless tests PASS; fresh editor import completed without parser/import errors.
+- Corrected Phase B integration-test typed-array calls exposed by the real Godot runtime and retained the generated script UID sidecars.
+
 ## 0.0.0-phase-a - 2026-09-06
 
 - Created Godot 4.7.2-stable project skeleton.

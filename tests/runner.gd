@@ -84,7 +84,6 @@ func _discover_tests(root_path: String, output: Array[String]) -> void:
     if directory == null:
         _harness_failures.append("Unable to open test directory: " + root_path)
         return
-
     directory.list_dir_begin()
     var entry: String = directory.get_next()
     while entry != "":
@@ -100,44 +99,21 @@ func _discover_tests(root_path: String, output: Array[String]) -> void:
 func _execute_test(test_path: String) -> void:
     var script_resource: Resource = load(test_path)
     if script_resource == null or not script_resource is Script:
-        _results.append({
-            "name": test_path,
-            "path": test_path,
-            "passed": false,
-            "failures": ["Test script could not be loaded as Script."],
-        })
+        _results.append({"name": test_path, "path": test_path, "passed": false, "failures": ["Test script could not be loaded as Script."]})
         return
     if not (script_resource as Script).can_instantiate():
         var failure_message: String = "Test script could not be instantiated; check parser and base-type errors."
-        _results.append({
-            "name": test_path,
-            "path": test_path,
-            "passed": false,
-            "failures": [failure_message],
-        })
+        _results.append({"name": test_path, "path": test_path, "passed": false, "failures": [failure_message]})
         _harness_failures.append(test_path + ": " + failure_message)
         return
-
     var instance: Variant = (script_resource as Script).new()
     if instance == null or not instance.has_method("run"):
-        _results.append({
-            "name": test_path,
-            "path": test_path,
-            "passed": false,
-            "failures": ["Test script does not expose run()."],
-        })
+        _results.append({"name": test_path, "path": test_path, "passed": false, "failures": ["Test script does not expose run()."]})
         return
-
     var raw_result: Variant = instance.call("run")
     if not raw_result is Dictionary:
-        _results.append({
-            "name": test_path,
-            "path": test_path,
-            "passed": false,
-            "failures": ["run() did not return a Dictionary."],
-        })
+        _results.append({"name": test_path, "path": test_path, "passed": false, "failures": ["run() did not return a Dictionary."]})
         return
-
     var result: Dictionary = raw_result
     if not result.has("name"):
         result["name"] = test_path
@@ -160,7 +136,6 @@ func _write_summary(path: String, summary: Dictionary) -> bool:
         var make_error: Error = DirAccess.make_dir_recursive_absolute(absolute_base)
         if make_error != OK and make_error != ERR_ALREADY_EXISTS:
             return false
-
     var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
     if file == null:
         return false

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "person_seed.fixture.owner",
+    "display_name": "Fixture Owner",
+    "role_ids": [
+      "role.owner"
+    ],
+    "home_market_id": "market.fixture.alpha",
+    "tags": [
+      "fixture"
+    ]
+  },
+  {
+    "id": "person_seed.fixture.booker",
+    "display_name": "Fixture Booker",
+    "role_ids": [
+      "role.booker"
+    ],
+    "home_market_id": "market.fixture.alpha",
+    "tags": [
+      "fixture"
+    ]
+  },
+  {
+    "id": "person_seed.fixture.wrestler",
+    "display_name": "Fixture Wrestler",
+    "role_ids": [
+      "role.wrestler"
+    ],
+    "home_market_id": "market.fixture.beta",
+    "tags": [
+      "fixture"
+    ]
+  }
+]

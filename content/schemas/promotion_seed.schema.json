@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:the-business:schemas:promotion_seed.schema.json",
+  "$ref": "we.phase0.schema.json#/$defs/PromotionSeedDefinition",
+  "x-we-derivation-status": "controlled_reconstruction"
+}

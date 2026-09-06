@@ -1,0 +1,18 @@
+[
+  {
+    "id": "venue.fixture.alpha",
+    "display_name": "Alpha Hall",
+    "market_id": "market.fixture.alpha",
+    "tags": [
+      "fixture"
+    ]
+  },
+  {
+    "id": "venue.fixture.beta",
+    "display_name": "Beta Hall",
+    "market_id": "market.fixture.beta",
+    "tags": [
+      "fixture"
+    ]
+  }
+]

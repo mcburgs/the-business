@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:the-business:schemas:promotion_strategy_definition.schema.json",
+  "$ref": "we.phase0.schema.json#/$defs/PromotionStrategyDefinition",
+  "x-we-derivation-status": "controlled_reconstruction"
+}

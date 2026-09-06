@@ -1,0 +1,272 @@
+[
+  {
+    "id": "market.great_lakes.toronto",
+    "display_name": "Toronto",
+    "region_id": "region.great_lakes.ontario",
+    "coordinates": {
+      "x": 0.58,
+      "y": 0.23
+    },
+    "venue_ids": [
+      "venue.great_lakes.toronto.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.hamilton",
+    "display_name": "Hamilton",
+    "region_id": "region.great_lakes.ontario",
+    "coordinates": {
+      "x": 0.52,
+      "y": 0.29
+    },
+    "venue_ids": [
+      "venue.great_lakes.hamilton.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.london_on",
+    "display_name": "London",
+    "region_id": "region.great_lakes.ontario",
+    "coordinates": {
+      "x": 0.38,
+      "y": 0.31
+    },
+    "venue_ids": [
+      "venue.great_lakes.london_on.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.windsor",
+    "display_name": "Windsor",
+    "region_id": "region.great_lakes.ontario",
+    "coordinates": {
+      "x": 0.24,
+      "y": 0.43
+    },
+    "venue_ids": [
+      "venue.great_lakes.windsor.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.detroit",
+    "display_name": "Detroit",
+    "region_id": "region.great_lakes.michigan",
+    "coordinates": {
+      "x": 0.21,
+      "y": 0.46
+    },
+    "venue_ids": [
+      "venue.great_lakes.detroit.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.grand_rapids",
+    "display_name": "Grand Rapids",
+    "region_id": "region.great_lakes.michigan",
+    "coordinates": {
+      "x": 0.12,
+      "y": 0.34
+    },
+    "venue_ids": [
+      "venue.great_lakes.grand_rapids.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.cleveland",
+    "display_name": "Cleveland",
+    "region_id": "region.great_lakes.ohio",
+    "coordinates": {
+      "x": 0.43,
+      "y": 0.55
+    },
+    "venue_ids": [
+      "venue.great_lakes.cleveland.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.toledo",
+    "display_name": "Toledo",
+    "region_id": "region.great_lakes.ohio",
+    "coordinates": {
+      "x": 0.29,
+      "y": 0.51
+    },
+    "venue_ids": [
+      "venue.great_lakes.toledo.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.columbus",
+    "display_name": "Columbus",
+    "region_id": "region.great_lakes.ohio",
+    "coordinates": {
+      "x": 0.35,
+      "y": 0.7
+    },
+    "venue_ids": [
+      "venue.great_lakes.columbus.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.buffalo",
+    "display_name": "Buffalo",
+    "region_id": "region.great_lakes.new_york",
+    "coordinates": {
+      "x": 0.69,
+      "y": 0.38
+    },
+    "venue_ids": [
+      "venue.great_lakes.buffalo.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.rochester",
+    "display_name": "Rochester",
+    "region_id": "region.great_lakes.new_york",
+    "coordinates": {
+      "x": 0.8,
+      "y": 0.34
+    },
+    "venue_ids": [
+      "venue.great_lakes.rochester.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.syracuse",
+    "display_name": "Syracuse",
+    "region_id": "region.great_lakes.new_york",
+    "coordinates": {
+      "x": 0.91,
+      "y": 0.36
+    },
+    "venue_ids": [
+      "venue.great_lakes.syracuse.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.erie",
+    "display_name": "Erie",
+    "region_id": "region.great_lakes.pennsylvania",
+    "coordinates": {
+      "x": 0.57,
+      "y": 0.51
+    },
+    "venue_ids": [
+      "venue.great_lakes.erie.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.pittsburgh",
+    "display_name": "Pittsburgh",
+    "region_id": "region.great_lakes.pennsylvania",
+    "coordinates": {
+      "x": 0.62,
+      "y": 0.72
+    },
+    "venue_ids": [
+      "venue.great_lakes.pittsburgh.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  },
+  {
+    "id": "market.great_lakes.chicago",
+    "display_name": "Chicago",
+    "region_id": "region.great_lakes.illinois",
+    "coordinates": {
+      "x": 0.02,
+      "y": 0.54
+    },
+    "venue_ids": [
+      "venue.great_lakes.chicago.primary_placeholder"
+    ],
+    "culture_tags": [
+      "great_lakes_skeleton"
+    ],
+    "infrastructure_tags": [
+      "placeholder"
+    ]
+  }
+]

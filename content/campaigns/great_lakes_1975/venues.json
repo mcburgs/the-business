@@ -1,0 +1,137 @@
+[
+  {
+    "id": "venue.great_lakes.toronto.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Toronto",
+    "market_id": "market.great_lakes.toronto",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.hamilton.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Hamilton",
+    "market_id": "market.great_lakes.hamilton",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.london_on.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — London",
+    "market_id": "market.great_lakes.london_on",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.windsor.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Windsor",
+    "market_id": "market.great_lakes.windsor",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.detroit.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Detroit",
+    "market_id": "market.great_lakes.detroit",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.grand_rapids.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Grand Rapids",
+    "market_id": "market.great_lakes.grand_rapids",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.cleveland.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Cleveland",
+    "market_id": "market.great_lakes.cleveland",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.toledo.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Toledo",
+    "market_id": "market.great_lakes.toledo",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.columbus.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Columbus",
+    "market_id": "market.great_lakes.columbus",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.buffalo.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Buffalo",
+    "market_id": "market.great_lakes.buffalo",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.rochester.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Rochester",
+    "market_id": "market.great_lakes.rochester",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.syracuse.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Syracuse",
+    "market_id": "market.great_lakes.syracuse",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.erie.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Erie",
+    "market_id": "market.great_lakes.erie",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.pittsburgh.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Pittsburgh",
+    "market_id": "market.great_lakes.pittsburgh",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  },
+  {
+    "id": "venue.great_lakes.chicago.primary_placeholder",
+    "display_name": "Primary Venue Placeholder — Chicago",
+    "market_id": "market.great_lakes.chicago",
+    "tags": [
+      "placeholder",
+      "phase_b_skeleton"
+    ]
+  }
+]

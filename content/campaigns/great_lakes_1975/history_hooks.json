@@ -1,0 +1,38 @@
+[
+  {
+    "id": "history_hook.great_lakes.alpha.prestart",
+    "date": "1974-12-15",
+    "hook_type": "history_hook_type.promotion_prestart",
+    "subject_ids": [
+      "promotion_seed.great_lakes.alpha"
+    ],
+    "market_id": "market.great_lakes.toronto",
+    "narrative_context": "system_neutral",
+    "narrative_key": null,
+    "placeholder": true
+  },
+  {
+    "id": "history_hook.great_lakes.beta.prestart",
+    "date": "1974-12-15",
+    "hook_type": "history_hook_type.promotion_prestart",
+    "subject_ids": [
+      "promotion_seed.great_lakes.beta"
+    ],
+    "market_id": "market.great_lakes.detroit",
+    "narrative_context": "system_neutral",
+    "narrative_key": null,
+    "placeholder": true
+  },
+  {
+    "id": "history_hook.great_lakes.gamma.prestart",
+    "date": "1974-12-15",
+    "hook_type": "history_hook_type.promotion_prestart",
+    "subject_ids": [
+      "promotion_seed.great_lakes.gamma"
+    ],
+    "market_id": "market.great_lakes.cleveland",
+    "narrative_context": "system_neutral",
+    "narrative_key": null,
+    "placeholder": true
+  }
+]

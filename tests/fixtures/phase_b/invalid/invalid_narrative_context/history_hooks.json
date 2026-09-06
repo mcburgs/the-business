@@ -1,0 +1,14 @@
+[
+  {
+    "id": "history_hook.fixture.bad_context",
+    "date": "1975-01-01",
+    "hook_type": "history_hook_type.fixture",
+    "subject_ids": [
+      "promotion_seed.fixture.alpha"
+    ],
+    "market_id": "market.fixture.alpha",
+    "narrative_context": "wink_at_player",
+    "narrative_key": null,
+    "placeholder": true
+  }
+]

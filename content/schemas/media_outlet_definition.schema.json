@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:the-business:schemas:media_outlet_definition.schema.json",
+  "$ref": "we.phase0.schema.json#/$defs/MediaOutletDefinition",
+  "x-we-derivation-status": "controlled_reconstruction"
+}
