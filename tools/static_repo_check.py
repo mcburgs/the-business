@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -70,9 +71,17 @@ def check() -> dict:
             if token in text:
                 failures.append(f"domain boundary violation token {token!r}: {script.relative_to(ROOT)}")
 
-    for child in ROOT.iterdir():
-        if child.name in GENERATED_ROOT_NAMES:
-            failures.append(f"generated/cache directory present in repository root: {child.name}")
+    tracked_generated = subprocess.run(
+        ["git", "-C", str(ROOT), "ls-files", "--", *sorted(GENERATED_ROOT_NAMES)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if tracked_generated.returncode != 0:
+        warnings.append("Unable to verify whether generated/cache roots are tracked by Git.")
+    else:
+        for path in tracked_generated.stdout.splitlines():
+            failures.append(f"generated/cache path is tracked by Git: {path}")
 
     schema_dir = ROOT / "content" / "schemas"
     if not any(p.suffix == ".json" for p in schema_dir.iterdir() if p.is_file()):

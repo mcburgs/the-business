@@ -12,8 +12,8 @@ Date: 2026-09-06
 - [x] Stock-Godot headless runner exists with machine-readable diagnostics and meaningful exit codes.
 - [x] Domain dependency guard exists.
 - [x] Static repository check exists.
-- [ ] Fresh checkout opened in the pinned Godot editor on the integration workstation.
-- [ ] Headless gate executed successfully on the integration workstation if no pinned runtime result is recorded below.
+- [x] Fresh checkout opened in the pinned Godot editor on the integration workstation.
+- [x] Headless gate executed successfully on the integration workstation if no pinned runtime result is recorded below.
 
 ## Source-package caveat
 

@@ -107,6 +107,16 @@ func _execute_test(test_path: String) -> void:
             "failures": ["Test script could not be loaded as Script."],
         })
         return
+    if not (script_resource as Script).can_instantiate():
+        var failure_message: String = "Test script could not be instantiated; check parser and base-type errors."
+        _results.append({
+            "name": test_path,
+            "path": test_path,
+            "passed": false,
+            "failures": [failure_message],
+        })
+        _harness_failures.append(test_path + ": " + failure_message)
+        return
 
     var instance: Variant = (script_resource as Script).new()
     if instance == null or not instance.has_method("run"):

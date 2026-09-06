@@ -2,7 +2,7 @@
 
 Date: 2026-09-06
 
-## Result available in this build environment
+## Verified result
 
 **Static repository gate: PASS**
 
@@ -10,14 +10,28 @@ Date: 2026-09-06
 
 ## Pinned Godot engine gate
 
-**Status: READY FOR WORK / runtime execution still required.**
+**Status: PASS**
 
-The build environment did not contain a Godot executable. The official Godot archive confirms that 4.7.2-stable is an actual stable release dated 2026-08-18. An attempt to fetch the Linux 4.7.2 binary into this container was blocked by the container's lack of outbound DNS/network access, so this artifact does not pretend that an engine run occurred.
+Engine used:
 
-Canonical verification command:
+```text
+4.7.2.stable.official.ed1daf0bf
+```
+
+The official Linux archive matched the SHA-512 checksum published with the Godot 4.7.2-stable release. A clean headless editor open completed without parser, project-configuration, or import warnings after the asset ledger was configured to remain a raw CSV.
+
+Canonical verification command executed from the repository root:
 
 ```text
 godot --headless --path . --script res://tests/runner.gd
 ```
 
-The first integration workstation/Work session should execute that command under Godot 4.7.2-stable and return any parser/type/runtime errors as concrete artifacts. Any retained fix must be committed back into this repository.
+Result: exit code `0`; 4 tests discovered, 4 passed, 0 failed, and no harness failures. The runner wrote `user://diagnostics/headless-results.json` successfully.
+
+Retained runtime fixes:
+
+- Corrected the domain dependency guard's statically invalid `RefCounted` versus `Node` type comparison while preserving the intended boundary assertion.
+- Made the headless runner treat a non-instantiable test script as a harness failure instead of emitting a false pass after a parser error.
+- Marked `assets/asset_ledger.csv` as a raw retained file so Godot does not mis-import its column headings as translation locales.
+- Retained Godot-generated script UID sidecars required for stable resource identity under the pinned engine.
+- Corrected the static repository check to reject generated/cache paths tracked by Git while allowing the ignored local `.godot` cache created by a valid editor open.

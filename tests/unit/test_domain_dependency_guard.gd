@@ -19,7 +19,7 @@ const FORBIDDEN_TOKENS: Array[String] = [
 
 func run() -> Dictionary:
     var failures: Array[String] = []
-    var sentinel: RefCounted = ArchitectureSentinel.new()
+    var sentinel: Object = ArchitectureSentinel.new()
     _expect(sentinel is RefCounted, "Domain sentinel must be RefCounted.", failures)
     _expect(not (sentinel is Node), "Domain sentinel must not depend on Node/scene-tree presence.", failures)
 
