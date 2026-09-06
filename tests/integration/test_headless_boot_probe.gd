@@ -7,7 +7,7 @@ func run() -> Dictionary:
     var probe: Variant = BootProbe.new()
     var report: Dictionary = probe.collect()
 
-    _expect(report.get("build_phase", "") == "B", "Boot probe did not report Phase B.", failures)
+    _expect(report.get("build_phase", "") == "C", "Boot probe did not report Phase C.", failures)
     _expect(report.get("expected_engine", "") == "4.7.2-stable", "Boot probe engine pin is wrong.", failures)
     _expect(report.get("main_scene", "") == "res://presentation/shell/game_root.tscn", "Boot probe main scene is wrong.", failures)
 

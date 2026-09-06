@@ -2,11 +2,14 @@
 
 **The Business** is the working repository for the Wrestling Empire game project: an offline, simulation-first wrestling-promotion strategy game built in Godot.
 
-This repository is currently at **Phase B: Content Foundation**, verified under the pinned Godot 4.7.2-stable runtime. Phase A remains the foundational architecture baseline; Phase B establishes the generic static-content and skeletal Great Lakes 1975 campaign foundation.
+This repository is currently at **Phase C: Domain Kernel**, verified under the pinned Godot 4.7.2-stable runtime. Phase A established the architecture baseline, Phase B established the generic static-content foundation, and Phase C establishes the authoritative deterministic campaign-state kernel upon which later simulation phases will build.
 
 ## Current baseline
 
 - Engine: **Godot 4.7.2-stable**
+- Verified runtime: **4.7.2.stable.official.ed1daf0bf**
+- Game version: **0.0.0-phase-c**
+- Build phase: **C**
 - Language: **typed GDScript**
 - Runtime posture: offline, single-process simulation with a replaceable presentation shell
 - Primary future target: Android phone
@@ -15,22 +18,24 @@ This repository is currently at **Phase B: Content Foundation**, verified under 
 
 ## Architectural rule
 
-The scene tree is a shell around the domain model. Presentation may depend on Application; Application may depend on Domain; dependencies point inward. Simulation-domain code must not require Nodes, rendering, audio, input, wall-clock access, or global randomness simply to exist.
+The scene tree is a shell around the domain model. Presentation may depend on Application; Application may depend on Domain; dependencies point inward. Simulation-domain code must not require Nodes, rendering, audio, input, wall-clock access, or uncontrolled global randomness simply to exist.
 
-Phase B adds static campaign/content infrastructure only. The Great Lakes map, 1975 start date, three promotions, and authored entity counts are data, not engine limits. Mutable CampaignState, commands, RNG, simulation formulas, save codecs, knowledge projection, and Chronicle runtime implementation remain Phase C or later work.
+Great Lakes is data. The 1975 start date is content. The authored promotion/market/roster counts are scenario counts, not engine ceilings.
+
+Phase C adds authoritative mutable `CampaignState`, stable runtime entity identity/stores, the command/result mutation boundary, controlled `RandomService`, invariant validation, explicit current-state codecs/migration scaffolding, and hidden-information knowledge projection. It does **not** implement the Phase D month-resolution simulation, Chronicle runtime, AI strategy, production booking/economy/touring resolution, or production UI.
 
 ## Schema note
 
-The original standalone Phase 0 machine-readable schema package referenced by the governing contracts was not supplied. Phase B therefore contains a deliberately labeled controlled reconstruction of the minimum static-content subset required by the Phase B gate. See `content/schemas/DERIVATION.md`.
+The original standalone Phase 0 machine-readable schema package referenced by the governing contracts was not supplied. Phase B contains a deliberately labeled controlled reconstruction of the minimum static-content subset required by its gate. Phase C separately reconstructs only the runtime-state/command/save contracts directly supported by the governing prose and records the remaining open nested shapes. See `content/schemas/DERIVATION.md`.
 
 ## Start here
 
-1. Read `BUILD.md` and `docs/PHASE_B_ACCEPTANCE.md`.
+1. Read `BUILD.md` and `docs/PHASE_C_ACCEPTANCE.md`.
 2. Run `python tools/static_repo_check.py`.
 3. Run the stock-Godot headless test gate:
 
    `godot --headless --path . --script res://tests/runner.gd`
 
-4. Preserve the verified Phase B gate when making later changes: fresh-clone editor import under **Godot 4.7.2-stable** must remain free of parser/import warnings. See `docs/PHASE_B_RUNTIME_RESULT.md` for the recorded Phase B verification.
+4. Preserve the verified Phase C gate when making later changes: fresh editor import under **Godot 4.7.2-stable** must remain free of retained parser/import/project-configuration errors. See `docs/PHASE_C_RUNTIME_RESULT.md` for the recorded verification.
 
 The full governing documents are preserved under `docs/governing/`.

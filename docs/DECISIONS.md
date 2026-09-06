@@ -49,3 +49,27 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted
 **Decision:** Person/promotion/title/contract records in Phase B are immutable seed/placeholder definitions only. Runtime CampaignState, entity stores, commands/results, RNG, save codecs, knowledge projection, and Chronicle mutation remain unimplemented until Phase C or later.
 **Reason:** The Build Plan sequences those systems into Phase C. Convenience hooks are not authority to collapse the phase boundary.
+
+## ADR-C-001 - Runtime schema reconstruction remains code-adjacent and explicitly controlled
+
+**Status:** Accepted for Phase C
+**Decision:** Derive Phase C runtime field catalogs, ID/reference validation, command envelope/catalog, RNG state, current-state codec, migration entry point, and knowledge projection directly from the supplied canonical prose/tables. Do not extend the Phase B reconstructed JSON file and do not claim that typed code is the missing original Phase 0 machine package.
+**Reason:** The original machine-readable runtime schema remains unavailable. The supplied canonical contract is precise at the parent/entity field level but intentionally incomplete for several nested supporting value-object shapes. `content/schemas/DERIVATION.md` records those boundaries in its Phase C addendum.
+
+## ADR-C-002 - No current-state compaction before Chronicle identity resolution exists
+
+**Status:** Accepted for Phase C
+**Decision:** Phase C authoritative entity stores do not delete or recycle retired runtime identities. Lifecycle changes may make an entity inactive, but its record and ID remain present until later Chronicle identity/tombstone infrastructure can guarantee historical resolvability.
+**Reason:** This satisfies runtime-ID non-reuse and creates a safe handoff to later Chronicle compaction without implementing Phase D early.
+
+## ADR-C-003 - One retained Phase C mutation proves the command boundary without importing simulation
+
+**Status:** Accepted for Phase C
+**Decision:** The command catalog recognizes all 29 v0.1 command types. `command.set_champion` is retained as a Phase C mutation because its reference/integrity semantics are fully defined and do not require month simulation. Other future-facing command types are contract-visible but reject through the structured command result boundary until their governing simulation phase exists.
+**Reason:** Phase C must prove deterministic command ordering, validation-before-mutation, and rollback behavior while explicitly not implementing Phase D/E resolution systems.
+
+## ADR-C-004 - Godot RNG remains a single controlled root stream
+
+**Status:** Accepted for Phase C
+**Decision:** RandomService wraps one `RandomNumberGenerator`, records provider ID, explicit seed, internal state, captured turn, and `single_root_v1` stream policy, and treats diagnostic tags as metadata only.
+**Reason:** This is the exact initial randomness contract. A project-owned PRNG remains the documented open engineering question rather than a Phase C invention.

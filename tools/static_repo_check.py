@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase B repository/content checks that do not require Godot."""
+"""Phase C repository/content checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -24,7 +24,7 @@ REQUIRED_DIRS = [
     "assets/audio", "assets/fonts", "tools/content_validator", "tools/campaign_builder",
     "tools/simulation_cli", "tests/unit", "tests/integration", "tests/golden",
     "tests/soak", "tests/fixtures/phase_b/valid/mini_campaign",
-    "tests/fixtures/phase_b/invalid",
+    "tests/fixtures/phase_b/invalid", "tests/helpers",
 ]
 
 REQUIRED_FILES = [
@@ -38,6 +38,27 @@ REQUIRED_FILES = [
     "app/content/version_constraint.gd", "content/schemas/we.phase0.schema.json",
     "content/schemas/DERIVATION.md", "content/base/manifest.json",
     "content/campaigns/great_lakes_1975/manifest.json", "docs/PHASE_B_ACCEPTANCE.md",
+    "app/commands/command_envelope.gd", "app/commands/command_result.gd",
+    "app/commands/command_router.gd", "app/session/random_service.gd",
+    "app/queries/knowledge_query_service.gd", "app/queries/debug_truth_query.gd",
+    "domain/core/campaign_state.gd", "domain/core/campaign_state_validator.gd",
+    "domain/core/domain_ids.gd", "domain/core/entity_store.gd",
+    "domain/core/ownership_seat_state.gd", "domain/core/random_state.gd",
+    "domain/core/victory_state.gd", "domain/people/person_state.gd",
+    "domain/people/contract_state.gd", "domain/people/relationship_state.gd",
+    "domain/promotions/promotion_state.gd", "domain/world/market_state.gd",
+    "domain/world/region_state.gd", "domain/world/venue_state.gd",
+    "domain/touring/touring_company_state.gd", "domain/booking/championship_state.gd",
+    "domain/booking/program_state.gd", "domain/media/media_deal_state.gd",
+    "domain/diplomacy/agreement_state.gd", "domain/knowledge/knowledge_base.gd",
+    "domain/knowledge/knowledge_projection.gd", "domain/events/event_state.gd",
+    "domain/audience/drawing_power_query.gd",
+    "persistence/codecs/campaign_state_codec.gd", "persistence/migrations/state_migrator.gd",
+    "tests/helpers/phase_c_fixture.gd", "docs/PHASE_C_ACCEPTANCE.md",
+    "tests/unit/test_phase_c_state_invariants.gd", "tests/unit/test_phase_c_commands.gd",
+    "tests/unit/test_phase_c_random_service.gd", "tests/unit/test_phase_c_knowledge_projection.gd",
+    "tests/unit/test_phase_c_entity_store.gd",
+    "tests/integration/test_phase_c_state_roundtrip.gd",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -256,7 +277,7 @@ def check() -> dict:
             if token in text:
                 failures.append(f"domain boundary violation token {token!r}: {script.relative_to(ROOT)}")
 
-    for code_root in (ROOT / "app", ROOT / "domain"):
+    for code_root in (ROOT / "app", ROOT / "domain", ROOT / "persistence"):
         for script in sorted(code_root.rglob("*.gd")):
             lowered = script.read_text(encoding="utf-8").lower()
             for token in FORBIDDEN_SCENARIO_TOKENS:
@@ -281,6 +302,72 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
+    # Phase C static domain-kernel gates. These complement, not replace, the real Godot runtime tests.
+    try:
+        version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
+        if 'const BUILD_PHASE: String = "C"' not in version_text:
+            failures.append("Phase C candidate/final metadata must report build phase C")
+        if not any(token in version_text for token in (
+            'const GAME_VERSION: String = "0.0.0-phase-c-candidate"',
+            'const GAME_VERSION: String = "0.0.0-phase-c"',
+        )):
+            failures.append("Phase C game version must be candidate or verified Phase C")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase C version metadata: {exc}")
+
+    expected_commands = {
+        "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
+        "command.create_touring_company", "command.assign_person", "command.set_route", "command.set_directive", "command.split_company", "command.merge_company",
+        "command.start_program", "command.end_program", "command.set_champion", "command.approve_major_outcome", "command.push_person", "command.protect_person",
+        "command.offer_contract", "command.counter_offer", "command.renew_contract", "command.release_person",
+        "command.book_market_focus", "command.set_local_media_spend", "command.sign_media_deal",
+        "command.propose_agreement", "command.violate_territory", "command.accept_talent_share",
+        "command.advance_month", "command.save_campaign",
+    }
+    try:
+        router_text = (ROOT / "app/commands/command_router.gd").read_text(encoding="utf-8")
+        observed_commands = set(re.findall(r'"(command\.[a-z_]+)"', router_text))
+        missing = sorted(expected_commands - observed_commands)
+        unexpected = sorted(observed_commands - expected_commands)
+        if missing:
+            failures.append(f"Phase C command catalog missing canonical commands: {missing}")
+        if unexpected:
+            failures.append(f"Phase C command catalog contains unexpected commands: {unexpected}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase C command catalog: {exc}")
+
+    random_service_path = ROOT / "app/session/random_service.gd"
+    for code_root in (ROOT / "app", ROOT / "domain", ROOT / "persistence"):
+        for script in sorted(code_root.rglob("*.gd")):
+            if script == random_service_path:
+                continue
+            text = script.read_text(encoding="utf-8")
+            for token in ("RandomNumberGenerator", "randf(", "randi(", "randi_range(", "randf_range("):
+                if token in text:
+                    failures.append(f"randomness boundary violation token {token!r}: {script.relative_to(ROOT)}")
+
+    try:
+        projection_text = (ROOT / "domain/knowledge/knowledge_projection.gd").read_text(encoding="utf-8")
+        if "true_value" in projection_text:
+            failures.append("KnowledgeProjection must not expose a true_value escape hatch")
+    except OSError as exc:
+        failures.append(f"unable to inspect knowledge projection: {exc}")
+
+    try:
+        for rel in ("domain/core/campaign_state.gd", "persistence/codecs/campaign_state_codec.gd"):
+            state_text = (ROOT / rel).read_text(encoding="utf-8").lower()
+            if "drawing_power" in state_text:
+                failures.append(f"derived drawing power must not be persisted in authoritative state: {rel}")
+    except OSError as exc:
+        failures.append(f"unable to inspect derived-state boundary: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase c runtime-contract reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase C controlled runtime-schema reconstruction must remain explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase C derivation record: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -298,7 +385,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_b.static_check.v1",
+        "schema": "we.phase_c.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

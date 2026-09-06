@@ -2,6 +2,19 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-c - 2026-09-06
+
+- Added the authoritative campaign-state domain kernel with stable runtime IDs, ID-keyed entity stores, deterministic canonical iteration, non-reused identities, and Phase C lifecycle/reference validation.
+- Added slice-critical Person, Promotion, Market, Region, TouringCompany, Contract, Championship, Program, MediaDeal, Venue, Agreement, Relationship, OwnershipSeat, KnowledgeBase, EventState, RandomState, and supporting state/value objects without scene-tree ownership.
+- Added the closed 29-command application surface, deterministic command ordering, structured rejection results, validation-before-mutation, and a retained Phase C championship mutation proving the shared command boundary without implementing later simulation.
+- Added a single controlled RandomService wrapping Godot RandomNumberGenerator with explicit seed/provider/internal-state checkpoints and deterministic save/restore tests.
+- Added comprehensive CampaignState invariant validation, deliberate corrupt-state tests, and derived drawing-power query boundaries that avoid duplicate authoritative persistence.
+- Added explicit current-state serialization/deserialization, strict schema-v1 load validation, manifest/RNG/content metadata scaffolding, and migration entry points.
+- Added organization-owned knowledge storage and known/estimated/unknown projection with no hidden-truth escape hatch in normal presentation queries.
+- Added a separately documented controlled reconstruction of the missing runtime-state/command/save machine contracts, limited to details directly supported by the governing prose.
+- Expanded the static repository gate for Phase C architecture boundaries and retained legitimate Godot-generated `.gd.uid` sidecars.
+- Verified Phase C under Godot `4.7.2.stable.official.ed1daf0bf`: static gate PASS with zero failures/warnings; 16/16 headless tests PASS with zero harness failures; fresh editor import PASS with no retained parser/import/project-configuration errors.
+
 ## 0.0.0-phase-b - 2026-09-06
 
 - Added generic content discovery, dependency resolution, schema-backed structural validation, semantic reference validation, safe data-only path enforcement, immutable-by-copy content registry, and deterministic SHA-256 content fingerprinting.

@@ -43,3 +43,21 @@ The governing prose does not publish the missing original JSON property names fo
 - population/economy/venue tuning fields whose exact missing machine property names are not published are left for later controlled schema expansion; Phase B implements the map fields explicitly required by the Phase B work package and does not guess tuning contracts.
 
 Any later recovery of the original machine-readable Phase 0 package must be compared against this reconstruction. Divergences are architecture-sensitive migration work, not silent edits.
+
+---
+
+# Phase C runtime-contract reconstruction addendum
+
+## Status
+
+The original machine-readable runtime-state/command/save schema portions remain **not supplied**. Phase C therefore performs a second, separately bounded **controlled reconstruction** in typed GDScript field catalogs, validators, and explicit codecs. It does not expand `we.phase0.schema.json` beyond the Phase B static-content subset and never presents the reconstruction as the unavailable original artifact.
+
+## Directly reconstructed contracts
+
+Phase C code derives only details explicitly stated in the governing canonical contract: runtime/content ID forms; canonical validation codes; CampaignState and Appendix A entity field catalogs; numeric representation; the 29 named command types and deterministic ordering tuple; structured command results; the single-root RandomService state; explicit current-state codec/version boundary; migration entry point; and KnowledgeBase/KnowledgeProjection hiding rules.
+
+## Intentionally preserved open shapes
+
+The supplied governing prose does not enumerate complete machine property schemas for every nested supporting value object, including role assignments, health/career internals, audience components, contract compensation/clauses, program sides, tour stops/directives, hot-state objects, world-state internals, event-choice state, and victory details. Those remain explicit opaque data objects beneath their canonical parent fields in Phase C. No undocumented balance formulas, thresholds, decay rates, breakout probabilities, succession mechanics, or scene/presentation identities are introduced.
+
+A recovered original Phase 0 machine package must be compared against both the Phase B static reconstruction and this Phase C code-adjacent reconstruction. Any divergence is architecture-sensitive migration work, not a silent cleanup.
