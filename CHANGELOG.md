@@ -2,6 +2,19 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-d - 2026-09-06
+
+- Added the explicit deterministic 15-phase monthly orchestration pipeline with transactional clone/validate/publish semantics, deterministic command commitment through the Phase C boundary, structured TurnContext/TurnResult data, and failure-safe postflight publication.
+- Added structured transient and permanent DomainEvents with stable permanent event IDs, monotonic Chronicle sequence IDs, causal/reference metadata, and Chronicle integrity diagnostics.
+- Added minimal deterministic reconciled ledger plumbing using integer minor units and currency-definition IDs, with validation-before-mutation and controlled storage under `world_state.ledger_v1`.
+- Added ChronicleStore logical event, metric, checkpoint, delta, index, artifact, and historical-identity stores plus a purpose-built HistoricalProjection and read-only checkpoint-plus-delta ChronicleQueryService.
+- Added historical identity/tombstone compatibility so committed references remain resolvable after entities become inactive without keeping them artificially active or reusing IDs.
+- Added coherent state-plus-Chronicle SaveService orchestration, content/schema compatibility checks, exact RNG checkpoint persistence across JSON, temporary validation/publication, and last-good recovery skeleton with injected-failure coverage.
+- Added a generic headless simulation CLI with campaign/session selection, explicit month count and seed, structured summary/failure output, optional save/reload proof, and no authored Great Lakes assumptions in the engine path.
+- Added the Phase D 12-month reconstruction proof: prior HistoricalProjection state reconstructs from committed Chronicle checkpoint/delta/identity data while simulation resolution and RandomService are unavailable, without mutating current CampaignState.
+- Documented Phase D controlled machine-contract reconstruction and preserved checkpoint cadence, metric cadence, physical Chronicle chunking/compression, compaction, archive permanence, PRNG replacement, scale ceilings, gameplay formulas, and Android I/O as open policy questions.
+- Verified Phase D under Godot `4.7.2.stable.official.ed1daf0bf`: static gate PASS with zero failures/warnings; 20/20 headless tests PASS with zero harness failures; 12-month CLI/save-roundtrip PASS; fresh editor import PASS with no retained parser/import/project-configuration errors.
+
 ## 0.0.0-phase-c - 2026-09-06
 
 - Added the authoritative campaign-state domain kernel with stable runtime IDs, ID-keyed entity stores, deterministic canonical iteration, non-reused identities, and Phase C lifecycle/reference validation.

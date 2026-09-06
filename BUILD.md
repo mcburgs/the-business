@@ -12,7 +12,7 @@ godot --version
 
 The verified official runtime is `4.7.2.stable.official.ed1daf0bf`.
 
-## Static repository/content/domain-kernel check
+## Static repository/content/core-loop check
 
 From the repository root:
 
@@ -20,7 +20,7 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-For Phase C this preserves the Phase A/B repository/content gates and adds domain-kernel checks for Phase C metadata, the canonical 29-command catalog, the single randomness boundary, hidden-information projection, derived-state non-persistence, and the explicitly documented controlled runtime-contract reconstruction. It does not replace an engine run.
+For Phase D this preserves the Phase A/B/C repository, content, and domain-kernel gates and adds checks for Phase D metadata, the explicit 15-phase month pipeline, Chronicle/query boundaries, the headless simulation CLI, persistence/recovery modules, ledger plumbing, Phase D architecture tests, and documented controlled machine-contract reconstruction. It does not replace an engine run.
 
 ## Canonical headless gate
 
@@ -32,7 +32,7 @@ The runner:
 
 - boots under stock Godot without an editor plugin;
 - recursively discovers `test_*.gd` scripts under `tests/unit/` and `tests/integration/`;
-- executes retained Phase A/B tests plus Phase C state, command, RNG, codec, knowledge, and invariant tests;
+- executes retained Phase A/B/C tests plus Phase D pipeline, ledger, Chronicle reconstruction, and save/recovery tests;
 - emits JSON-line diagnostics prefixed `WE_DIAG`;
 - emits one machine-readable summary prefixed `WE_TEST_SUMMARY`;
 - writes a JSON result artifact to `user://diagnostics/headless-results.json` by default;
@@ -46,17 +46,29 @@ godot --headless --path . --script res://tests/runner.gd -- --output=res://tests
 
 `tests/output/*.json` is intentionally ignored by Git.
 
-## Phase C acceptance evidence
+## Phase D headless simulation gate
 
-`docs/PHASE_C_ACCEPTANCE.md` is the controlling implementation checklist for Phase C. `docs/PHASE_C_RUNTIME_RESULT.md` records the pinned-engine verification evidence.
+The generic CLI lives under `tools/simulation_cli/` and accepts campaign/session selection, month count, and seed without embedding a specific authored scenario in application/domain code.
 
-The Phase C gate proves, among other things, that synthetic variable-count CampaignState fixtures validate, current state round-trips through explicit codecs, rejected commands do not partially mutate state, command ordering is deterministic, RNG checkpoints reproduce subsequent draws, hidden truth can be withheld from normal projections, corrupt state fails diagnostically, and all Phase A/B tests remain green.
+Phase D acceptance invocation:
 
-The original standalone runtime machine-schema package remains unavailable. Phase C reconstructs only contracts directly supported by the governing prose and records that boundary in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
+```text
+godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_d --months 12 --seed 424242 --save-roundtrip --save-id=phase_d_acceptance
+```
+
+The synthetic fixture is intentionally small. It advances through the real 15-phase pipeline, creates meaningful recorded-history deltas through an existing canonical command, validates invariants, reconstructs prior history from checkpoint plus deltas without simulation or RNG, and optionally proves save/reload coherence. It is test evidence, not a production campaign constant.
+
+## Phase D acceptance evidence
+
+`docs/PHASE_D_ACCEPTANCE.md` is the controlling implementation checklist for Phase D. `docs/PHASE_D_RUNTIME_RESULT.md` records pinned-engine verification evidence.
+
+The Phase D gate proves, among other things, exact phase ordering, transactional failure behavior, deterministic command commitment, reconciled ledger posting, permanent event sequence identity, sparse checkpoint/delta reconstruction, historical identity resolution, reconstruction with simulation and RandomService unavailable, current-state non-mutation during historical queries, coherent state/Chronicle save/load, content/schema rejection diagnostics, and preservation of the last known-good save under injected pre-publication failure.
+
+The original standalone machine-schema package remains unavailable. Phase D reconstructs only contracts directly supported by governing prose and records those boundaries in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
 
 ## Earlier acceptance evidence
 
-Phase B acceptance remains recorded in `docs/PHASE_B_ACCEPTANCE.md` and `docs/PHASE_B_RUNTIME_RESULT.md`. Phase A records remain unchanged. Later phases must not reopen those baselines without a genuine architecture defect.
+Phase C acceptance remains recorded in `docs/PHASE_C_ACCEPTANCE.md` and `docs/PHASE_C_RUNTIME_RESULT.md`; Phase A/B records remain unchanged. Later phases must not reopen those baselines without a genuine architecture defect.
 
 ## Parse-only checks
 
@@ -68,13 +80,13 @@ godot --headless --path . --script res://tests/runner.gd --check-only
 
 ## Fresh editor import
 
-After headless tests pass, verify a clean clone/import under the pinned engine:
+After headless tests pass, verify a fresh import under the pinned engine. For command-line acceptance the equivalent shape is:
 
 ```text
-godot --editor --path .
+godot --headless --editor --path . --quit-after 120
 ```
 
-Phase C requires no retained parser/import/project-configuration errors attributable to source/content. Generated `.godot/` cache data remains ignored. Legitimate new `.gd.uid` sidecars generated by the pinned editor are retained in Git.
+Phase D requires no retained parser/import/project-configuration errors attributable to source/content. Generated `.godot/` cache data remains ignored. Legitimate new `.gd.uid` sidecars generated by the pinned editor are retained in Git.
 
 ## Final staged-tree hygiene
 
@@ -84,7 +96,7 @@ Before committing a verified phase baseline:
 git diff --cached --check
 ```
 
-Do not commit generated editor/build caches, logs, runtime test output, or temporary files.
+Do not commit generated editor/build caches, logs, runtime test output, failure artifacts, or temporary files.
 
 ## Launch shell
 
@@ -99,19 +111,20 @@ The launch shell remains deliberately minimal and must not become an owner of do
 If Godot is not on PATH, invoke the pinned console executable directly. Example PowerShell shape:
 
 ```text
-& "C:\\path\\to\\Godot_v4.7.2-stable_win64_console.exe" --headless --path . --script res://tests/runner.gd
+& "C:\path\to\Godot_v4.7.2-stable_win64_console.exe" --headless --path . --script res://tests/runner.gd
 ```
 
 Use the actual local filename/path rather than changing repository files to match one workstation.
 
 ## Phase boundary
 
-Not part of Phase C:
+Not part of Phase D:
 
-- monthly simulation or the 15-phase month-resolution pipeline;
-- real AI strategy;
-- full booking/show resolution, economy simulation, or touring gameplay resolution;
-- ChronicleStore, Chronicle checkpoints/deltas/reconstruction, historical replay, or domain-event journal orchestration;
-- full save recovery/rotating-backup orchestration;
-- production UI screens or Android integration;
-- tuning/balance formulas or final roster/content population.
+- playable touring strategy, travel/fatigue formulas, or touring resolution;
+- playable booking abstraction, show generation/resolution, attendance, or wrestler-performance simulation;
+- overness/heat/shine/momentum/drawing-power tuning, program/feud gameplay, or territorial influence formulas;
+- gate/payroll/travel/venue/local-TV/sponsorship/merchandise/debt economic simulation;
+- real strategic AI, opponent competition, talent-market AI, or full scouting gameplay;
+- production map/UI, polished Historical Replay, Android integration, final balance/tuning, or final roster/content population.
+
+The corresponding monthly phases exist as extension points. Their Phase E/F behavior does not.

@@ -73,3 +73,27 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted for Phase C
 **Decision:** RandomService wraps one `RandomNumberGenerator`, records provider ID, explicit seed, internal state, captured turn, and `single_root_v1` stream policy, and treats diagnostic tags as metadata only.
 **Reason:** This is the exact initial randomness contract. A project-owned PRNG remains the documented open engineering question rather than a Phase C invention.
+
+## ADR-D-001 - Monthly resolution publishes transactionally after postflight
+
+**Status:** Accepted for Phase D
+**Decision:** `MonthPipeline` resolves against cloned `CampaignState` and `ChronicleStore` objects. The completed pair is returned for publication only after phase 14 postflight validation succeeds. A failed phase leaves the caller's retained current state and Chronicle untouched.
+**Reason:** This preserves the explicit phase-13 Chronicle commit contract while preventing a failed postflight or persistence-adjacent defect from leaving a half-published month.
+
+## ADR-D-002 - Historical reconstruction is sparse checkpoint plus ordered deltas
+
+**Status:** Accepted; cadence remains configurable
+**Decision:** Chronicle stores purpose-built `HistoricalProjection` keyframes and recursive add/replace/remove deltas. The first committed month is checkpointed; later checkpoint cadence is policy. Historical query code accepts only Chronicle data and has no simulation, command-router, AI, or RandomService dependency.
+**Reason:** This directly implements ADR-015 through ADR-020 and makes the no-resimulation requirement testable rather than aspirational.
+
+## ADR-D-003 - Phase D uses a coarse JSON Chronicle codec behind logical store boundaries
+
+**Status:** Accepted for Phase D only
+**Decision:** SaveService writes current state plus a Chronicle manifest and one coarse Chronicle data file to temporary paths, validates them, then publishes the pair while preserving a last-good copy. Logical Chronicle stores remain distinct in code. Exact chunking/compression remains open.
+**Reason:** The governing architecture explicitly permits coarse initial physical segments and forbids prematurely locking the production storage codec.
+
+## ADR-D-004 - Minimum ledger state uses the existing world-state extension point
+
+**Status:** Accepted as controlled reconstruction for Phase D
+**Decision:** Reconciled double-entry-style postings are retained under `CampaignState.world_state.ledger_v1` rather than adding a new top-level CampaignState field not present in the supplied field catalog.
+**Reason:** Phase D needs durable ledger plumbing, but the missing original machine schema does not publish ledger placement. This choice is deliberately narrow and migration-aware rather than masquerading as recovered canonical schema.

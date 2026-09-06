@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase C repository/content checks that do not require Godot."""
+"""Phase D repository/content/headless-core checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -59,6 +59,17 @@ REQUIRED_FILES = [
     "tests/unit/test_phase_c_random_service.gd", "tests/unit/test_phase_c_knowledge_projection.gd",
     "tests/unit/test_phase_c_entity_store.gd",
     "tests/integration/test_phase_c_state_roundtrip.gd",
+    "app/session/turn_context.gd", "app/session/turn_result.gd", "app/session/month_pipeline.gd",
+    "domain/events/domain_event.gd", "domain/economy/ledger_service.gd",
+    "domain/chronicle/chronicle_store.gd", "domain/chronicle/chronicle_delta.gd",
+    "domain/chronicle/historical_projection.gd", "domain/chronicle/chronicle_committer.gd",
+    "domain/chronicle/chronicle_query_service.gd", "domain/chronicle/chronicle_validator.gd",
+    "domain/chronicle/identity_catalog_service.gd", "persistence/codecs/chronicle_codec.gd",
+    "persistence/services/save_service.gd", "tools/simulation_cli/run.gd",
+    "tests/helpers/phase_d_fixture.gd", "tests/unit/test_phase_d_pipeline.gd",
+    "tests/unit/test_phase_d_ledger.gd", "tests/integration/test_phase_d_chronicle_reconstruction.gd",
+    "tests/integration/test_phase_d_save_service.gd",
+    "docs/PHASE_D_ACCEPTANCE.md", "docs/PHASE_D_RUNTIME_RESULT.md",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -302,18 +313,18 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
-    # Phase C static domain-kernel gates. These complement, not replace, the real Godot runtime tests.
+    # Phase D static headless-core gates. These complement, not replace, the real Godot runtime tests.
     try:
         version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
-        if 'const BUILD_PHASE: String = "C"' not in version_text:
-            failures.append("Phase C candidate/final metadata must report build phase C")
+        if 'const BUILD_PHASE: String = "D"' not in version_text:
+            failures.append("Phase D candidate/final metadata must report build phase D")
         if not any(token in version_text for token in (
-            'const GAME_VERSION: String = "0.0.0-phase-c-candidate"',
-            'const GAME_VERSION: String = "0.0.0-phase-c"',
+            'const GAME_VERSION: String = "0.0.0-phase-d-candidate"',
+            'const GAME_VERSION: String = "0.0.0-phase-d"',
         )):
-            failures.append("Phase C game version must be candidate or verified Phase C")
+            failures.append("Phase D game version must be candidate or verified Phase D")
     except OSError as exc:
-        failures.append(f"unable to inspect Phase C version metadata: {exc}")
+        failures.append(f"unable to inspect Phase D version metadata: {exc}")
 
     expected_commands = {
         "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
@@ -368,6 +379,31 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase C derivation record: {exc}")
 
+    try:
+        pipeline_text = (ROOT / "app/session/month_pipeline.gd").read_text(encoding="utf-8")
+        phase_names_match = re.search(r"const PHASE_NAMES: Array\[String\] = \[(.*?)\]", pipeline_text, re.S)
+        if not phase_names_match or len(re.findall(r'"[a-z_]+"', phase_names_match.group(1))) != 15:
+            failures.append("Phase D month pipeline must expose exactly 15 named phase boundaries")
+        if "ChronicleCommitter" not in pipeline_text or "_chronicle_commit" not in pipeline_text or "_postflight" not in pipeline_text:
+            failures.append("Phase D pipeline must retain explicit Chronicle commit and postflight boundaries")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase D month pipeline: {exc}")
+
+    try:
+        query_text = (ROOT / "domain/chronicle/chronicle_query_service.gd").read_text(encoding="utf-8")
+        for forbidden in ("month_pipeline", "RandomService", "random_service.gd", "CommandRouter"):
+            if forbidden in query_text:
+                failures.append(f"historical reconstruction must not depend on simulation/RNG mutation boundary: {forbidden}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Chronicle query boundary: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase d chronicle/save/ledger reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase D controlled Chronicle/save/ledger reconstruction must remain explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase D derivation record: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -385,7 +421,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_c.static_check.v1",
+        "schema": "we.phase_d.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

@@ -61,3 +61,29 @@ Phase C code derives only details explicitly stated in the governing canonical c
 The supplied governing prose does not enumerate complete machine property schemas for every nested supporting value object, including role assignments, health/career internals, audience components, contract compensation/clauses, program sides, tour stops/directives, hot-state objects, world-state internals, event-choice state, and victory details. Those remain explicit opaque data objects beneath their canonical parent fields in Phase C. No undocumented balance formulas, thresholds, decay rates, breakout probabilities, succession mechanics, or scene/presentation identities are introduced.
 
 A recovered original Phase 0 machine package must be compared against both the Phase B static reconstruction and this Phase C code-adjacent reconstruction. Any divergence is architecture-sensitive migration work, not a silent cleanup.
+
+---
+
+# Phase D Chronicle/save/ledger reconstruction addendum
+
+## Status
+
+The original machine-readable Phase 0 definitions for `TurnContext`, `TurnResult`, `DomainEvent` journal records, `ChronicleManifest`, historical metrics, `HistoricalProjection`, `ChronicleDelta`, checkpoints, indexes, tombstones/identity epochs, save orchestration metadata, and ledger infrastructure remain **not supplied**. Phase D therefore performs a third bounded **controlled reconstruction** in typed GDScript and explicit codecs. It does not claim to reproduce the unavailable original schema package.
+
+## Directly reconstructed contracts
+
+Phase D derives only structures required by the governing prose: the explicit 15-phase monthly ordering; transient versus permanent DomainEvent identity; monotonic Chronicle sequence IDs; logically separate event, metric, checkpoint, delta, index, artifact and identity stores; the checkpoint-plus-delta reconstruction rule; read-only historical queries; Chronicle-aware SaveManifest fields; coherent state/Chronicle publication; and a minimal reconciled ledger transaction/posting shape using integer minor units plus currency IDs.
+
+`HistoricalProjection` is deliberately purpose-built and contains only the reconstruction fields called for by the governing contracts: promotion identity/ownership/roster/prestige/momentum summaries, championship state, market interest/influence/hot state, agreement status/parties/clauses, media footprints, and identity/presentation references. It is not a serialized `CampaignState` copy.
+
+## Controlled implementation choices
+
+- Chronicle physical persistence uses one coarse `chronicle.json` data segment plus a Chronicle manifest for Phase D. Logical stores remain separate in `ChronicleStore`. Chunking/compression remains open.
+- The synthetic acceptance fixture configures a 12-month checkpoint cadence so the architecture can prove an initial keyframe, monthly deltas, and a later checkpoint. The cadence remains store policy, not schema.
+- The minimal ledger is retained under the existing open `CampaignState.world_state` extension point as `ledger_v1`, rather than adding an unsupported new top-level CampaignState field to the closed Phase C field catalog. Phase E may migrate this representation if recovered canonical schema or implementation evidence establishes a better authoritative placement.
+- Godot JSON does not safely round-trip the full 64-bit `RandomNumberGenerator.state` integer. SaveService therefore encodes that specific RNG internal state as a decimal string in JSON and restores it to the canonical 64-bit integer before `CampaignStateCodec` validation. Money `minor_units` are restored from safe integral JSON numbers before current-state decode.
+- Free-form Chronicle fact numbers preserve numeric meaning across JSON even where Godot parses an integer-shaped JSON number as float. Structural sequence/generation/head values remain validated as integral ordering metadata.
+
+## Intentionally preserved open questions
+
+Metric cadence, final checkpoint cadence, Chronicle segmentation/compression, compaction policy, archive permanence, PRNG replacement, full-game scale ceilings, gameplay formulas, balance values, and Android I/O behavior remain open exactly as required by the governing documents.
