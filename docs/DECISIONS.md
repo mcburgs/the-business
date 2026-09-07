@@ -97,3 +97,27 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted as controlled reconstruction for Phase D
 **Decision:** Reconciled double-entry-style postings are retained under `CampaignState.world_state.ledger_v1` rather than adding a new top-level CampaignState field not present in the supplied field catalog.
 **Reason:** Phase D needs durable ledger plumbing, but the missing original machine schema does not publish ledger placement. This choice is deliberately narrow and migration-aware rather than masquerading as recovered canonical schema.
+
+## ADR-E-001 - Phase E mechanics activate through the existing ruleset/content boundary
+
+**Status:** Accepted for Phase E
+**Decision:** The Phase E strategic services run when a `phase_e_tuning` dictionary is supplied through the existing content index. Retained Phase A-D fixtures remain behaviorally unchanged when that profile is absent.
+**Reason:** This preserves the verified Phase D pipeline and makes gameplay coefficients external/tunable rather than scattering scenario-specific constants through domain code.
+
+## ADR-E-002 - ShowResolver is a pure resolution boundary with downstream effects
+
+**Status:** Accepted
+**Decision:** BookingSystem creates structured ShowPlans; ShowResolver consumes plans plus authoritative inputs and RandomService and returns structured ShowResults/causal factors. Audience, media/markets, economy, Chronicle, and persistence consume those outputs in their own canonical phases.
+**Reason:** The governing architecture explicitly treats a cross-system resolver monolith as a Phase E rework trigger.
+
+## ADR-E-003 - Strategic history expands HistoricalProjection, not monthly snapshots
+
+**Status:** Accepted
+**Decision:** HistoricalProjection now retains the minimum Phase E touring, local audience, program, market/influence, media, promotion/financial, championship, agreement, and identity state needed for meaningful historical reconstruction. Chronicle still stores sparse checkpoints plus ordered deltas.
+**Reason:** Phase E history must reconstruct real gameplay without rerunning booking, show resolution, audience/economy formulas, commands, or RandomService.
+
+## ADR-E-004 - JSON publication restores integer semantics and canonicalizes event floats
+
+**Status:** Accepted as a persistence-boundary repair
+**Decision:** Known integer-semantic values in open world-state and Chronicle structures are restored after Godot JSON parsing, while DomainEvent facts/explanations canonicalize finite floats to nine decimal places before journal publication. RNG internal state continues to use the Phase D decimal-string safeguard.
+**Reason:** Phase E exposed that Godot JSON parses integer-shaped nested numbers as floats and can round arbitrary computed doubles by one ULP. Deterministic save/resume requires stable authoritative/history representation rather than tolerance-based acceptance.

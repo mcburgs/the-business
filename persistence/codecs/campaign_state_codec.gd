@@ -94,7 +94,9 @@ func decode(data: Dictionary, content_index: Dictionary = {}) -> Dictionary:
     state.set("ruleset_id", str(data["ruleset_id"]))
     state.set("current_date", str(data["current_date"]))
     state.set("turn_number", int(data["turn_number"]))
-    state.set("world_state", _dictionary_or_error(data["world_state"], "world_state", errors))
+    var world_state: Dictionary = _dictionary_or_error(data["world_state"], "world_state", errors)
+    _restore_world_state_integer_types(world_state)
+    state.set("world_state", world_state)
 
     state.set("ownership_seat", _decode_record(data["ownership_seat"], OwnershipSeatState, OWNERSHIP_FIELDS, OWNERSHIP_FIELDS, "ownership_seat", errors))
     state.set("event_state", _decode_record(data["event_state"], EventState, EVENT_FIELDS, EVENT_FIELDS, "event_state", errors))
@@ -183,6 +185,68 @@ func _decode_record(value: Variant, script: Script, allowed_fields: Array[String
         if bool(conversion.get("passed", false)):
             entity.set(field, conversion.get("value"))
     return entity
+
+
+func _restore_world_state_integer_types(world_state: Dictionary) -> void:
+    # JSON represents numbers as floating point. Restore only fields whose Phase D/E
+    # contracts define integer semantics; normalized gameplay quantities remain floats.
+    var streaks: Variant = world_state.get("market_visit_streaks", null)
+    if streaks is Dictionary:
+        _restore_integral_leaves(streaks)
+    var spend: Variant = world_state.get("local_media_spend_by_promotion", null)
+    if spend is Dictionary:
+        _restore_keyed_integers(spend, "minor_units")
+    var ledger_value: Variant = world_state.get("ledger_v1", null)
+    if ledger_value is Dictionary:
+        var ledger: Dictionary = ledger_value
+        _restore_integer_key(ledger, "schema_version")
+        var accounts: Variant = ledger.get("accounts", null)
+        if accounts is Dictionary:
+            _restore_integral_leaves(accounts)
+        var transactions: Variant = ledger.get("transactions", null)
+        if transactions is Array:
+            for transaction_value: Variant in transactions:
+                if transaction_value is Dictionary:
+                    _restore_keyed_integers(transaction_value, "minor_units")
+
+func _restore_keyed_integers(value: Variant, key_name: String) -> void:
+    if value is Dictionary:
+        var dictionary: Dictionary = value
+        for key: Variant in dictionary.keys():
+            if str(key) == key_name:
+                dictionary[key] = _safe_int(dictionary[key])
+            else:
+                _restore_keyed_integers(dictionary[key], key_name)
+    elif value is Array:
+        for item: Variant in value:
+            _restore_keyed_integers(item, key_name)
+
+func _restore_integral_leaves(value: Variant) -> void:
+    if value is Dictionary:
+        var dictionary: Dictionary = value
+        for key: Variant in dictionary.keys():
+            if dictionary[key] is Dictionary or dictionary[key] is Array:
+                _restore_integral_leaves(dictionary[key])
+            else:
+                dictionary[key] = _safe_int(dictionary[key])
+    elif value is Array:
+        for index: int in range((value as Array).size()):
+            var item: Variant = (value as Array)[index]
+            if item is Dictionary or item is Array:
+                _restore_integral_leaves(item)
+            else:
+                (value as Array)[index] = _safe_int(item)
+
+func _restore_integer_key(dictionary: Dictionary, key: String) -> void:
+    if dictionary.has(key):
+        dictionary[key] = _safe_int(dictionary[key])
+
+func _safe_int(value: Variant) -> Variant:
+    if value is int:
+        return value
+    if value is float and is_finite(float(value)) and float(value) == floor(float(value)) and abs(float(value)) <= 9007199254740991.0:
+        return int(value)
+    return value
 
 func _validate_top_types(data: Dictionary, errors: Array[Dictionary]) -> void:
     for field: String in ["campaign_pack_id", "campaign_pack_version", "content_fingerprint", "ruleset_id", "current_date"]:

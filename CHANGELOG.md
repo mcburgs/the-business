@@ -2,6 +2,19 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-e - 2026-09-07
+
+- Added deterministic touring-company logistics with route/directive/budget handling, bounded travel pressure/fatigue, availability inputs, and canonical command-boundary mutation.
+- Added abstract BookingSystem/ShowPlan generation and ShowResolver/ShowResult resolution so routine cards are generated automatically while selective owner constraints and major outcomes remain possible.
+- Added localized overness, heat, shine and signed momentum, reinforcement/decay, derived contextual drawing power, basic program/championship consequences, and explainable causal factors.
+- Added bounded audience/media/business/infrastructure market influence, generic local MediaDeal exposure, ledger-backed live/media/overhead economics, and stateful financial stress without instant campaign failure.
+- Added reusable qualification-gated hot/cold states driven only by RandomService with bounded intensity/decay and retained causal contributors.
+- Extended HistoricalProjection/identity retention and Chronicle recording for real Phase E touring/audience/program/market/media/financial history while preserving sparse checkpoint-plus-delta reconstruction with simulation and RandomService unavailable.
+- Extended SaveService/codec handling for Phase E open-state integer semantics and canonical DomainEvent floating-point publication, preserving exact save/load and last-known-good recovery under Godot JSON.
+- Extended the generic simulation CLI with equal-seed `phase_e_good` and `phase_e_bad` acceptance fixtures and strategic diagnostics for shows, attendance, money, touring, wrestler audience, programs, influence, media, hot/cold and Chronicle state.
+- Added Phase E architecture/strategic tests and static gates; retained all Phase A/B/C/D regression gates.
+- Verified Phase E under Godot `4.7.2.stable.official.ed1daf0bf`: static gate PASS with zero failures/warnings; 25/25 headless tests PASS; equal-seed 12-month strategic comparison PASS; save/reload and no-resimulation Chronicle reconstruction PASS; fresh editor import PASS.
+
 ## 0.0.0-phase-d - 2026-09-06
 
 - Added the explicit deterministic 15-phase monthly orchestration pipeline with transactional clone/validate/publish semantics, deterministic command commitment through the Phase C boundary, structured TurnContext/TurnResult data, and failure-safe postflight publication.

@@ -87,3 +87,27 @@ Phase D derives only structures required by the governing prose: the explicit 15
 ## Intentionally preserved open questions
 
 Metric cadence, final checkpoint cadence, Chronicle segmentation/compression, compaction policy, archive permanence, PRNG replacement, full-game scale ceilings, gameplay formulas, balance values, and Android I/O behavior remain open exactly as required by the governing documents.
+
+---
+
+# Phase E strategic-loop reconstruction addendum
+
+## Status
+
+The original Phase 0 machine-readable definitions for `ShowPlan`, `ShowResult`, local audience records, hot/cold state payloads, touring route/directive details, booking/show effects, influence effects, media-resolution effects, explainability records, and strategic tuning remain **not supplied**. Phase E therefore performs a fourth bounded **controlled reconstruction** in typed GDScript and test-fixture tuning data. It does not claim to reproduce the unavailable original schema package.
+
+## Directly reconstructed contracts
+
+Phase E derives only responsibilities directly stated by the governing GDD, Technical Architecture, Canonical Data Schemas & Domain Contracts, and Build Plan: touring companies reference rather than own people; routine cards are generated from touring personnel/directives/program/title/availability context; show resolution returns structured results/effects rather than mutating downstream systems; audience state retains local overness/heat/shine/momentum while drawing power remains derived; market influence retains bounded audience/media/business/infrastructure components; material cash movements post through the reconciled ledger; local television remains a generic MediaDeal implementation; and hot/cold activation requires qualifying conditions plus RandomService.
+
+## Controlled implementation choices
+
+- `ShowPlan` and `ShowResult` are narrow runtime objects containing only the fields required to drive the Phase E loop and explain its outcomes. They are not declared final production schemas.
+- Provisional Phase E formula coefficients, thresholds, decay values, hot/cold probabilities, venue/travel/production costs, and media defaults live in the synthetic fixture/ruleset tuning dictionary exposed through `content_index.phase_e_tuning`. They are acceptance tuning, not final balance.
+- Phase E uses the existing open `CampaignState.world_state` extension point for booker assignment, approved major outcomes, market focus, local media spend, financial stress, and market-visit streaks. These placements remain migration-aware because the missing original machine schema does not publish deeper nested records.
+- Save/load restores only known integer-semantic values inside open world/Chronicle data after Godot JSON parsing. Event facts/explanations are canonicalized to nine decimal places at the DomainEvent boundary so saved Chronicle history is deterministic rather than dependent on one-ULP parser differences.
+- HistoricalProjection is expanded only with Phase E values needed to reconstruct meaningful prior strategic state. History remains checkpoint plus ordered deltas and does not serialize a complete monthly CampaignState.
+
+## Intentionally preserved open questions
+
+Final balance, breakout frequency, detailed booking heuristics, split/merge depth beyond the current coherent hooks, advanced title politics, deep injuries/careers, sponsorship/merchandise/debt, national media/PPV/streaming, rival strategy, scouting, final Chronicle physical segmentation, and production UI remain open for later phases. A recovered original machine-schema package must be compared against this controlled reconstruction before incompatible shapes are silently adopted.

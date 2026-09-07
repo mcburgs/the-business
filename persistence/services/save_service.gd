@@ -182,7 +182,7 @@ func _rng_manifest_json_safe(data: Dictionary) -> Dictionary:
 func _write_json(path: String, data: Dictionary) -> bool:
     var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
     if file == null: return false
-    file.store_string(JSON.stringify(data, "  "))
+    file.store_string(JSON.stringify(data, "  ", true, true))
     file.store_line("")
     file.close()
     return true

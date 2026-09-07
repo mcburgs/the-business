@@ -10,6 +10,9 @@ static func from_campaign_state(state: RefCounted, date_value: String = "") -> D
         "schema_version": SCHEMA_VERSION,
         "date": date,
         "promotions": {},
+        "people_audience": {},
+        "touring_companies": {},
+        "programs": {},
         "championships": {},
         "markets": {},
         "agreements": {},
@@ -32,12 +35,49 @@ static func from_campaign_state(state: RefCounted, date_value: String = "") -> D
             "roster_person_ids": roster,
             "prestige": float(promotion.get("prestige")),
             "momentum": float(promotion.get("momentum")),
+            "cash": (promotion.get("cash") as Dictionary).duplicate(true),
+            "financial_stress": float((state.get("world_state") as Dictionary).get("financial_stress_by_promotion", {}).get(promotion_id, 0.0)),
             "current_hot_state": _copy_variant(promotion.get("current_hot_state")),
         }
         projection["identity_refs"][promotion_id] = {"family": "promotion", "display_name": str(promotion.get("brand_name")), "lifecycle": str(promotion.get("lifecycle"))}
     for person_id: String in DomainIds.sorted_keys(state.get("people")):
         var person: RefCounted = (state.get("people") as Dictionary)[person_id]
+        projection["people_audience"][person_id] = {
+            "audience_by_market": (person.get("audience_by_market") as Dictionary).duplicate(true),
+            "current_hot_state": _copy_variant(person.get("current_hot_state")),
+        }
         projection["identity_refs"][person_id] = {"family": "person", "display_name": str(person.get("display_name")), "lifecycle": str(person.get("lifecycle"))}
+    for company_id: String in DomainIds.sorted_keys(state.get("touring_companies")):
+        var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
+        projection["touring_companies"][company_id] = {
+            "promotion_id": str(company.get("promotion_id")),
+            "status": str(company.get("status")),
+            "person_assignment_ids": (company.get("person_assignment_ids") as Array).duplicate(),
+            "carried_championship_ids": (company.get("carried_championship_ids") as Array).duplicate(),
+            "route": (company.get("route") as Array).duplicate(true),
+            "directives": (company.get("directives") as Array).duplicate(true),
+            "monthly_budget": (company.get("monthly_budget") as Dictionary).duplicate(true),
+            "fatigue_pressure": float(company.get("fatigue_pressure")),
+            "cohesion": float(company.get("cohesion")),
+            "current_hot_state": _copy_variant(company.get("current_hot_state")),
+        }
+        projection["identity_refs"][company_id] = {"family": "touring", "display_name": str(company.get("name")), "lifecycle": str(company.get("status"))}
+    for program_id: String in DomainIds.sorted_keys(state.get("programs")):
+        var program: RefCounted = (state.get("programs") as Dictionary)[program_id]
+        projection["programs"][program_id] = {
+            "promotion_id": str(program.get("promotion_id")),
+            "status": str(program.get("status")),
+            "side_a": (program.get("side_a") as Dictionary).duplicate(true),
+            "side_b": (program.get("side_b") as Dictionary).duplicate(true),
+            "purpose_id": str(program.get("purpose_id")),
+            "phase_id": str(program.get("phase_id")),
+            "heat": float(program.get("heat")),
+            "momentum": float(program.get("momentum")),
+            "objective_ids": (program.get("objective_ids") as Array).duplicate(),
+            "planned_direction_id": program.get("planned_direction_id"),
+            "current_hot_state": _copy_variant(program.get("current_hot_state")),
+        }
+        projection["identity_refs"][program_id] = {"family": "program", "display_name": program_id, "lifecycle": str(program.get("status"))}
     for championship_id: String in DomainIds.sorted_keys(state.get("championships")):
         var championship: RefCounted = (state.get("championships") as Dictionary)[championship_id]
         projection["championships"][championship_id] = {

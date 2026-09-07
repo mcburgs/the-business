@@ -52,7 +52,12 @@ func decode(data: Dictionary) -> Dictionary:
                 if not record_value is Dictionary:
                     _add(errors, "CHR001", field + "[" + str(index) + "]", {"reason": "object_required"})
                 else:
-                    typed_records.append((record_value as Dictionary).duplicate(true))
+                    var record: Dictionary = (record_value as Dictionary).duplicate(true)
+                    if field == "event_journal":
+                        _restore_integer_key(record, "sequence_id")
+                    elif field == "checkpoints":
+                        _restore_integer_key(record, "generation")
+                    typed_records.append(record)
             store.set(field, typed_records)
     for field: String in ["metric_series", "chronicle_index", "artifact_index", "identity_catalog"]:
         if not data[field] is Dictionary:
@@ -63,6 +68,14 @@ func decode(data: Dictionary) -> Dictionary:
     var validation: Dictionary = ChronicleValidator.new().validate(store)
     if not bool(validation["passed"]): return {"passed": false, "chronicle": null, "errors": validation["errors"]}
     return {"passed": true, "chronicle": store, "errors": []}
+
+
+func _restore_integer_key(dictionary: Dictionary, key: String) -> void:
+    if not dictionary.has(key):
+        return
+    var value: Variant = dictionary[key]
+    if value is float and is_finite(float(value)) and float(value) == floor(float(value)) and abs(float(value)) <= 9007199254740991.0:
+        dictionary[key] = int(value)
 
 func _add(errors: Array[Dictionary], code: String, path: String, details: Dictionary) -> void:
     errors.append({"code": code, "path": path, "localization_key": "validation." + code.to_lower(), "details": details.duplicate(true)})

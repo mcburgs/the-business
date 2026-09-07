@@ -31,6 +31,32 @@ func post(world_state: Dictionary, transaction: Dictionary) -> Dictionary:
     world_state[LEDGER_KEY] = candidate
     return {"passed": true, "errors": [], "transaction_id": transaction_id}
 
+
+func post_for_promotion(state: RefCounted, promotion_id: String, transaction: Dictionary) -> Dictionary:
+    var promotions: Dictionary = state.get("promotions")
+    if not promotions.has(promotion_id):
+        return _failure("LEDGER001", "transaction.promotion_id", {"reason": "promotion_missing", "promotion_id": promotion_id})
+    var promotion: RefCounted = promotions[promotion_id]
+    var cash: Dictionary = promotion.get("cash")
+    var currency_id: String = str(cash.get("currency_id", ""))
+    var cash_account: String = promotion_id + ".cash"
+    var cash_delta: int = 0
+    for posting_value: Variant in transaction.get("postings", []):
+        if posting_value is Dictionary:
+            var posting: Dictionary = posting_value
+            if str(posting.get("account_id", "")) == cash_account:
+                if str(posting.get("currency_id", "")) != currency_id:
+                    return _failure("LEDGER001", "transaction.postings", {"reason": "cash_currency_mismatch", "expected": currency_id, "actual": posting.get("currency_id")})
+                cash_delta += int(posting.get("minor_units", 0))
+    if cash_delta == 0:
+        return _failure("LEDGER001", "transaction.postings", {"reason": "promotion_cash_posting_required", "account_id": cash_account})
+    var posted: Dictionary = post(state.get("world_state"), transaction)
+    if not bool(posted.get("passed", false)):
+        return posted
+    cash["minor_units"] = int(cash.get("minor_units", 0)) + cash_delta
+    promotion.set("cash", cash)
+    return {"passed": true, "errors": [], "transaction_id": transaction.get("transaction_id"), "cash_delta": cash_delta}
+
 func validate_transaction(transaction: Dictionary) -> Dictionary:
     var transaction_id: String = str(transaction.get("transaction_id", ""))
     if transaction_id.is_empty():

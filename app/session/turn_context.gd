@@ -14,3 +14,4 @@ var start_projection: Dictionary = {}
 var transient_events: Array[Dictionary] = []
 var command_results: Array[Dictionary] = []
 var diagnostics: Array[Dictionary] = []
+var phase_outputs: Dictionary = {}

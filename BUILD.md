@@ -12,7 +12,7 @@ godot --version
 
 The verified official runtime is `4.7.2.stable.official.ed1daf0bf`.
 
-## Static repository/content/core-loop check
+## Static repository/content/strategic-loop check
 
 From the repository root:
 
@@ -20,7 +20,7 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-For Phase D this preserves the Phase A/B/C repository, content, and domain-kernel gates and adds checks for Phase D metadata, the explicit 15-phase month pipeline, Chronicle/query boundaries, the headless simulation CLI, persistence/recovery modules, ledger plumbing, Phase D architecture tests, and documented controlled machine-contract reconstruction. It does not replace an engine run.
+For Phase E this preserves the Phase A/B/C/D repository, content, domain-kernel and headless-core gates and adds checks for Phase E metadata, strategic pipeline seams, ShowResolver isolation, derived drawing-power and component-influence boundaries, generic CLI fixtures, persistence rules, and documented controlled machine-contract reconstruction. It does not replace an engine run.
 
 ## Canonical headless gate
 
@@ -32,7 +32,7 @@ The runner:
 
 - boots under stock Godot without an editor plugin;
 - recursively discovers `test_*.gd` scripts under `tests/unit/` and `tests/integration/`;
-- executes retained Phase A/B/C tests plus Phase D pipeline, ledger, Chronicle reconstruction, and save/recovery tests;
+- executes all retained Phase A/B/C/D tests plus Phase E touring, booking, audience, economy/media/hot-state, strategic-loop, Chronicle and save/recovery tests;
 - emits JSON-line diagnostics prefixed `WE_DIAG`;
 - emits one machine-readable summary prefixed `WE_TEST_SUMMARY`;
 - writes a JSON result artifact to `user://diagnostics/headless-results.json` by default;
@@ -46,25 +46,29 @@ godot --headless --path . --script res://tests/runner.gd -- --output=res://tests
 
 `tests/output/*.json` is intentionally ignored by Git.
 
-## Phase D headless simulation gate
+## Phase E headless strategic-loop gates
 
-The generic CLI lives under `tools/simulation_cli/` and accepts campaign/session selection, month count, and seed without embedding a specific authored scenario in application/domain code.
+The generic CLI under `tools/simulation_cli/` supports the retained Phase D fixture plus Phase E good/bad strategic schedules. Application/domain code contains no acceptance-scenario branch.
 
-Phase D acceptance invocation:
+Coherent strategy:
 
 ```text
-godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_d --months 12 --seed 424242 --save-roundtrip --save-id=phase_d_acceptance
+godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_e_good --months 12 --seed 424242 --save-roundtrip --save-id=phase_e_good_acceptance
 ```
 
-The synthetic fixture is intentionally small. It advances through the real 15-phase pipeline, creates meaningful recorded-history deltas through an existing canonical command, validates invariants, reconstructs prior history from checkpoint plus deltas without simulation or RNG, and optionally proves save/reload coherence. It is test evidence, not a production campaign constant.
+Poor/concentrated strategy with the same seed:
 
-## Phase D acceptance evidence
+```text
+godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_e_bad --months 12 --seed 424242 --save-roundtrip --save-id=phase_e_bad_acceptance
+```
 
-`docs/PHASE_D_ACCEPTANCE.md` is the controlling implementation checklist for Phase D. `docs/PHASE_D_RUNTIME_RESULT.md` records pinned-engine verification evidence.
+The decisive acceptance proposition is comparative: materially different command schedules must create materially different, explainable results in stars, programs, markets/influence and money while remaining deterministic, saveable and historically reconstructable.
 
-The Phase D gate proves, among other things, exact phase ordering, transactional failure behavior, deterministic command commitment, reconciled ledger posting, permanent event sequence identity, sparse checkpoint/delta reconstruction, historical identity resolution, reconstruction with simulation and RandomService unavailable, current-state non-mutation during historical queries, coherent state/Chronicle save/load, content/schema rejection diagnostics, and preservation of the last known-good save under injected pre-publication failure.
+## Phase E acceptance evidence
 
-The original standalone machine-schema package remains unavailable. Phase D reconstructs only contracts directly supported by governing prose and records those boundaries in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
+`docs/PHASE_E_ACCEPTANCE.md` is the controlling Phase E implementation checklist and strategic comparison. `docs/PHASE_E_RUNTIME_RESULT.md` records the pinned-engine commands/results. The gate proves automatic booking without manual cards, deterministic show/audience/economy propagation, local audience divergence, component influence, ledger reconciliation, qualified hot/cold behavior, real-gameplay Chronicle reconstruction without resimulation/RNG, exact save/load/recovery, and retained Phase A-D regression safety.
+
+The original standalone machine-schema package remains unavailable. Phase E reconstructs only contracts directly supported by governing prose and records those boundaries in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
 
 ## Earlier acceptance evidence
 
@@ -86,7 +90,7 @@ After headless tests pass, verify a fresh import under the pinned engine. For co
 godot --headless --editor --path . --quit-after 120
 ```
 
-Phase D requires no retained parser/import/project-configuration errors attributable to source/content. Generated `.godot/` cache data remains ignored. Legitimate new `.gd.uid` sidecars generated by the pinned editor are retained in Git.
+Phase E requires no retained parser/import/project-configuration errors attributable to source/content. Generated `.godot/` cache data remains ignored. Legitimate new `.gd.uid` sidecars generated by the pinned editor are retained in Git.
 
 ## Final staged-tree hygiene
 
@@ -118,13 +122,13 @@ Use the actual local filename/path rather than changing repository files to matc
 
 ## Phase boundary
 
-Not part of Phase D:
+Not part of Phase E:
 
-- playable touring strategy, travel/fatigue formulas, or touring resolution;
-- playable booking abstraction, show generation/resolution, attendance, or wrestler-performance simulation;
-- overness/heat/shine/momentum/drawing-power tuning, program/feud gameplay, or territorial influence formulas;
-- gate/payroll/travel/venue/local-TV/sponsorship/merchandise/debt economic simulation;
-- real strategic AI, opponent competition, talent-market AI, or full scouting gameplay;
-- production map/UI, polished Historical Replay, Android integration, final balance/tuning, or final roster/content population.
+- strategic rival AI, opponent market-defense/invasion intelligence, RecoveryAI, or autonomous TouringPlanner;
+- full talent-market negotiation, contract-clause depth, acquisitions, alliances, or sophisticated diplomacy;
+- deep scouting/knowledge gameplay, careers, injuries, ownership succession, or staff ecosystem;
+- national media competition, PPV, streaming, sponsorship, merchandise, licensing, or debt strategy;
+- production UI/map/monthly brief/inbox/touch controls/Android integration;
+- final Great Lakes population, final art/audio, or final balance/tuning.
 
-The corresponding monthly phases exist as extension points. Their Phase E/F behavior does not.
+Phase F begins strategic opponents and related systems; Phase E does not implement them early.

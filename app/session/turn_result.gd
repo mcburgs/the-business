@@ -11,6 +11,7 @@ var phase_names: Array[String] = []
 var command_results: Array[Dictionary] = []
 var events: Array[Dictionary] = []
 var journaled_events: Array[Dictionary] = []
+var phase_outputs: Dictionary = {}
 var errors: Array[Dictionary] = []
 var autosave_requested: bool = false
 var state: RefCounted = null
@@ -29,6 +30,7 @@ func to_summary() -> Dictionary:
         "command_results": command_results.duplicate(true),
         "events": events.duplicate(true),
         "journaled_events": journaled_events.duplicate(true),
+        "phase_outputs": phase_outputs.duplicate(true),
         "errors": errors.duplicate(true),
         "autosave_requested": autosave_requested,
     }

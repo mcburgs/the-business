@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase D repository/content/headless-core checks that do not require Godot."""
+"""Phase E repository/content/strategic-loop checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -70,6 +70,16 @@ REQUIRED_FILES = [
     "tests/unit/test_phase_d_ledger.gd", "tests/integration/test_phase_d_chronicle_reconstruction.gd",
     "tests/integration/test_phase_d_save_service.gd",
     "docs/PHASE_D_ACCEPTANCE.md", "docs/PHASE_D_RUNTIME_RESULT.md",
+    "domain/core/phase_e_math.gd", "domain/touring/logistics_system.gd",
+    "domain/booking/show_plan.gd", "domain/booking/booking_system.gd",
+    "domain/booking/show_result.gd", "domain/booking/show_resolver.gd",
+    "domain/audience/audience_creative_system.gd", "domain/audience/hot_state_system.gd",
+    "domain/world/influence_query.gd", "domain/media/media_market_system.gd",
+    "domain/economy/economy_system.gd", "tests/helpers/phase_e_fixture.gd",
+    "tests/integration/test_phase_e_strategic_loop.gd", "tests/integration/test_phase_e_chronicle_save.gd",
+    "tests/unit/test_phase_e_commands_logistics.gd", "tests/unit/test_phase_e_booking_audience.gd",
+    "tests/unit/test_phase_e_economy_media_hot.gd", "docs/PHASE_E_ACCEPTANCE.md",
+    "docs/PHASE_E_RUNTIME_RESULT.md",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -313,18 +323,15 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
-    # Phase D static headless-core gates. These complement, not replace, the real Godot runtime tests.
+    # Phase E static strategic-loop gates. These complement, not replace, the real Godot runtime tests.
     try:
         version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
-        if 'const BUILD_PHASE: String = "D"' not in version_text:
-            failures.append("Phase D candidate/final metadata must report build phase D")
-        if not any(token in version_text for token in (
-            'const GAME_VERSION: String = "0.0.0-phase-d-candidate"',
-            'const GAME_VERSION: String = "0.0.0-phase-d"',
-        )):
-            failures.append("Phase D game version must be candidate or verified Phase D")
+        if 'const BUILD_PHASE: String = "E"' not in version_text:
+            failures.append("Phase E metadata must report build phase E")
+        if 'const GAME_VERSION: String = "0.0.0-phase-e"' not in version_text:
+            failures.append("verified Phase E game version must be 0.0.0-phase-e")
     except OSError as exc:
-        failures.append(f"unable to inspect Phase D version metadata: {exc}")
+        failures.append(f"unable to inspect Phase E version metadata: {exc}")
 
     expected_commands = {
         "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
@@ -404,6 +411,48 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase D derivation record: {exc}")
 
+    # Phase E architecture-sensitive static gates.
+    try:
+        pipeline_text = (ROOT / "app/session/month_pipeline.gd").read_text(encoding="utf-8")
+        for seam in ("LogisticsSystem", "BookingSystem", "ShowResolver", "AudienceCreativeSystem", "MediaMarketSystem", "EconomySystem"):
+            if seam not in pipeline_text:
+                failures.append(f"Phase E pipeline is missing strategic-loop seam: {seam}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E pipeline integration: {exc}")
+
+    try:
+        resolver_text = (ROOT / "domain/booking/show_resolver.gd").read_text(encoding="utf-8")
+        for forbidden in ("AudienceCreativeSystem", "MediaMarketSystem", "EconomySystem", "ChronicleCommitter", "LedgerService"):
+            if forbidden in resolver_text:
+                failures.append(f"ShowResolver must return effects rather than mutate downstream systems directly: {forbidden}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E ShowResolver boundary: {exc}")
+
+    try:
+        market_text = (ROOT / "domain/world/market_state.gd").read_text(encoding="utf-8").lower()
+        for forbidden in ("owner_promotion_id", "owning_promotion_id", "market_owner"):
+            if forbidden in market_text:
+                failures.append(f"market influence must not become ownership state: {forbidden}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E market ownership boundary: {exc}")
+
+    try:
+        cli_text = (ROOT / "tools/simulation_cli/run.gd").read_text(encoding="utf-8")
+        for fixture in ("phase_e_good", "phase_e_bad"):
+            if fixture not in cli_text:
+                failures.append(f"Phase E CLI must expose acceptance fixture: {fixture}")
+        if "WE_SIM_SUMMARY" not in cli_text or "we.simulation_summary.v1" not in cli_text:
+            failures.append("Phase E CLI must expose generic structured simulation diagnostics")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E CLI: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase e strategic-loop reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase E controlled strategic-loop schema reconstruction must be explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E derivation record: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -421,7 +470,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_d.static_check.v1",
+        "schema": "we.phase_e.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,
