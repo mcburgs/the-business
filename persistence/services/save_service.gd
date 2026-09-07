@@ -7,6 +7,7 @@ const LedgerService = preload("res://domain/economy/ledger_service.gd")
 
 const SAVE_SCHEMA_VERSION: int = 1
 const CHRONICLE_SCHEMA_VERSION: int = 1
+const MIGRATABLE_ARCHITECTURE_VERSIONS: Array[String] = ["0.2.0"]
 
 var root_path: String = "user://saves"
 var failure_injection_stage: String = ""
@@ -92,7 +93,7 @@ func _load_from_absolute(absolute: String, expected_content_fingerprint: String,
     if not bool(decoded_chronicle["passed"]): return {"passed": false, "errors": decoded_chronicle["errors"]}
     if str(decoded_chronicle["chronicle"].get("head_date")) != str(manifest.get("chronicle_head_date")) or int(decoded_chronicle["chronicle"].get("head_sequence")) != int(manifest.get("chronicle_head_sequence")):
         return _failure("SAVE001", "manifest.chronicle_head", {"reason": "head_mismatch"})
-    return {"passed": true, "errors": [], "state": decoded_state["state"], "chronicle": decoded_chronicle["chronicle"], "manifest": manifest}
+    return {"passed": true, "errors": [], "state": decoded_state["state"], "chronicle": decoded_chronicle["chronicle"], "manifest": manifest, "migrations_applied": decoded_state.get("migrations_applied", [])}
 
 func _make_manifest(save_id: String, display_name: String, state: RefCounted, chronicle: RefCounted, metadata: Dictionary) -> Dictionary:
     var rng: RefCounted = state.get("rng_state")
@@ -129,8 +130,9 @@ func _validate_manifest(manifest: Dictionary, expected_content_fingerprint: Stri
         return _failure("SAVE002", "manifest.schema_version", {"supported_save": SAVE_SCHEMA_VERSION, "actual_save": manifest.get("save_schema_version"), "supported_chronicle": CHRONICLE_SCHEMA_VERSION, "actual_chronicle": manifest.get("chronicle_schema_version")})
     if int(manifest.get("save_schema_version", -1)) != SAVE_SCHEMA_VERSION or int(manifest.get("chronicle_schema_version", -1)) != CHRONICLE_SCHEMA_VERSION:
         return _failure("SAVE001", "manifest.schema_version", {"reason": "unsupported_or_invalid_older_schema"})
-    if str(manifest.get("architecture_version", "")) != ProjectVersion.ARCHITECTURE_VERSION:
-        return _failure("SAVE001", "manifest.architecture_version", {"expected": ProjectVersion.ARCHITECTURE_VERSION, "actual": manifest.get("architecture_version")})
+    var architecture_version: String = str(manifest.get("architecture_version", ""))
+    if architecture_version != ProjectVersion.ARCHITECTURE_VERSION and not architecture_version in MIGRATABLE_ARCHITECTURE_VERSIONS:
+        return _failure("SAVE001", "manifest.architecture_version", {"expected": ProjectVersion.ARCHITECTURE_VERSION, "migratable": MIGRATABLE_ARCHITECTURE_VERSIONS, "actual": architecture_version})
     if not expected_content_fingerprint.is_empty() and str(manifest.get("resolved_content_fingerprint", "")) != expected_content_fingerprint:
         return _failure("SAVE001", "manifest.resolved_content_fingerprint", {"expected": expected_content_fingerprint, "actual": manifest.get("resolved_content_fingerprint")})
     return {"passed": true, "errors": []}

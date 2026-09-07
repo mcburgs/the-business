@@ -2,6 +2,19 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-f-r - 2026-09-07
+
+- Reconciled player control with GDD/Architecture v0.3: `OwnershipSeatState` is a non-person control seat and no longer stores or validates a player `PersonState` identity.
+- Advanced current CampaignState to schema v2 with an explicit v1 -> v2 migration that retires only `ownership_seat.owner_person_id` while preserving in-world `PromotionState.controlling_owner_person_id` semantics and migration evidence.
+- Allowed historical Phase F architecture `0.2.0` save manifests through the controlled migration path; current saves identify architecture `0.3.0` / contract `0.2.0`.
+- Hardened the command boundary so player issuers cannot carry `person_id` and must be scoped to the promotion controlled by the Ownership Seat; AI/automation/system Person issuers remain available where appropriate.
+- Added a separate non-person Ownership Seat to HistoricalProjection while retaining legitimate NPC promotion-owner Person references.
+- Added explicit `presentation_context` and `wrestling_language_context` carriers to the existing ShowPlan/BookingSystem/ShowResolver path without implementing deep psychology or a second booking engine.
+- Added Phase F-R ownership, migration, save, Chronicle and booking-seam regressions plus controlled ownership/seam audit records.
+- Added Creative Direction & Experience Bible v0.1 and Creative-to-Systems Impact Matrix v0.1 as subordinate governing creative artifacts.
+- Retained historical Phase F acceptance/soak evidence unchanged and reran the complete Phase F verification surface for the reconciled baseline.
+
+
 ## 0.0.0-phase-f - 2026-09-07
 
 - Added knowledge-filtered, frozen-snapshot planning for three active promotions with deterministic Owner, Talent, Touring, Booker, Recovery and Diplomacy AI modules issuing ordinary command envelopes.

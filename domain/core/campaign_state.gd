@@ -5,7 +5,7 @@ const EventState = preload("res://domain/events/event_state.gd")
 const RandomState = preload("res://domain/core/random_state.gd")
 const VictoryState = preload("res://domain/core/victory_state.gd")
 
-const STATE_SCHEMA_VERSION: int = 1
+const STATE_SCHEMA_VERSION: int = 2
 
 var state_schema_version: int = STATE_SCHEMA_VERSION
 var campaign_pack_id: String = ""

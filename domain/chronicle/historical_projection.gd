@@ -9,6 +9,7 @@ static func from_campaign_state(state: RefCounted, date_value: String = "") -> D
     var projection: Dictionary = {
         "schema_version": SCHEMA_VERSION,
         "date": date,
+        "ownership_seat": (state.get("ownership_seat") as RefCounted).call("to_dict"),
         "promotions": {},
         "contracts": {},
         "knowledge": {},

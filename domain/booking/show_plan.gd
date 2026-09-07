@@ -13,6 +13,8 @@ var booking_quality: float = 0.0
 var coherence: float = 0.0
 var travel_pressure: float = 0.0
 var market_context: Dictionary = {}
+var presentation_context: Dictionary = {}
+var wrestling_language_context: Dictionary = {}
 var causal_factors: Array = []
 
 func to_dict() -> Dictionary:
@@ -30,5 +32,7 @@ func to_dict() -> Dictionary:
         "coherence": coherence,
         "travel_pressure": travel_pressure,
         "market_context": market_context.duplicate(true),
+        "presentation_context": presentation_context.duplicate(true),
+        "wrestling_language_context": wrestling_language_context.duplicate(true),
         "causal_factors": causal_factors.duplicate(true),
     }

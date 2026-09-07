@@ -145,3 +145,22 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted for Phase F acceptance tooling
 **Decision:** The long soak deterministically rotates balanced, expansionist and defensive profiles across the three asymmetric fixture promotions by seed. Production mechanics are unchanged; the test fixture avoids mistaking a stronger initial roster/home market for an intrinsically superior policy.
 **Reason:** Policy variance must be evaluated across contexts rather than inferred from one fixed organization-policy pairing.
+
+
+## ADR-FR-001 - Player control is a non-person Ownership Seat and current state schema is v2
+
+**Status:** Accepted for Phase F-R
+**Decision:** `OwnershipSeatState` contains promotion control and transition state only. CampaignState schema v2 removes the historical `owner_person_id` field. State migration v1 -> v2 explicitly retires that field while leaving every `PromotionState.controlling_owner_person_id` untouched. Historical Phase F architecture `0.2.0` manifests are an explicitly migratable source.
+**Reason:** GDD/Architecture v0.3 lock the player as an abstract non-person seat while preserving NPC owner/promoter people. Silent reinterpretation would corrupt both product meaning and historical save provenance.
+
+## ADR-FR-002 - Player command authority is promotion-scoped, never Person-scoped
+
+**Status:** Accepted for Phase F-R
+**Decision:** Player `CommandEnvelope.issuer` must identify the promotion controlled by `OwnershipSeatState` and may not contain `person_id`. AI/automation/system issuers retain Person references when a real simulated person is the appropriate actor.
+**Reason:** The shared command boundary must not reintroduce the forbidden owner-avatar identity indirectly. Promotion scoping also prevents a player issuer from impersonating a rival promotion.
+
+## ADR-FR-003 - Presentation intent and WrestlingLanguage travel through the existing ShowPlan path
+
+**Status:** Accepted as a narrow Phase F-R seam
+**Decision:** `ShowPlan` carries separate `presentation_context` and `wrestling_language_context` dictionaries. BookingSystem may populate them from governed state/content context and ShowResolver carries them as explicit causal context. They have no Phase F-R balance effect. Future hands-on booking must continue to reuse this same ShowPlan/command/resolution architecture.
+**Reason:** Reality, Perception and deliberate Presentation must not collapse into one concept, and era/region/audience wrestling language must have a place to enter booking resolution without requiring a future resolver rewrite. Deep psychology, formal language profiles and production UI remain deferred.

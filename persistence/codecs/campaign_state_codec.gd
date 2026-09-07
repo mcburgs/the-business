@@ -20,6 +20,7 @@ const VenueState = preload("res://domain/world/venue_state.gd")
 const AgreementState = preload("res://domain/diplomacy/agreement_state.gd")
 const RelationshipState = preload("res://domain/people/relationship_state.gd")
 const KnowledgeBase = preload("res://domain/knowledge/knowledge_base.gd")
+const StateMigrator = preload("res://persistence/migrations/state_migrator.gd")
 
 const TOP_FIELDS: Array[String] = [
     "state_schema_version", "campaign_pack_id", "campaign_pack_version", "content_fingerprint",
@@ -42,7 +43,7 @@ const VENUE_FIELDS: Array[String] = ["venue_id", "availability_state", "relation
 const AGREEMENT_FIELDS: Array[String] = ["id", "party_promotion_ids", "status", "start_date", "end_date", "clause_ids", "clauses", "trust_effect", "last_violation_event_id"]
 const RELATIONSHIP_FIELDS: Array[String] = ["id", "person_a_id", "person_b_id", "strength", "trust", "grievance", "tag_ids"]
 const KNOWLEDGE_FIELDS: Array[String] = ["owner_promotion_id", "observations", "familiarity_by_subject"]
-const OWNERSHIP_FIELDS: Array[String] = ["promotion_id", "owner_person_id", "transition_pending"]
+const OWNERSHIP_FIELDS: Array[String] = ["promotion_id", "transition_pending"]
 const EVENT_FIELDS: Array[String] = ["fired_event_ids", "active_event_ids", "cooldown_by_event_id", "choice_history"]
 const RNG_FIELDS: Array[String] = ["provider_id", "seed", "internal_state", "captured_turn", "stream_policy"]
 const VICTORY_FIELDS: Array[String] = ["status", "outcome_id", "details"]
@@ -78,6 +79,10 @@ func encode(state: RefCounted) -> Dictionary:
 
 func decode(data: Dictionary, content_index: Dictionary = {}) -> Dictionary:
     var errors: Array[Dictionary] = []
+    var migration: Dictionary = StateMigrator.new().migrate_to_current(data)
+    if not bool(migration.get("passed", false)):
+        return {"passed": false, "state": null, "errors": migration.get("errors", []), "migrations_applied": migration.get("migrations_applied", [])}
+    data = (migration.get("data", {}) as Dictionary).duplicate(true)
     _restore_keyed_integers(data, "minor_units")
     _restore_keyed_integers(data, "counter_minor_units")
     _restore_keyed_integers(data, "contract_demand_minor_units")
@@ -86,10 +91,10 @@ func decode(data: Dictionary, content_index: Dictionary = {}) -> Dictionary:
     _check_closed_required(data, TOP_FIELDS, TOP_FIELDS, "state", errors)
     _validate_top_types(data, errors)
     if not errors.is_empty():
-        return {"passed": false, "state": null, "errors": errors}
+        return {"passed": false, "state": null, "errors": errors, "migrations_applied": migration.get("migrations_applied", [])}
     if int(data.get("state_schema_version", -1)) != CampaignState.STATE_SCHEMA_VERSION:
         _add(errors, "STATE001", "state_schema_version", {"supported": CampaignState.STATE_SCHEMA_VERSION, "actual": data.get("state_schema_version")})
-        return {"passed": false, "state": null, "errors": errors}
+        return {"passed": false, "state": null, "errors": errors, "migrations_applied": migration.get("migrations_applied", [])}
 
     var state: RefCounted = CampaignState.new()
     state.set("state_schema_version", int(data["state_schema_version"]))
@@ -127,7 +132,7 @@ func decode(data: Dictionary, content_index: Dictionary = {}) -> Dictionary:
     var validation: Dictionary = CampaignStateValidator.new().validate(state, content_index)
     if not bool(validation.get("passed", false)):
         return {"passed": false, "state": null, "errors": validation.get("errors", [])}
-    return {"passed": true, "state": state, "errors": []}
+    return {"passed": true, "state": state, "errors": [], "migrations_applied": migration.get("migrations_applied", [])}
 
 func build_manifest_scaffold(state: RefCounted, save_id: String, display_name: String, game_version: String, architecture_version: String, engine_version: String) -> Dictionary:
     return {

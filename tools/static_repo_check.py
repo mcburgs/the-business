@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase F repository/content/competitive-world checks that do not require Godot."""
+"""Phase F-R repository/content/reconciliation checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -92,6 +92,12 @@ REQUIRED_FILES = [
     "tools/simulation_cli/phase_f_soak.gd", "docs/PHASE_F_ACCEPTANCE.md",
     "docs/PHASE_F_RUNTIME_RESULT.md", "tests/soak/PHASE_F_SOAK_REPORT.md",
     "tests/soak/phase_f_5_year_soak.json",
+    "docs/PHASE_F_R_ACCEPTANCE.md", "docs/PHASE_F_R_RUNTIME_RESULT.md",
+    "docs/PHASE_F_R_OWNERSHIP_AUDIT.md", "docs/PHASE_F_R_ARCHITECTURE_SEAM_AUDIT.md",
+    "tests/integration/test_phase_f_r_reconciliation.gd",
+    "tests/soak/PHASE_F_R_SOAK_REPORT.md", "tests/soak/phase_f_r_5_year_soak.json",
+    "docs/governing/The_Business_Creative_Direction_and_Experience_Bible_v0_1.docx",
+    "docs/governing/The_Business_Creative_to_Systems_Impact_Matrix_v0_1.docx",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -335,15 +341,19 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
-    # Phase F static competitive-world gates. These complement, not replace, the real Godot runtime tests.
+    # Phase F-R current metadata plus retained Phase F competitive-world static gates.
     try:
         version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
-        if 'const BUILD_PHASE: String = "F"' not in version_text:
-            failures.append("Phase F metadata must report build phase F")
-        if 'const GAME_VERSION: String = "0.0.0-phase-f"' not in version_text:
-            failures.append("verified Phase F game version must be 0.0.0-phase-f")
+        if 'const BUILD_PHASE: String = "F-R"' not in version_text:
+            failures.append("Phase F-R metadata must report build phase F-R")
+        if 'const GAME_VERSION: String = "0.0.0-phase-f-r"' not in version_text:
+            failures.append("Phase F-R game version must be 0.0.0-phase-f-r")
+        if 'const ARCHITECTURE_VERSION: String = "0.3.0"' not in version_text:
+            failures.append("Phase F-R architecture version must be 0.3.0")
+        if 'const CONTRACT_VERSION: String = "0.2.0"' not in version_text:
+            failures.append("Phase F-R contract version must be 0.2.0")
     except OSError as exc:
-        failures.append(f"unable to inspect Phase E version metadata: {exc}")
+        failures.append(f"unable to inspect Phase F-R version metadata: {exc}")
 
     expected_commands = {
         "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
@@ -522,6 +532,79 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase F derivation record: {exc}")
 
+
+    # Phase F-R reconciliation-sensitive static gates.
+    try:
+        seat_text = (ROOT / "domain/core/ownership_seat_state.gd").read_text(encoding="utf-8").lower()
+        for forbidden in ("owner_person_id", "person_id", "portrait", "biograph", "health", "skill", "trait", "mortality"):
+            if forbidden in seat_text:
+                failures.append(f"Phase F-R OwnershipSeatState must remain non-person; forbidden token: {forbidden}")
+        if 'var promotion_id: string' not in seat_text:
+            failures.append("Phase F-R OwnershipSeatState must retain promotion control identity")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R OwnershipSeatState: {exc}")
+
+    try:
+        codec_text = (ROOT / "persistence/codecs/campaign_state_codec.gd").read_text(encoding="utf-8")
+        migrator_text = (ROOT / "persistence/migrations/state_migrator.gd").read_text(encoding="utf-8")
+        state_text = (ROOT / "domain/core/campaign_state.gd").read_text(encoding="utf-8")
+        if 'const STATE_SCHEMA_VERSION: int = 2' not in state_text or 'const CURRENT_STATE_SCHEMA_VERSION: int = 2' not in migrator_text:
+            failures.append("Phase F-R current CampaignState/migration schema must be v2")
+        ownership_match = re.search(r'const OWNERSHIP_FIELDS: Array\[String\] = \[(.*?)\]', codec_text, re.S)
+        if not ownership_match or "owner_person_id" in ownership_match.group(1) or '"promotion_id"' not in ownership_match.group(1):
+            failures.append("Phase F-R current ownership codec must contain promotion_id and no owner_person_id")
+        if "_migrate_v1_to_v2" not in migrator_text or 'seat.erase("owner_person_id")' not in migrator_text or "promotion_owner_semantics" not in migrator_text:
+            failures.append("Phase F-R must retain explicit v1 -> v2 player-seat migration provenance")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R state migration: {exc}")
+
+    try:
+        router_text = (ROOT / "app/commands/command_router.gd").read_text(encoding="utf-8")
+        for token in ("player_is_non_person_ownership_seat", "player_ownership_seat_scope_mismatch", "player_ownership_seat_requires_promotion_scope"):
+            if token not in router_text:
+                failures.append(f"Phase F-R player command boundary missing guard: {token}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R player issuer boundary: {exc}")
+
+    try:
+        projection_text = (ROOT / "domain/chronicle/historical_projection.gd").read_text(encoding="utf-8")
+        if '"ownership_seat"' not in projection_text or "controlling_owner_person_id" not in projection_text:
+            failures.append("Phase F-R HistoricalProjection must separate non-person seat from legitimate promotion owner Persons")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R Chronicle ownership projection: {exc}")
+
+    try:
+        plan_text = (ROOT / "domain/booking/show_plan.gd").read_text(encoding="utf-8")
+        booking_text = (ROOT / "domain/booking/booking_system.gd").read_text(encoding="utf-8")
+        resolver_text = (ROOT / "domain/booking/show_resolver.gd").read_text(encoding="utf-8")
+        for seam in ("presentation_context", "wrestling_language_context"):
+            if seam not in plan_text or seam not in booking_text or seam not in resolver_text:
+                failures.append(f"Phase F-R ShowPlan context seam missing from booking/resolution path: {seam}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R booking context seams: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase f-r ownership-seat reconciliation addendum" not in derivation_text or "controlled reconciliation" not in derivation_text:
+            failures.append("Phase F-R ownership/schema reconciliation provenance must be explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R derivation record: {exc}")
+
+    try:
+        fr_soak = load_json(ROOT / "tests/soak/phase_f_r_5_year_soak.json", failures)
+        if not isinstance(fr_soak, dict) or not fr_soak.get("passed") or fr_soak.get("phase") != "F-R" or fr_soak.get("game_version") != "0.0.0-phase-f-r" or fr_soak.get("years_per_run", 0) < 5:
+            failures.append("Phase F-R must retain a passing five-year soak artifact")
+        elif (
+            not fr_soak.get("repeated_seed_deterministic")
+            or fr_soak.get("distinct_world_fingerprints") != fr_soak.get("unique_seed_count")
+            or fr_soak.get("active_promotion_endings") != fr_soak.get("run_count", 0) * 3
+            or fr_soak.get("maximum_market_concentration", 1.0) >= 0.95
+            or len(fr_soak.get("policy_wins", {})) < 2
+        ):
+            failures.append("Phase F-R soak artifact does not prove replay, divergence, survival, bounded concentration and policy variance")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F-R soak evidence: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -539,7 +622,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_f.static_check.v1",
+        "schema": "we.phase_f_r.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

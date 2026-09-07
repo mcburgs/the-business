@@ -70,6 +70,12 @@ func generate(state: RefCounted, schedules: Array[Dictionary], tuning: Dictionar
             "wrestling_interest": float(((state.get("markets") as Dictionary)[market_id] as RefCounted).get("wrestling_interest")),
             "program_strength": program_strength,
         })
+        var presentation_by_promotion: Dictionary = world_state.get("presentation_context_by_promotion", {})
+        if presentation_by_promotion.get(promotion_id, {}) is Dictionary:
+            plan.set("presentation_context", (presentation_by_promotion.get(promotion_id, {}) as Dictionary).duplicate(true))
+        var language_by_market: Dictionary = world_state.get("wrestling_language_context_by_market", {})
+        if language_by_market.get(market_id, {}) is Dictionary:
+            plan.set("wrestling_language_context", (language_by_market.get(market_id, {}) as Dictionary).duplicate(true))
         plan.set("causal_factors", [
             {"source": "booker_skill", "value": booking_skill},
             {"source": "road_agent_skill", "value": road_agent_skill},

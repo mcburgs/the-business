@@ -10,7 +10,7 @@ func run() -> Dictionary:
     _expect(configured_main_scene == expected_main_scene, "application/run/main_scene must point to the minimal presentation shell.", failures)
     _expect(FileAccess.file_exists(expected_main_scene), "Configured main scene does not exist.", failures)
     _expect(ProjectVersion.ENGINE_VERSION == "4.7.2-stable", "Pinned engine constant changed unexpectedly.", failures)
-    _expect(ProjectVersion.ARCHITECTURE_VERSION == "0.2.0", "Architecture version must remain 0.2.0 for this baseline.", failures)
+    _expect(ProjectVersion.ARCHITECTURE_VERSION == "0.3.0", "Architecture version must be 0.3.0 for the reconciled Phase F-R baseline.", failures)
 
     var actual: Dictionary = Engine.get_version_info()
     _expect(int(actual.get("major", -1)) == 4, "Godot major version must be 4.", failures)

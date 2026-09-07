@@ -22,7 +22,7 @@ func run() -> Dictionary:
     var malformed: Dictionary = encoded.duplicate(true)
     malformed["mystery_future_field"] = 42
     var malformed_result: Dictionary = codec.call("decode", malformed, Fixture.content_index())
-    _expect(not bool(malformed_result.get("passed", true)), "Unknown state schema v1 fields must be rejected.", failures)
+    _expect(not bool(malformed_result.get("passed", true)), "Unknown current-state schema fields must be rejected.", failures)
     _expect(_has_code(malformed_result, "STATE001"), "Unknown field rejection must be structured as STATE001.", failures)
 
     var malformed_type: Dictionary = encoded.duplicate(true)
@@ -42,9 +42,20 @@ func run() -> Dictionary:
 
     var migrator: RefCounted = Migrator.new()
     var same_version: Dictionary = migrator.call("migrate_to_current", encoded)
-    _expect(bool(same_version.get("passed", false)), "Schema v1 migration entry point must accept v1 as a no-op.", failures)
+    _expect(bool(same_version.get("passed", false)) and (same_version.get("migrations_applied", []) as Array).is_empty(), "Schema v2 migration entry point must accept v2 as a no-op.", failures)
+    var legacy: Dictionary = encoded.duplicate(true)
+    legacy["state_schema_version"] = 1
+    (legacy["ownership_seat"] as Dictionary)["owner_person_id"] = "person:PER00001"
+    var migrated: Dictionary = migrator.call("migrate_to_current", legacy)
+    _expect(bool(migrated.get("passed", false)), "Schema v1 must deliberately migrate to v2.", failures)
+    if bool(migrated.get("passed", false)):
+        _expect(int((migrated.get("data", {}) as Dictionary).get("state_schema_version", -1)) == 2, "v1 migration must publish schema v2.", failures)
+        _expect(not ((migrated.get("data", {}) as Dictionary).get("ownership_seat", {}) as Dictionary).has("owner_person_id"), "v1 migration must retire player owner_person_id from OwnershipSeatState.", failures)
+        _expect(((migrated.get("data", {}) as Dictionary).get("promotions", {}) as Dictionary).get("promotion:PRO00001", {}).get("controlling_owner_person_id") == "person:PER00001", "v1 migration must preserve in-world NPC promotion ownership semantics.", failures)
+    var codec_migrated: Dictionary = codec.call("decode", legacy, Fixture.content_index())
+    _expect(bool(codec_migrated.get("passed", false)) and (codec_migrated.get("migrations_applied", []) as Array).size() == 1, "Codec load must execute and report the v1->v2 migration.", failures)
     var future: Dictionary = encoded.duplicate(true)
-    future["state_schema_version"] = 2
+    future["state_schema_version"] = 3
     _expect(not bool((migrator.call("migrate_to_current", future) as Dictionary).get("passed", true)), "Future state schemas must fail cleanly.", failures)
 
     var manifest: Dictionary = codec.call("build_manifest_scaffold", original, "save:fixture", "Fixture", "0.0.0-phase-c", "0.2.0", "4.7.2-stable")

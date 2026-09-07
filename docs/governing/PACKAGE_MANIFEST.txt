@@ -1,16 +1,23 @@
 THE BUSINESS - RECONCILED GOVERNING DOCUMENT PACKAGE
-Finalized: 7 September 2026
+Updated: 7 September 2026
 
-CURRENT GOVERNING / CONTROLLED ARTIFACTS
+PRIMARY GOVERNING / CONTROLLED AUTHORITIES
 1. The_Business_Game_Design_Document_v0_3.docx - product authority.
 2. The_Business_Technical_Architecture_and_Vertical_Slice_Specification_v0_3.docx - engineering authority.
 3. The_Business_Development_and_Build_Plan_v0_3.docx - sequencing, gates, and implementation governance.
 4. The_Business_Post_Phase_F_Governing_Reconciliation_Record_v0_1.docx - reconciliation authority for the post-Phase-F delta.
-5. The_Business_Adversarial_Gameplay_Testing_and_Scripted_Campaign_Specification_v0_2.docx - controlled adversarial QA handoff specification.
-6. The_Business_Visual_Identity_Research_Dossier_v0_2.docx - visual research/evidence basis, subordinate to the product and engineering authorities.
+5. The_Business_Adversarial_Gameplay_Testing_and_Scripted_Campaign_Specification_v0_2.docx - F->G adversarial QA authority; first execution package targets verified F-R.
+6. The_Business_Visual_Identity_Research_Dossier_v0_2.docx - visual research/evidence basis subordinate to product and engineering authorities.
+
+PHASE F-R SUBORDINATE CREATIVE ARTIFACTS
+7. The_Business_Creative_Direction_and_Experience_Bible_v0_1.docx - practical creative/experience law subordinate to GDD and Architecture.
+8. The_Business_Creative_to_Systems_Impact_Matrix_v0_1.docx - creative-to-system traceability, risk, deferred ownership, and acceptance implications.
 
 HISTORICAL IMPLEMENTATION BASELINE
-7. The_Business_Canonical_Data_Schemas_and_Domain_Contracts_v0_1_HISTORICAL_BASELINE.docx - accepted Phase 0/Phase F provenance only. Where it conflicts with the reconciled v0.3 authorities, the conflict is a Phase F-R implementation/schema delta to be migrated and verified before F->G adversarial testing.
+9. The_Business_Canonical_Data_Schemas_and_Domain_Contracts_v0_1_HISTORICAL_BASELINE.docx - accepted Phase 0/Phase F provenance only. It is not edited to disguise the F-R delta.
 
-NEXT CONTROLLED WORK
-Phase F-R repository/schema alignment audit -> Creative Direction & Experience Bible v0.1 + Creative-to-Systems Impact Matrix -> verify/freeze Phase F-R -> F->G adversarial strategic validation -> Phase G presentation.
+CONTROL STATUS
+Phase F historically accepted.
+Post-Phase-F creative reconciliation complete.
+Phase F-R implementation/schema alignment: current controlled gate.
+After verified/frozen F-R: F->G adversarial strategic validation -> Phase G presentation.

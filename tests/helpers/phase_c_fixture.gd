@@ -100,7 +100,6 @@ static func make_state() -> RefCounted:
 
     var seat: RefCounted = OwnershipSeatState.new()
     seat.set("promotion_id", "promotion:PRO00001")
-    seat.set("owner_person_id", "person:PER00001")
     state.set("ownership_seat", seat)
 
     var market_a: RefCounted = MarketState.new()

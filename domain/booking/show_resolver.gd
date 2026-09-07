@@ -31,6 +31,8 @@ func resolve(state: RefCounted, plans: Array, random_service: RefCounted, tuning
         var performance: float = performance_total / float(count) if count > 0 else 0.0
         var psychology: float = psychology_total / float(count) if count > 0 else 0.0
         var program_strength: float = float((plan.get("market_context") as Dictionary).get("program_strength", 0.0))
+        var presentation_context: Dictionary = (plan.get("presentation_context") as Dictionary).duplicate(true)
+        var wrestling_language_context: Dictionary = (plan.get("wrestling_language_context") as Dictionary).duplicate(true)
         var variance_width: float = float(tuning.get("show_variance", 0.08))
         var raw_draw: float = float(random_service.call("draw_float", "phase_e.show." + str(plan.get("show_id"))))
         var variance: float = (raw_draw * 2.0 - 1.0) * variance_width
@@ -99,6 +101,8 @@ func resolve(state: RefCounted, plans: Array, random_service: RefCounted, tuning
             {"source": "drawing_power", "value": drawing_power},
             {"source": "market_interest", "value": market_interest},
             {"source": "bounded_variance", "value": variance},
+            {"source": "presentation_context", "context": presentation_context},
+            {"source": "wrestling_language_context", "context": wrestling_language_context},
         ])
         results.append(result)
     return {"passed": true, "errors": [], "results": results}

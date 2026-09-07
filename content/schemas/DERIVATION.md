@@ -135,3 +135,30 @@ Phase F implements only responsibilities stated by the governing documents: orga
 ## Intentionally preserved open questions
 
 Deep contract clauses and disputes, detailed career/injury development, ownership succession, acquisitions, sophisticated alliances and talent exchanges, final AI utility functions, final scouting calibration, production balance, UI presentation and physical Chronicle segmentation remain open.
+
+
+---
+
+# Phase F-R ownership-seat reconciliation addendum
+
+## Status and provenance
+
+The preserved `The_Business_Canonical_Data_Schemas_and_Domain_Contracts_v0_1_HISTORICAL_BASELINE.docx` remains unchanged historical implementation evidence. GDD v0.3, Technical Architecture v0.3 and the Post-Phase-F Governing Reconciliation Record explicitly supersede one historical runtime meaning: the player may not be represented as a Person. Phase F-R therefore performs a deliberate **controlled reconciliation**, not a retroactive edit of the historical schema baseline.
+
+## Runtime-state delta
+
+`CampaignState.state_schema_version` advances from 1 to 2. `OwnershipSeatState` removes `owner_person_id`; its closed current field set is `promotion_id` and `transition_pending`. `PromotionState.controlling_owner_person_id` is **not** removed or reinterpreted: it remains the in-world NPC/historical ownership reference. `role.owner` and static content `owner_person_seed_id` likewise remain NPC content contracts.
+
+The v1 -> v2 migration removes only the obsolete seat-person field, records the legacy value in `migrations_applied`, advances the state schema, and preserves promotion-owner semantics unchanged. Historical architecture `0.2.0` save manifests are accepted only as an explicit migratable source; current writes use architecture `0.3.0`. This avoids silently treating an old player-avatar identity as current truth.
+
+## Command and Chronicle delta
+
+Player command issuers are promotion-scoped through the non-person Ownership Seat and may not supply `person_id`. AI/automation/system issuers retain Person references where appropriate. HistoricalProjection now records the ownership seat separately from promotion owner Person references so control history and human governance cannot collapse into one identity.
+
+## Creative extension seams
+
+`ShowPlan` receives separate open context records for deliberate Presentation intent and WrestlingLanguage. These are bounded extension seams, not complete Phase F-R schemas or balance formulas. Deep audience belief, wrestling-language profiles, psychology, dynasties, scandal propagation, production map/UI and hands-on card editing remain deferred. RelationshipState stable Person references/tag IDs, Chronicle identity retention and the existing ShowPlan command/resolution path are the accepted future seams.
+
+## Historical baseline protection
+
+No Phase F-R tool or static check rewrites the preserved historical baseline DOCX or the Phase B static-content `we.phase0.schema.json` to pretend those artifacts always contained the reconciled rule. Any future recovered canonical machine package must be diffed against both the historical evidence and this explicit Phase F-R delta.

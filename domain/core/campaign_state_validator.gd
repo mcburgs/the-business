@@ -24,8 +24,8 @@ func validate(state: RefCounted, content_index: Dictionary = {}) -> Dictionary:
     return {"passed": errors.is_empty(), "errors": errors}
 
 func _validate_top_level(state: RefCounted, content_index: Dictionary, errors: Array[Dictionary]) -> void:
-    if int(state.get("state_schema_version")) != 1:
-        _add(errors, "STATE001", "state_schema_version", {"expected": 1, "actual": state.get("state_schema_version")})
+    if int(state.get("state_schema_version")) != 2:
+        _add(errors, "STATE001", "state_schema_version", {"expected": 2, "actual": state.get("state_schema_version")})
     _content_id(str(state.get("campaign_pack_id")), "campaign_pack_id", errors)
     _content_id(str(state.get("ruleset_id")), "ruleset_id", errors)
     _semver(str(state.get("campaign_pack_version")), "campaign_pack_version", errors)
@@ -43,7 +43,6 @@ func _validate_top_level(state: RefCounted, content_index: Dictionary, errors: A
         _add(errors, "STATE001", "ownership_seat", {"reason": "required"})
     else:
         _runtime_ref(str(seat.get("promotion_id")), "promotion", state.get("promotions"), "ownership_seat.promotion_id", errors)
-        _runtime_ref(str(seat.get("owner_person_id")), "person", state.get("people"), "ownership_seat.owner_person_id", errors)
 
     var event_state: RefCounted = state.get("event_state") as RefCounted
     if event_state == null:

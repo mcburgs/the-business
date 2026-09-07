@@ -105,10 +105,18 @@ func _validate_issuer(state: RefCounted, command_id: String, issuer_value: Varia
     var kind: String = str(issuer.get("kind", ""))
     if not kind in ["player", "ai", "automation", "system"]:
         return CommandResult.rejection(command_id, "CMD001", "issuer.kind", "validation.cmd001", {"kind": kind})
+    if kind == "player" and issuer.has("person_id") and issuer["person_id"] != null:
+        return CommandResult.rejection(command_id, "CMD001", "issuer.person_id", "validation.cmd001", {"reason": "player_is_non_person_ownership_seat"})
     if issuer.has("promotion_id") and issuer["promotion_id"] != null:
         var promotion_id: String = str(issuer["promotion_id"])
         var invalid_promotion: Dictionary = _runtime_ref_error(command_id, promotion_id, "promotion", state.get("promotions"), "issuer.promotion_id")
         if not invalid_promotion.is_empty(): return invalid_promotion
+        if kind == "player":
+            var player_promotion_id: String = str((state.get("ownership_seat") as RefCounted).get("promotion_id"))
+            if promotion_id != player_promotion_id:
+                return CommandResult.rejection(command_id, "STATE003", "issuer.promotion_id", "validation.state003", {"reason": "player_ownership_seat_scope_mismatch", "expected": player_promotion_id, "actual": promotion_id})
+    elif kind == "player":
+        return CommandResult.rejection(command_id, "CMD001", "issuer.promotion_id", "validation.cmd001", {"reason": "player_ownership_seat_requires_promotion_scope"})
     if issuer.has("person_id") and issuer["person_id"] != null:
         var person_id: String = str(issuer["person_id"])
         var invalid_person: Dictionary = _runtime_ref_error(command_id, person_id, "person", state.get("people"), "issuer.person_id")
