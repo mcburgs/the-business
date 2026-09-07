@@ -1,0 +1,16 @@
+THE BUSINESS - RECONCILED GOVERNING DOCUMENT PACKAGE
+Finalized: 7 September 2026
+
+CURRENT GOVERNING / CONTROLLED ARTIFACTS
+1. The_Business_Game_Design_Document_v0_3.docx - product authority.
+2. The_Business_Technical_Architecture_and_Vertical_Slice_Specification_v0_3.docx - engineering authority.
+3. The_Business_Development_and_Build_Plan_v0_3.docx - sequencing, gates, and implementation governance.
+4. The_Business_Post_Phase_F_Governing_Reconciliation_Record_v0_1.docx - reconciliation authority for the post-Phase-F delta.
+5. The_Business_Adversarial_Gameplay_Testing_and_Scripted_Campaign_Specification_v0_2.docx - controlled adversarial QA handoff specification.
+6. The_Business_Visual_Identity_Research_Dossier_v0_2.docx - visual research/evidence basis, subordinate to the product and engineering authorities.
+
+HISTORICAL IMPLEMENTATION BASELINE
+7. The_Business_Canonical_Data_Schemas_and_Domain_Contracts_v0_1_HISTORICAL_BASELINE.docx - accepted Phase 0/Phase F provenance only. Where it conflicts with the reconciled v0.3 authorities, the conflict is a Phase F-R implementation/schema delta to be migrated and verified before F->G adversarial testing.
+
+NEXT CONTROLLED WORK
+Phase F-R repository/schema alignment audit -> Creative Direction & Experience Bible v0.1 + Creative-to-Systems Impact Matrix -> verify/freeze Phase F-R -> F->G adversarial strategic validation -> Phase G presentation.
