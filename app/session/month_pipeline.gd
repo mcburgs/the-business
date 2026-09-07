@@ -18,6 +18,10 @@ const ShowResolver = preload("res://domain/booking/show_resolver.gd")
 const AudienceCreativeSystem = preload("res://domain/audience/audience_creative_system.gd")
 const MediaMarketSystem = preload("res://domain/media/media_market_system.gd")
 const EconomySystem = preload("res://domain/economy/economy_system.gd")
+const AIPlanningService = preload("res://domain/ai/ai_planning_service.gd")
+const ContractSystem = preload("res://domain/people/contract_system.gd")
+const DiplomacySystem = preload("res://domain/diplomacy/diplomacy_system.gd")
+const ScoutingSystem = preload("res://domain/knowledge/scouting_system.gd")
 
 const PHASE_NAMES: Array[String] = [
     "preflight", "calendar_environment", "planning_snapshot", "commit_strategic_commands",
@@ -39,6 +43,10 @@ var _show_resolver: RefCounted = ShowResolver.new()
 var _audience: RefCounted = AudienceCreativeSystem.new()
 var _media_market: RefCounted = MediaMarketSystem.new()
 var _economy_system: RefCounted = EconomySystem.new()
+var _ai_planning: RefCounted = AIPlanningService.new()
+var _contracts: RefCounted = ContractSystem.new()
+var _diplomacy: RefCounted = DiplomacySystem.new()
+var _scouting: RefCounted = ScoutingSystem.new()
 
 func advance_month(input_state: RefCounted, input_chronicle: RefCounted, commands: Array = [], content_index: Dictionary = {}, phase_hooks: Dictionary = {}) -> RefCounted:
     var result: RefCounted = TurnResult.new()
@@ -87,7 +95,9 @@ func _run_phase(ordinal: int, context: RefCounted) -> Dictionary:
         7: return _audience_phase(context)
         8: return _media_market_phase(context)
         9: return _economy(context)
-        10, 11, 12: return _placeholder_phase(ordinal, context)
+        10: return _careers_contracts_phase(context)
+        11: return _diplomacy_phase(context)
+        12: return _knowledge_phase(context)
         13: return _chronicle_commit(context)
         14: return _postflight(context)
         _: return _failure("STATE001", "turn.phase", {"ordinal": ordinal})
@@ -108,6 +118,18 @@ func _calendar_environment(context: RefCounted) -> Dictionary:
 
 func _planning_snapshot(context: RefCounted) -> Dictionary:
     context.set("planning_snapshot", _state_codec.call("encode", context.get("state")))
+    if _phase_f_enabled(context):
+        var decoded: Dictionary = _state_codec.call("decode", context.get("planning_snapshot"), context.get("content_index"))
+        if not bool(decoded.get("passed", false)): return decoded
+        var planning_state: RefCounted = decoded.get("state")
+        var planned: Dictionary = _ai_planning.call("plan", planning_state, context.get("content_index"), context.get("random_service"))
+        if not bool(planned.get("passed", false)): return planned
+        if _state_codec.call("encode", planning_state) != context.get("planning_snapshot"):
+            return _failure("STATE003", "planning_snapshot", {"reason": "ai_planner_mutated_frozen_snapshot"})
+        (context.get("commands") as Array).append_array(planned.get("commands", []))
+        context.get("phase_outputs")["ai_decisions"] = planned.get("decisions", [])
+        context.get("phase_outputs")["ai_explanations"] = planned.get("explanations", {})
+        context.get("phase_outputs")["scouting_intents"] = planned.get("scouting_intents", [])
     return _invoke_hook(2, context)
 
 func _commit_commands(context: RefCounted) -> Dictionary:
@@ -119,6 +141,8 @@ func _commit_commands(context: RefCounted) -> Dictionary:
         if bool(command_result.get("accepted", false)):
             var command_type: String = str(command.get("command_type"))
             var payload: Dictionary = command.get("payload")
+            var details: Dictionary = command_result.get("details", {})
+            var explanation: Array = _command_explanation(context, command)
             if command_type == "command.set_champion":
                 context.get("transient_events").append(DomainEvent.make("ChampionshipChanged", str(context.get("target_date")), [str(payload.get("championship_id"))] + (payload.get("holder_person_ids", []) as Array), {"championship_id": payload.get("championship_id"), "holder_person_ids": (payload.get("holder_person_ids", []) as Array).duplicate()}, {"category": "booking", "historical_class": "state_change", "explanation": [{"source": "command", "command_id": command.get("command_id")}]}))
             elif command_type == "command.start_program":
@@ -127,6 +151,15 @@ func _commit_commands(context: RefCounted) -> Dictionary:
                 context.get("transient_events").append(DomainEvent.make("ProgramEnded", str(context.get("target_date")), [str(payload.get("program_id"))], payload.duplicate(true), {"category": "booking", "historical_class": "state_change", "explanation": [{"source": "command", "command_id": command.get("command_id")}]}))
             elif command_type == "command.sign_media_deal":
                 context.get("transient_events").append(DomainEvent.make("MediaDealSigned", str(context.get("target_date")), [str(payload.get("media_deal_id")), str(payload.get("promotion_id"))], payload.duplicate(true), {"category": "media", "historical_class": "state_change", "explanation": [{"source": "command", "command_id": command.get("command_id")}]}))
+            elif command_type in ["command.offer_contract", "command.counter_offer"] and str(details.get("outcome")) == "accepted":
+                context.get("transient_events").append(DomainEvent.make("TalentSigned", str(context.get("target_date")), [str(details.get("contract_id")), str(details.get("person_id")), str(details.get("promotion_id"))], details.duplicate(true), {"category": "talent", "historical_class": "state_change", "explanation": explanation}))
+            elif command_type == "command.renew_contract" and str(details.get("outcome")) == "accepted":
+                context.get("transient_events").append(DomainEvent.make("ContractRenewed", str(context.get("target_date")), [str(details.get("contract_id")), str(details.get("person_id")), str(details.get("promotion_id"))], details.duplicate(true), {"category": "talent", "historical_class": "state_change", "explanation": explanation}))
+            elif command_type == "command.release_person" and str(details.get("outcome")) == "released":
+                context.get("transient_events").append(DomainEvent.make("TalentReleased", str(context.get("target_date")), [str(details.get("contract_id")), str(details.get("person_id")), str(details.get("promotion_id"))], details.duplicate(true), {"category": "talent", "historical_class": "state_change", "explanation": explanation}))
+            elif command_type == "command.propose_agreement" and str(details.get("outcome")) == "accepted":
+                context.get("transient_events").append(DomainEvent.make("AgreementCreated", str(context.get("target_date")), [str(details.get("agreement_id"))] + (details.get("party_promotion_ids", []) as Array), details.duplicate(true), {"category": "diplomacy", "historical_class": "state_change", "explanation": explanation}))
+            _journal_ai_decision(context, command, details, explanation)
     return _invoke_hook(3, context)
 
 func _logistics_phase(context: RefCounted) -> Dictionary:
@@ -177,8 +210,26 @@ func _economy(context: RefCounted) -> Dictionary:
     if not bool(ledger_validation["passed"]): return ledger_validation
     return _invoke_hook(9, context)
 
-func _placeholder_phase(ordinal: int, context: RefCounted) -> Dictionary:
-    return _invoke_hook(ordinal, context)
+func _careers_contracts_phase(context: RefCounted) -> Dictionary:
+    if _phase_f_enabled(context):
+        var resolved: Dictionary = _contracts.call("resolve_expiry", context.get("state"), str(context.get("target_date")))
+        if not bool(resolved.get("passed", false)): return resolved
+        context.get("transient_events").append_array(resolved.get("events", []))
+    return _invoke_hook(10, context)
+
+func _diplomacy_phase(context: RefCounted) -> Dictionary:
+    if _phase_f_enabled(context):
+        var resolved: Dictionary = _diplomacy.call("resolve", context.get("state"), str(context.get("target_date")))
+        if not bool(resolved.get("passed", false)): return resolved
+        context.get("transient_events").append_array(resolved.get("events", []))
+    return _invoke_hook(11, context)
+
+func _knowledge_phase(context: RefCounted) -> Dictionary:
+    if _phase_f_enabled(context):
+        var updated: Dictionary = _scouting.call("update", context.get("state"), context.get("phase_outputs").get("scouting_intents", []), str(context.get("target_date")), context.get("random_service"), _phase_f_tuning(context))
+        if not bool(updated.get("passed", false)): return updated
+        context.get("phase_outputs")["scouting_reports"] = updated.get("reports", [])
+    return _invoke_hook(12, context)
 
 func _chronicle_commit(context: RefCounted) -> Dictionary:
     var hook_result: Dictionary = _invoke_hook(13, context)
@@ -209,6 +260,26 @@ func _phase_e_enabled(context: RefCounted) -> bool:
 
 func _tuning(context: RefCounted) -> Dictionary:
     return ((context.get("content_index") as Dictionary).get("phase_e_tuning", {}) as Dictionary).duplicate(true)
+
+func _phase_f_enabled(context: RefCounted) -> bool:
+    return (context.get("content_index") as Dictionary).get("phase_f_tuning", null) is Dictionary
+
+func _phase_f_tuning(context: RefCounted) -> Dictionary:
+    return ((context.get("content_index") as Dictionary).get("phase_f_tuning", {}) as Dictionary).duplicate(true)
+
+func _command_explanation(context: RefCounted, command: RefCounted) -> Array:
+    var explanation: Dictionary = context.get("phase_outputs").get("ai_explanations", {}).get(str(command.get("command_id")), {})
+    if explanation.is_empty(): return [{"source": "command", "command_id": command.get("command_id")}]
+    return [explanation]
+
+func _journal_ai_decision(context: RefCounted, command: RefCounted, details: Dictionary, explanation: Array) -> void:
+    var command_id: String = str(command.get("command_id"))
+    for decision_value: Variant in context.get("phase_outputs").get("ai_decisions", []):
+        if not decision_value is Dictionary: continue
+        var decision: Dictionary = decision_value
+        if str(decision.get("command_id")) == command_id and bool(decision.get("historical", false)) and not str(command.get("command_type")) in ["command.offer_contract", "command.counter_offer", "command.renew_contract", "command.release_person", "command.propose_agreement", "command.violate_territory"]:
+            context.get("transient_events").append(DomainEvent.make("AiStrategicDecision", str(context.get("target_date")), [str(decision.get("promotion_id"))], {"command_id": command_id, "command_type": command.get("command_type"), "result": details.duplicate(true)}, {"category": "ai", "historical_class": "state_change", "explanation": explanation}))
+            return
 
 func _invoke_hook(ordinal: int, context: RefCounted) -> Dictionary:
     var hooks: Dictionary = context.get("phase_hooks")

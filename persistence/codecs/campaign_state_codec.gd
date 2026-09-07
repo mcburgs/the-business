@@ -78,6 +78,11 @@ func encode(state: RefCounted) -> Dictionary:
 
 func decode(data: Dictionary, content_index: Dictionary = {}) -> Dictionary:
     var errors: Array[Dictionary] = []
+    _restore_keyed_integers(data, "minor_units")
+    _restore_keyed_integers(data, "counter_minor_units")
+    _restore_keyed_integers(data, "contract_demand_minor_units")
+    _restore_keyed_integers(data, "remaining_months")
+    _restore_monetary_observation_integers(data)
     _check_closed_required(data, TOP_FIELDS, TOP_FIELDS, "state", errors)
     _validate_top_types(data, errors)
     if not errors.is_empty():
@@ -208,6 +213,23 @@ func _restore_world_state_integer_types(world_state: Dictionary) -> void:
             for transaction_value: Variant in transactions:
                 if transaction_value is Dictionary:
                     _restore_keyed_integers(transaction_value, "minor_units")
+
+func _restore_monetary_observation_integers(data: Dictionary) -> void:
+    var bases: Variant = data.get("knowledge_bases", {})
+    if not bases is Dictionary: return
+    for base_value: Variant in (bases as Dictionary).values():
+        if not base_value is Dictionary: continue
+        var observations: Variant = (base_value as Dictionary).get("observations", [])
+        if not observations is Array: continue
+        for observation_value: Variant in observations:
+            if not observation_value is Dictionary or str((observation_value as Dictionary).get("field_id", "")) != "contract.demand_minor_units": continue
+            var observation: Dictionary = observation_value
+            var estimate_range: Variant = observation.get("range", {})
+            if estimate_range is Dictionary:
+                _restore_integer_key(estimate_range, "min")
+                _restore_integer_key(estimate_range, "max")
+            _restore_integer_key(observation, "bias")
+            _restore_integer_key(observation, "error_margin")
 
 func _restore_keyed_integers(value: Variant, key_name: String) -> void:
     if value is Dictionary:

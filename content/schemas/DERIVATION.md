@@ -111,3 +111,27 @@ Phase E derives only responsibilities directly stated by the governing GDD, Tech
 ## Intentionally preserved open questions
 
 Final balance, breakout frequency, detailed booking heuristics, split/merge depth beyond the current coherent hooks, advanced title politics, deep injuries/careers, sponsorship/merchandise/debt, national media/PPV/streaming, rival strategy, scouting, final Chronicle physical segmentation, and production UI remain open for later phases. A recovered original machine-schema package must be compared against this controlled reconstruction before incompatible shapes are silently adopted.
+
+---
+
+# Phase F competitive-world reconstruction addendum
+
+## Status
+
+The original Phase 0 machine-readable definitions for organizational scouting reports, pending contract negotiations, promotion-level relations, AI decision explanations and competitive-world tuning remain **not supplied**. Phase F therefore performs a fifth bounded **controlled reconstruction**. It does not claim that these provisional nested records reproduce an unavailable canonical schema.
+
+## Directly reconstructed contracts
+
+Phase F implements only responsibilities stated by the governing documents: organization-owned knowledge with known/estimated/unknown projections; familiarity and confidence that improve through scouting; exclusive contracts with offer, counteroffer, renewal, release and expiry pressure; separate Owner, Talent, Touring, Booker, Recovery and Diplomacy planners; identical player/AI command resolution; contested multi-component market influence; visible recovery behavior; shallow agreements and hostile-entry consequences; and Chronicle reconstruction without resimulation.
+
+## Controlled implementation choices
+
+- `content_index.phase_f_tuning` holds provisional strategy weights, recovery thresholds, roster targets, scouting margins and agreement thresholds. These are acceptance tuning, not final balance.
+- `world_state.contract_negotiations_v1`, `promotion_relations_v1`, `pending_territory_violations_v1` and `talent_shares_v1` are versioned migration-aware extension records.
+- Scouting may read authoritative truth only inside phase-12 observation resolution to create a bounded, biased estimate. Rival planners consume only KnowledgeProjection values and never receive that truth.
+- AI decision explanations retain goal, observed state, strategy weight, pressure/opportunity/inertia where applicable, bounded noise and principal reasons. They are explainability records, not a final UI schema.
+- HistoricalProjection adds contract, knowledge and promotion-relation state; Chronicle remains sparse checkpoint plus ordered deltas and does not replay AI, commands or RandomService.
+
+## Intentionally preserved open questions
+
+Deep contract clauses and disputes, detailed career/injury development, ownership succession, acquisitions, sophisticated alliances and talent exchanges, final AI utility functions, final scouting calibration, production balance, UI presentation and physical Chronicle segmentation remain open.

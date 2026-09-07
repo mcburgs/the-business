@@ -166,10 +166,15 @@ func _validate_references(state: RefCounted, content_index: Dictionary, errors: 
         _money_values_recursive(contract.get("compensation"), "contracts[" + id + "].compensation", errors)
         _runtime_ref(person_id, "person", people, "contracts[" + id + "].person_id", errors)
         _runtime_ref(promotion_id, "promotion", promotions, "contracts[" + id + "].promotion_id", errors)
-        if people.has(person_id) and not id in ((people[person_id] as RefCounted).get("active_contract_ids") as Array):
+        var is_active: bool = str(contract.get("status")) == "active"
+        if is_active and people.has(person_id) and not id in ((people[person_id] as RefCounted).get("active_contract_ids") as Array):
             _add(errors, "STATE003", "contracts[" + id + "]", {"reason": "person_contract_index_missing", "person_id": person_id})
-        if promotions.has(promotion_id) and not id in ((promotions[promotion_id] as RefCounted).get("contract_ids") as Array):
+        if is_active and promotions.has(promotion_id) and not id in ((promotions[promotion_id] as RefCounted).get("contract_ids") as Array):
             _add(errors, "STATE003", "contracts[" + id + "]", {"reason": "promotion_contract_index_missing", "promotion_id": promotion_id})
+        if not is_active and people.has(person_id) and id in ((people[person_id] as RefCounted).get("active_contract_ids") as Array):
+            _add(errors, "STATE003", "contracts[" + id + "]", {"reason": "inactive_contract_in_person_active_index", "person_id": person_id})
+        if not is_active and promotions.has(promotion_id) and id in ((promotions[promotion_id] as RefCounted).get("contract_ids") as Array):
+            _add(errors, "STATE003", "contracts[" + id + "]", {"reason": "inactive_contract_in_promotion_active_index", "promotion_id": promotion_id})
 
     for id: String in DomainIds.sorted_keys(touring):
         var company: RefCounted = touring[id]
@@ -347,6 +352,8 @@ func _clause_reference_hints(value: Variant, markets: Dictionary, people: Dictio
             _id_array_refs(clause["person_ids"], people, "person", path + "[" + str(index) + "].person_ids", errors)
         if clause.has("promotion_ids"):
             _id_array_refs(clause["promotion_ids"], promotions, "promotion", path + "[" + str(index) + "].promotion_ids", errors)
+        if clause.has("protected_promotion_id"):
+            _runtime_ref(str(clause["protected_promotion_id"]), "promotion", promotions, path + "[" + str(index) + "].protected_promotion_id", errors)
 
 func _definition_id_array_refs(values: Variant, store: Dictionary, path: String, errors: Array[Dictionary]) -> void:
     if not values is Array:
@@ -473,10 +480,20 @@ func _validate_ranges(state: RefCounted, errors: Array[Dictionary]) -> void:
                 var observation_path: String = "knowledge_bases[" + owner_id + "].observations[" + str(index) + "]"
                 if (observation as Dictionary).has("confidence"):
                     _normalized((observation as Dictionary)["confidence"], observation_path + ".confidence", errors)
+                var monetary_estimate: bool = str((observation as Dictionary).get("field_id", "")) == "contract.demand_minor_units"
                 if (observation as Dictionary).has("bias"):
-                    _signed((observation as Dictionary)["bias"], observation_path + ".bias", errors)
+                    if monetary_estimate:
+                        if not _finite_number((observation as Dictionary)["bias"]):
+                            _add(errors, "STATE001", observation_path + ".bias", {"reason": "finite_number_required"})
+                    else:
+                        _signed((observation as Dictionary)["bias"], observation_path + ".bias", errors)
                 if (observation as Dictionary).has("error_margin"):
-                    _normalized((observation as Dictionary)["error_margin"], observation_path + ".error_margin", errors)
+                    if monetary_estimate:
+                        var margin: Variant = (observation as Dictionary)["error_margin"]
+                        if not _finite_number(margin) or float(margin) < 0.0:
+                            _add(errors, "STATE001", observation_path + ".error_margin", {"reason": "nonnegative_finite_number_required"})
+                    else:
+                        _normalized((observation as Dictionary)["error_margin"], observation_path + ".error_margin", errors)
                 if (observation as Dictionary).has("range"):
                     var estimate_range: Variant = (observation as Dictionary)["range"]
                     if estimate_range is Dictionary and (estimate_range as Dictionary).has("min") and (estimate_range as Dictionary).has("max"):

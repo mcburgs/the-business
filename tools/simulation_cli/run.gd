@@ -3,6 +3,7 @@ extends SceneTree
 const ProjectVersion = preload("res://app/bootstrap/project_version.gd")
 const PhaseDFixture = preload("res://tests/helpers/phase_d_fixture.gd")
 const PhaseEFixture = preload("res://tests/helpers/phase_e_fixture.gd")
+const PhaseFFixture = preload("res://tests/helpers/phase_f_fixture.gd")
 const MonthPipeline = preload("res://app/session/month_pipeline.gd")
 const RandomService = preload("res://app/session/random_service.gd")
 const SaveService = preload("res://persistence/services/save_service.gd")
@@ -15,7 +16,7 @@ const EXIT_FAILURE: int = 1
 func _init() -> void:
     var options: Dictionary = _parse_args(OS.get_cmdline_user_args())
     var campaign_ref: String = str(options.get("campaign", "fixture:phase_d"))
-    var months: int = int(options.get("months", 12))
+    var months: int = int(options.get("months", int(options.get("years", 1)) * 12))
     var seed: int = int(options.get("seed", 12345))
     var session: Dictionary = _create_session(campaign_ref, seed)
     if not bool(session.get("passed", false)):
@@ -58,6 +59,8 @@ func _init() -> void:
     var summary: Dictionary = _summary(campaign_ref, months, seed, completed, state, chronicle)
     if str(session.get("source_kind")) == "phase_e_fixture":
         summary["strategic"] = _phase_e_strategic_summary(state, chronicle, strategic_totals)
+    elif str(session.get("source_kind")) == "phase_f_fixture":
+        summary["competition"] = _phase_f_competition_summary(state)
     summary["save_roundtrip"] = save_result
     summary["passed"] = true
     print("WE_SIM_SUMMARY " + JSON.stringify(summary))
@@ -79,6 +82,8 @@ func _create_session(campaign_ref: String, seed: int) -> Dictionary:
         if fixture_id in ["phase_e_good", "phase_e_bad"]:
             var strategy: String = "good" if fixture_id == "phase_e_good" else "bad"
             return {"passed": true, "state": PhaseEFixture.make_state(seed), "chronicle": PhaseEFixture.make_chronicle(), "content_index": PhaseEFixture.content_index(), "source_kind": "phase_e_fixture", "strategy": strategy}
+        if fixture_id == "phase_f_competition":
+            return {"passed": true, "state": PhaseFFixture.make_state(seed), "chronicle": PhaseFFixture.make_chronicle(), "content_index": PhaseFFixture.content_index(), "source_kind": "phase_f_fixture"}
         return _failure("CLI001", "campaign", {"reason": "unknown_fixture", "fixture_id": fixture_id})
     return _failure("CLI001", "campaign", {"reason": "unsupported_campaign_reference", "supported_schemes": ["fixture:<id>", "save:<save_id>"]})
 
@@ -115,6 +120,8 @@ func _parse_args(arguments: PackedStringArray) -> Dictionary:
         elif argument == "--campaign" and index + 1 < arguments.size(): index += 1; options["campaign"] = arguments[index]
         elif argument.begins_with("--months="): options["months"] = int(argument.trim_prefix("--months="))
         elif argument == "--months" and index + 1 < arguments.size(): index += 1; options["months"] = int(arguments[index])
+        elif argument.begins_with("--years="): options["years"] = int(argument.trim_prefix("--years="))
+        elif argument == "--years" and index + 1 < arguments.size(): index += 1; options["years"] = int(arguments[index])
         elif argument.begins_with("--seed="): options["seed"] = int(argument.trim_prefix("--seed="))
         elif argument == "--seed" and index + 1 < arguments.size(): index += 1; options["seed"] = int(arguments[index])
         elif argument == "--save-roundtrip": options["save_roundtrip"] = true
@@ -184,6 +191,20 @@ func _active_media_summary(state: RefCounted) -> Array[Dictionary]:
         output.append({"id": deal_id, "medium_id": deal.get("medium_id"), "status": deal.get("status"), "reach_market_ids": (deal.get("reach_market_ids") as Array).duplicate(true)})
     output.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.get("id")) < str(b.get("id")))
     return output
+
+func _phase_f_competition_summary(state: RefCounted) -> Dictionary:
+    var promotions: Dictionary = {}
+    for promotion_id: String in (state.get("promotions") as Dictionary).keys():
+        var promotion: RefCounted = (state.get("promotions") as Dictionary)[promotion_id]
+        promotions[promotion_id] = {"lifecycle": promotion.get("lifecycle"), "cash_minor_units": (promotion.get("cash") as Dictionary).get("minor_units"), "prestige": promotion.get("prestige"), "momentum": promotion.get("momentum"), "active_contracts": (promotion.get("contract_ids") as Array).size(), "strategy_profile_id": promotion.get("strategy_profile_id")}
+    var markets: Dictionary = {}
+    for market_id: String in (state.get("markets") as Dictionary).keys(): markets[market_id] = {"wrestling_interest": ((state.get("markets") as Dictionary)[market_id] as RefCounted).get("wrestling_interest"), "influence_by_promotion": (((state.get("markets") as Dictionary)[market_id] as RefCounted).get("influence_by_promotion") as Dictionary).duplicate(true)}
+    return {"promotions": promotions, "markets": markets, "agreements": (state.get("agreements") as Dictionary).size(), "contracts": (state.get("contracts") as Dictionary).size(), "knowledge_observations": _knowledge_observation_count(state), "financial_stress_by_promotion": ((state.get("world_state") as Dictionary).get("financial_stress_by_promotion", {}) as Dictionary).duplicate(true)}
+
+func _knowledge_observation_count(state: RefCounted) -> int:
+    var count: int = 0
+    for base_value: Variant in (state.get("knowledge_bases") as Dictionary).values(): count += ((base_value as RefCounted).get("observations") as Array).size()
+    return count
 
 func _finish_failure(campaign_ref: String, requested: int, seed: int, completed: int, errors: Array, state: Variant, chronicle: Variant) -> void:
     var failure: Dictionary = {

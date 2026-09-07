@@ -5,6 +5,11 @@ const CommandResult = preload("res://app/commands/command_result.gd")
 const TouringCompanyState = preload("res://domain/touring/touring_company_state.gd")
 const ProgramState = preload("res://domain/booking/program_state.gd")
 const MediaDealState = preload("res://domain/media/media_deal_state.gd")
+const ContractSystem = preload("res://domain/people/contract_system.gd")
+const DiplomacySystem = preload("res://domain/diplomacy/diplomacy_system.gd")
+
+var _contracts: RefCounted = ContractSystem.new()
+var _diplomacy: RefCounted = DiplomacySystem.new()
 
 const COMMAND_TYPES: Array[String] = [
     "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
@@ -38,10 +43,17 @@ func apply(state: RefCounted, command: RefCounted, content_index: Dictionary = {
         "command.book_market_focus": return _apply_book_market_focus(state, command)
         "command.set_local_media_spend": return _apply_local_media_spend(state, command)
         "command.sign_media_deal": return _apply_sign_media_deal(state, command)
+        "command.offer_contract": return _contracts.call("apply_offer", state, command)
+        "command.counter_offer": return _contracts.call("apply_counter", state, command)
+        "command.renew_contract": return _contracts.call("apply_renew", state, command)
+        "command.release_person": return _contracts.call("apply_release", state, command)
+        "command.propose_agreement": return _diplomacy.call("apply_proposal", state, command, content_index.get("phase_f_tuning", {}))
+        "command.violate_territory": return _diplomacy.call("apply_violation", state, command)
+        "command.accept_talent_share": return _diplomacy.call("apply_talent_share", state, command)
         _:
             return CommandResult.rejection(
                 str(command.get("command_id")), "CMD001", "command_type", "validation.cmd001",
-                {"reason": "resolution_deferred_beyond_phase_e", "command_type": command.get("command_type")}
+                {"reason": "resolution_deferred_beyond_phase_f", "command_type": command.get("command_type")}
             )
 
 func sort_commands(commands: Array) -> Array:

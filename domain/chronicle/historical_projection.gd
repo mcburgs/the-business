@@ -10,6 +10,9 @@ static func from_campaign_state(state: RefCounted, date_value: String = "") -> D
         "schema_version": SCHEMA_VERSION,
         "date": date,
         "promotions": {},
+        "contracts": {},
+        "knowledge": {},
+        "promotion_relations": (state.get("world_state") as Dictionary).get("promotion_relations_v1", {}).duplicate(true),
         "people_audience": {},
         "touring_companies": {},
         "programs": {},
@@ -47,6 +50,21 @@ static func from_campaign_state(state: RefCounted, date_value: String = "") -> D
             "current_hot_state": _copy_variant(person.get("current_hot_state")),
         }
         projection["identity_refs"][person_id] = {"family": "person", "display_name": str(person.get("display_name")), "lifecycle": str(person.get("lifecycle"))}
+    for contract_id: String in DomainIds.sorted_keys(state.get("contracts")):
+        var contract: RefCounted = (state.get("contracts") as Dictionary)[contract_id]
+        projection["contracts"][contract_id] = {
+            "person_id": str(contract.get("person_id")),
+            "promotion_id": str(contract.get("promotion_id")),
+            "status": str(contract.get("status")),
+            "start_date": str(contract.get("start_date")),
+            "end_date": contract.get("end_date"),
+            "compensation": (contract.get("compensation") as Dictionary).duplicate(true),
+            "exclusivity_id": str(contract.get("exclusivity_id")),
+        }
+        projection["identity_refs"][contract_id] = {"family": "contract", "display_name": contract_id, "lifecycle": str(contract.get("status"))}
+    for owner_id: String in DomainIds.sorted_keys(state.get("knowledge_bases")):
+        var knowledge: RefCounted = (state.get("knowledge_bases") as Dictionary)[owner_id]
+        projection["knowledge"][owner_id] = {"observations": (knowledge.get("observations") as Array).duplicate(true), "familiarity_by_subject": (knowledge.get("familiarity_by_subject") as Dictionary).duplicate(true)}
     for company_id: String in DomainIds.sorted_keys(state.get("touring_companies")):
         var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
         projection["touring_companies"][company_id] = {
@@ -102,6 +120,8 @@ static func from_campaign_state(state: RefCounted, date_value: String = "") -> D
             "status": str(agreement.get("status")),
             "party_promotion_ids": (agreement.get("party_promotion_ids") as Array).duplicate(),
             "clauses": (agreement.get("clauses") as Array).duplicate(true),
+            "trust_effect": float(agreement.get("trust_effect")),
+            "last_violation_event_id": agreement.get("last_violation_event_id"),
         }
         projection["identity_refs"][agreement_id] = {"family": "agreement", "display_name": agreement_id, "lifecycle": str(agreement.get("status"))}
     for deal_id: String in DomainIds.sorted_keys(state.get("media_deals")):

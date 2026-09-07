@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase E repository/content/strategic-loop checks that do not require Godot."""
+"""Phase F repository/content/competitive-world checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -80,6 +80,18 @@ REQUIRED_FILES = [
     "tests/unit/test_phase_e_commands_logistics.gd", "tests/unit/test_phase_e_booking_audience.gd",
     "tests/unit/test_phase_e_economy_media_hot.gd", "docs/PHASE_E_ACCEPTANCE.md",
     "docs/PHASE_E_RUNTIME_RESULT.md",
+    "domain/ai/ai_planning_view.gd", "domain/ai/ai_planning_service.gd",
+    "domain/ai/owner_strategy.gd", "domain/ai/talent_manager.gd",
+    "domain/ai/touring_planner.gd", "domain/ai/booker_ai.gd",
+    "domain/ai/recovery_ai.gd", "domain/ai/diplomacy_ai.gd",
+    "domain/people/contract_system.gd", "domain/knowledge/scouting_system.gd",
+    "domain/diplomacy/diplomacy_system.gd", "tests/helpers/phase_f_fixture.gd",
+    "tests/unit/test_phase_f_ai_boundary.gd", "tests/unit/test_phase_f_contracts.gd",
+    "tests/unit/test_phase_f_knowledge_ai.gd", "tests/unit/test_phase_f_recovery_diplomacy.gd",
+    "tests/integration/test_phase_f_competition.gd", "tests/integration/test_phase_f_chronicle_save.gd",
+    "tools/simulation_cli/phase_f_soak.gd", "docs/PHASE_F_ACCEPTANCE.md",
+    "docs/PHASE_F_RUNTIME_RESULT.md", "tests/soak/PHASE_F_SOAK_REPORT.md",
+    "tests/soak/phase_f_5_year_soak.json",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -323,13 +335,13 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
-    # Phase E static strategic-loop gates. These complement, not replace, the real Godot runtime tests.
+    # Phase F static competitive-world gates. These complement, not replace, the real Godot runtime tests.
     try:
         version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
-        if 'const BUILD_PHASE: String = "E"' not in version_text:
-            failures.append("Phase E metadata must report build phase E")
-        if 'const GAME_VERSION: String = "0.0.0-phase-e"' not in version_text:
-            failures.append("verified Phase E game version must be 0.0.0-phase-e")
+        if 'const BUILD_PHASE: String = "F"' not in version_text:
+            failures.append("Phase F metadata must report build phase F")
+        if 'const GAME_VERSION: String = "0.0.0-phase-f"' not in version_text:
+            failures.append("verified Phase F game version must be 0.0.0-phase-f")
     except OSError as exc:
         failures.append(f"unable to inspect Phase E version metadata: {exc}")
 
@@ -453,6 +465,63 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase E derivation record: {exc}")
 
+    # Phase F architecture-sensitive static gates.
+    try:
+        pipeline_text = (ROOT / "app/session/month_pipeline.gd").read_text(encoding="utf-8")
+        for seam in ("AIPlanningService", "ContractSystem", "DiplomacySystem", "ScoutingSystem"):
+            if seam not in pipeline_text:
+                failures.append(f"Phase F pipeline is missing competitive-world seam: {seam}")
+        if "ai_planner_mutated_frozen_snapshot" not in pipeline_text:
+            failures.append("Phase F pipeline must enforce frozen planning-snapshot immutability")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F pipeline integration: {exc}")
+
+    try:
+        service_text = (ROOT / "domain/ai/ai_planning_service.gd").read_text(encoding="utf-8")
+        for module in ("OwnerStrategy", "TalentManager", "TouringPlanner", "BookerAI", "RecoveryAI", "DiplomacyAI"):
+            if module not in service_text:
+                failures.append(f"Phase F AI service is missing separated module: {module}")
+        if "CommandEnvelope" not in service_text:
+            failures.append("Phase F AI decisions must enter the canonical CommandEnvelope path")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F AI separation: {exc}")
+
+    try:
+        planner_view = (ROOT / "domain/ai/ai_planning_view.gd").read_text(encoding="utf-8")
+        if "KnowledgeQueryService" not in planner_view or '"external_talent"' not in planner_view:
+            failures.append("Phase F external-talent planning must use knowledge projections")
+        for rel in ("owner_strategy.gd", "talent_manager.gd", "touring_planner.gd", "booker_ai.gd", "recovery_ai.gd", "diplomacy_ai.gd"):
+            planner = (ROOT / "domain/ai" / rel).read_text(encoding="utf-8")
+            if 'state.get("people")' in planner or 'state.get("contracts")' in planner or "ShowPlan" in planner or "ShowResult" in planner:
+                failures.append(f"Phase F planner bypasses knowledge/card boundary: domain/ai/{rel}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F knowledge/card boundary: {exc}")
+
+    try:
+        soak_text = (ROOT / "tools/simulation_cli/phase_f_soak.gd").read_text(encoding="utf-8")
+        if "WE_PHASE_F_SOAK_SUMMARY" not in soak_text or "we.phase_f.soak.v1" not in soak_text:
+            failures.append("Phase F soak CLI must expose machine-readable diagnostics")
+        soak_data = load_json(ROOT / "tests/soak/phase_f_5_year_soak.json", failures)
+        if not isinstance(soak_data, dict) or not soak_data.get("passed") or soak_data.get("phase") != "F" or soak_data.get("game_version") != "0.0.0-phase-f" or soak_data.get("years_per_run", 0) < 5:
+            failures.append("Phase F must retain a passing multi-year soak artifact")
+        elif (
+            not soak_data.get("repeated_seed_deterministic")
+            or soak_data.get("distinct_world_fingerprints") != soak_data.get("unique_seed_count")
+            or soak_data.get("active_promotion_endings") != soak_data.get("run_count", 0) * 3
+            or soak_data.get("maximum_market_concentration", 1.0) >= 0.95
+            or len(soak_data.get("policy_wins", {})) < 2
+        ):
+            failures.append("Phase F soak artifact does not prove replay, divergence, survival, bounded concentration and policy variance")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F soak evidence: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase f competitive-world reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase F controlled competitive-world reconstruction must be explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F derivation record: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -470,7 +539,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_e.static_check.v1",
+        "schema": "we.phase_f.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

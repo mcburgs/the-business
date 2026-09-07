@@ -2,14 +2,14 @@
 
 **The Business** is the working repository for the Wrestling Empire game project: an offline, simulation-first wrestling-promotion strategy game built in Godot.
 
-This repository is currently at **Phase E: Strategic Loop**, verified under the pinned Godot 4.7.2-stable runtime. Phase A established the architecture baseline, Phase B the generic static-content foundation, Phase C the authoritative deterministic campaign-state kernel, Phase D the deterministic month/Chronicle/save spine, and Phase E adds the first meaningful headless wrestling-business loop: touring, abstract booking, shows, local audience development, programs/titles, market influence, media, ledger-backed economics, and bounded hot/cold behavior.
+This repository is currently at **Phase F: Competitive World**, verified under the pinned Godot 4.7.2-stable runtime. Phase F turns the Phase E strategic loop into a multi-promotion world: three promotions observe incomplete information, issue ordinary commands through separated AI planners, compete for markets and talent, react to financial stress, and create shallow diplomatic consequences over multi-year simulations.
 
 ## Current baseline
 
 - Engine: **Godot 4.7.2-stable**
 - Verified runtime: **4.7.2.stable.official.ed1daf0bf**
-- Game version: **0.0.0-phase-e**
-- Build phase: **E**
+- Game version: **0.0.0-phase-f**
+- Build phase: **F**
 - Language: **typed GDScript**
 - Runtime posture: offline, single-process simulation with a replaceable presentation shell
 - Primary future target: Android phone
@@ -22,30 +22,30 @@ The scene tree is a shell around the domain model. Presentation may depend on Ap
 
 Great Lakes is data. The 1975 start date is content. Authored promotion/market/roster counts are scenario counts, not engine ceilings.
 
-The canonical 15-phase monthly pipeline remains the only turn-resolution spine. Phase E populates logistics, booking, show resolution, audience/creative, media/markets and economy without reordering that pipeline or bypassing the command boundary. Booking generates routine ShowPlans automatically; ShowResolver returns structured results/effects; downstream phases apply audience, influence/media and ledger consequences. Local overness/heat/shine/momentum are authoritative while drawing power remains derived. Market influence remains a bounded component vector rather than ownership. Historical reconstruction remains read-only checkpoint-plus-delta replay with no BookingSystem, ShowResolver, simulation or RandomService dependency.
+The canonical 15-phase monthly pipeline remains the only turn-resolution spine. Phase F freezes a planning snapshot in phase 2, gives every controlled promotion a knowledge-filtered planning view, and commits resulting AI/automation commands through the same phase-3 CommandRouter used by players. Owner, Talent, Touring, Booker, Recovery and Diplomacy decisions are separate modules. Booker AI supplies priorities and constraints; the Phase E BookingSystem still creates routine cards. Markets remain component influence spaces rather than owned flags, money remains ledger-backed, and Chronicle reconstruction remains checkpoint-plus-delta replay without AI, commands, RNG or simulation.
 
-Phase E deliberately does **not** implement strategic rival AI, the full talent market, deep careers/injuries/diplomacy, advanced national media/PPV/streaming, merchandise/sponsorship/debt depth, production UI, final balance, or final campaign population. Those remain later phases.
+Phase F deliberately keeps careers, clauses, diplomacy, recovery and scouting shallow. It does **not** implement deep injuries/medical systems, ownership succession, acquisitions, sophisticated alliances, advanced national media/PPV/streaming, merchandise/sponsorship/debt depth, production UI, final balance, or final campaign population.
 
 ## Schema note
 
-The original standalone Phase 0 machine-readable schema package referenced by the governing contracts was not supplied. Phase B reconstructed only the minimum static-content subset required by its gate; Phase C reconstructed only directly supported runtime-state/command/save contracts; Phase D reconstructed Chronicle/turn/save/ledger structures; Phase E reconstructs only the directly supported ShowPlan/ShowResult/audience/hot-state/effect/tuning structures required by the strategic loop. The derivation boundary and open policy questions are recorded in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
+The original standalone Phase 0 machine-readable schema package referenced by the governing contracts was not supplied. Phase F adds a bounded controlled reconstruction for scouting observations, pending contract negotiations, promotion relations, AI explanations and competition tuning. The derivation boundary and open policy questions are recorded in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
 
 ## Start here
 
-1. Read `BUILD.md` and `docs/PHASE_E_ACCEPTANCE.md`.
+1. Read `BUILD.md` and `docs/PHASE_F_ACCEPTANCE.md`.
 2. Run `python tools/static_repo_check.py`.
 3. Run the stock-Godot headless test gate:
 
    `godot --headless --path . --script res://tests/runner.gd`
 
-4. Run the Phase E coherent-deployment acceptance simulation:
+4. Run a three-promotion Phase F competition simulation:
 
-   `godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_e_good --months 12 --seed 424242 --save-roundtrip --save-id=phase_e_good_acceptance`
+   `godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_f_competition --years 2 --seed 424242 --save-roundtrip --save-id=phase_f_acceptance`
 
-5. Compare it with the equal-seed poor-deployment fixture:
+5. Run the repeated/varied-seed five-year soak matrix:
 
-   `godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_e_bad --months 12 --seed 424242 --save-roundtrip --save-id=phase_e_bad_acceptance`
+   `godot --headless --path . --script res://tools/simulation_cli/phase_f_soak.gd -- --years=5 --seeds=424242,424242,424243,424244,424245,424246,424247,424248`
 
-6. Preserve the verified Phase E gate when making later changes: fresh editor import under **Godot 4.7.2-stable** must remain free of retained parser/import/project-configuration errors. See `docs/PHASE_E_RUNTIME_RESULT.md` for recorded evidence.
+6. Preserve the verified Phase F gate when making later changes. See `docs/PHASE_F_RUNTIME_RESULT.md` for the pinned-engine evidence.
 
 The full governing documents are preserved under `docs/governing/`.

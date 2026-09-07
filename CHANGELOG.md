@@ -2,6 +2,17 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-f - 2026-09-07
+
+- Added knowledge-filtered, frozen-snapshot planning for three active promotions with deterministic Owner, Talent, Touring, Booker, Recovery and Diplomacy AI modules issuing ordinary command envelopes.
+- Added organization-owned scouting familiarity, confidence, bounded-error estimates and accumulated reports without exposing hidden true values to rival planners.
+- Added validated offer/counteroffer/renewal/release/expiry contract flows, active roster indexes and talent-market consequences while retaining ledger-only cash mutation.
+- Added competitive market entry/defense, visible recovery budget cuts under stress, shallow non-aggression/talent-share plumbing, and territory violations that remain possible but create trust, grievance and Chronicle consequences.
+- Expanded HistoricalProjection and persistence for contracts, knowledge and promotion relations; retained exact save/load and no-resimulation prior-world reconstruction.
+- Extended the generic simulation CLI with the Phase F competition fixture and added a reusable multi-seed/multi-year soak runner with machine-readable results.
+- Added six Phase F architecture/integration tests, bringing the pinned-engine suite to 31 tests while retaining all Phase A-E gates.
+- Verified Phase F under Godot `4.7.2.stable.official.ed1daf0bf`: repeated-seed determinism, varied-seed divergence, multi-policy competition, 24-month integration, five-year soak, Chronicle/save, static and fresh-editor gates pass.
+
 ## 0.0.0-phase-e - 2026-09-07
 
 - Added deterministic touring-company logistics with route/directive/budget handling, bounded travel pressure/fatigue, availability inputs, and canonical command-boundary mutation.

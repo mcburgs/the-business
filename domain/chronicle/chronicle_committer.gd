@@ -27,6 +27,10 @@ func commit_month(store: RefCounted, state: RefCounted, events: Array[Dictionary
         store.set("head_sequence", next_sequence)
         promoted.append(journaled)
         _index_event(store, journaled)
+        if str(journaled.get("event_type")) == "TerritoryViolated":
+            var agreement_id: String = str((journaled.get("facts", {}) as Dictionary).get("agreement_id", ""))
+            if (state.get("agreements") as Dictionary).has(agreement_id):
+                ((state.get("agreements") as Dictionary)[agreement_id] as RefCounted).set("last_violation_event_id", journaled.get("event_id"))
     var projection: Dictionary = HistoricalProjection.from_campaign_state(state, date)
     var cadence: int = maxi(1, int(store.get("checkpoint_cadence_months")))
     var should_checkpoint: bool = (store.get("checkpoints") as Array).is_empty() or int(state.get("turn_number")) % cadence == 0

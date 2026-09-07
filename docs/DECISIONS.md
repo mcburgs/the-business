@@ -121,3 +121,27 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted as a persistence-boundary repair
 **Decision:** Known integer-semantic values in open world-state and Chronicle structures are restored after Godot JSON parsing, while DomainEvent facts/explanations canonicalize finite floats to nine decimal places before journal publication. RNG internal state continues to use the Phase D decimal-string safeguard.
 **Reason:** Phase E exposed that Godot JSON parses integer-shaped nested numbers as floats and can round arbitrary computed doubles by one ULP. Deterministic save/resume requires stable authoritative/history representation rather than tolerance-based acceptance.
+
+## ADR-F-001 - Rival AI receives a sanitized frozen planning view
+
+**Status:** Accepted for Phase F
+**Decision:** Phase 2 serializes the authoritative CampaignState, decodes an isolated planning clone, and builds a promotion-scoped plain-data view. Own personnel data is visible to its organization; external talent ability, local value and demand enter only through KnowledgeQueryService projections. The pipeline rejects any planner mutation of the frozen clone.
+**Reason:** This enforces the governing knowledge boundary and prevents AI-only truth access while retaining deterministic planning.
+
+## ADR-F-002 - AI responsibilities remain separate command producers
+
+**Status:** Accepted for Phase F
+**Decision:** OwnerStrategy, TalentManager, TouringPlanner, BookerAI, RecoveryAI and DiplomacyAI remain separate modules coordinated by AIPlanningService. Their outputs are ordinary CommandEnvelope objects committed by CommandRouter. BookerAI may set push/protect/program priorities but does not construct ShowPlan or resolve shows.
+**Reason:** The Build Plan explicitly names god-manager AI and Booker-owned routine card generation as rework triggers.
+
+## ADR-F-003 - Shallow Phase F mutable records use the open world-state extension
+
+**Status:** Accepted as controlled reconstruction
+**Decision:** Pending negotiations, promotion-level trust/grievance, pending territory violations and talent-share records live in versioned `CampaignState.world_state` keys. Active ContractState and AgreementState objects remain authoritative domain records. HistoricalProjection retains the minimum contract, knowledge and promotion-relation state needed for prior-world reconstruction.
+**Reason:** The governing prose requires these behaviors, but the unavailable Phase 0 machine contracts do not specify final nested persistence records.
+
+## ADR-F-004 - Soak policy comparison rotates strategies across organization identities
+
+**Status:** Accepted for Phase F acceptance tooling
+**Decision:** The long soak deterministically rotates balanced, expansionist and defensive profiles across the three asymmetric fixture promotions by seed. Production mechanics are unchanged; the test fixture avoids mistaking a stronger initial roster/home market for an intrinsically superior policy.
+**Reason:** Policy variance must be evaluated across contexts rather than inferred from one fixed organization-policy pairing.
