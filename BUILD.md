@@ -10,9 +10,9 @@ Verify the executable first:
 godot --version
 ```
 
-The expected engine line is `4.7.2.stable` / `4.7.2-stable` depending on platform output formatting. The Phase A verified official build was `4.7.2.stable.official.ed1daf0bf`.
+The verified official runtime is `4.7.2.stable.official.ed1daf0bf`.
 
-## Static repository/content check
+## Static repository/content/strategic-loop check
 
 From the repository root:
 
@@ -20,7 +20,7 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-For Phase B this checks repository shape, the engine pin, architecture/special-case guards, JSON readability, schema reconstruction metadata, safe pack-file references, required validation fixtures, and the Great Lakes skeleton envelope. It does not replace an engine run.
+For Phase F this preserves the complete Phase A-E gate and adds checks for Phase F metadata, frozen planning, separated AI modules, knowledge/card boundaries, contract/scouting/diplomacy seams, long-soak evidence and controlled machine-contract reconstruction. It does not replace an engine run.
 
 ## Canonical headless gate
 
@@ -32,7 +32,7 @@ The runner:
 
 - boots under stock Godot without an editor plugin;
 - recursively discovers `test_*.gd` scripts under `tests/unit/` and `tests/integration/`;
-- executes the retained Phase A architecture/bootstrap tests and Phase B content/schema/fixture tests;
+- executes all retained Phase A-E tests plus Phase F AI-boundary, knowledge, contract, recovery/diplomacy, competition, Chronicle and save/recovery tests;
 - emits JSON-line diagnostics prefixed `WE_DIAG`;
 - emits one machine-readable summary prefixed `WE_TEST_SUMMARY`;
 - writes a JSON result artifact to `user://diagnostics/headless-results.json` by default;
@@ -46,13 +46,53 @@ godot --headless --path . --script res://tests/runner.gd -- --output=res://tests
 
 `tests/output/*.json` is intentionally ignored by Git.
 
-## Phase B acceptance evidence
+## Phase E headless strategic-loop gates
 
-A candidate is not complete merely because content files exist. `docs/PHASE_B_ACCEPTANCE.md` is the controlling implementation checklist for this phase. In particular, the same generic loader must load both the Great Lakes skeleton and a fixture with different entity counts, malformed packs must fail with specific codes, unsafe file references must be rejected, and no Great Lakes/1975 conditional may exist in application/domain code.
+The generic CLI under `tools/simulation_cli/` supports the retained Phase D fixture plus Phase E good/bad strategic schedules. Application/domain code contains no acceptance-scenario branch.
 
-The reconstructed `content/schemas/we.phase0.schema.json` is explicitly a controlled static-content replacement derived from the governing prose because the referenced original machine package was not supplied. See `content/schemas/DERIVATION.md`.
+Coherent strategy:
 
-The recorded verified Phase B runtime/editor result is in `docs/PHASE_B_RUNTIME_RESULT.md`.
+```text
+godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_e_good --months 12 --seed 424242 --save-roundtrip --save-id=phase_e_good_acceptance
+```
+
+Poor/concentrated strategy with the same seed:
+
+```text
+godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_e_bad --months 12 --seed 424242 --save-roundtrip --save-id=phase_e_bad_acceptance
+```
+
+The decisive acceptance proposition is comparative: materially different command schedules must create materially different, explainable results in stars, programs, markets/influence and money while remaining deterministic, saveable and historically reconstructable.
+
+## Phase F competitive-world gates
+
+Single competition run:
+
+```text
+godot --headless --path . --script res://tools/simulation_cli/run.gd -- --campaign fixture:phase_f_competition --years 2 --seed 424242 --save-roundtrip --save-id=phase_f_acceptance
+```
+
+Five-year repeated/varied-seed soak:
+
+```text
+godot --headless --path . --script res://tools/simulation_cli/phase_f_soak.gd -- --years=5 --seeds=424242,424242,424243,424244,424245,424246,424247,424248 --output=res://tests/soak/phase_f_5_year_soak.json
+```
+
+The soak output uses schema `we.phase_f.soak.v1` and records fingerprints, policy winners, promotion survival, market concentration, shows, AI decision families, contract/diplomacy events, scouting, recovery, cash stress and Chronicle counts.
+
+## Phase F acceptance evidence
+
+`docs/PHASE_F_ACCEPTANCE.md` is the controlling Phase F checklist. `docs/PHASE_F_RUNTIME_RESULT.md` records pinned-engine commands/results. `tests/soak/phase_f_5_year_soak.json` and `tests/soak/PHASE_F_SOAK_REPORT.md` are the machine-readable and human-readable long-run records.
+
+## Phase E acceptance evidence
+
+`docs/PHASE_E_ACCEPTANCE.md` is the controlling Phase E implementation checklist and strategic comparison. `docs/PHASE_E_RUNTIME_RESULT.md` records the pinned-engine commands/results. The gate proves automatic booking without manual cards, deterministic show/audience/economy propagation, local audience divergence, component influence, ledger reconciliation, qualified hot/cold behavior, real-gameplay Chronicle reconstruction without resimulation/RNG, exact save/load/recovery, and retained Phase A-D regression safety.
+
+The original standalone machine-schema package remains unavailable. Phase E reconstructs only contracts directly supported by governing prose and records those boundaries in `content/schemas/DERIVATION.md` and `docs/DECISIONS.md`.
+
+## Earlier acceptance evidence
+
+Phase C acceptance remains recorded in `docs/PHASE_C_ACCEPTANCE.md` and `docs/PHASE_C_RUNTIME_RESULT.md`; Phase A/B records remain unchanged. Later phases must not reopen those baselines without a genuine architecture defect.
 
 ## Parse-only checks
 
@@ -62,15 +102,25 @@ The full headless runner is the acceptance command because it exercises discover
 godot --headless --path . --script res://tests/runner.gd --check-only
 ```
 
-## Fresh-clone editor import
+## Fresh editor import
 
-After headless tests pass, verify a clean clone/import under the pinned engine:
+After headless tests pass, verify a fresh import under the pinned engine. For command-line acceptance the equivalent shape is:
 
 ```text
-godot --editor --path .
+godot --headless --editor --path . --quit-after 120
 ```
 
-Phase B requires no parser/import warnings attributable to retained source/content. Generated `.godot/` cache data remains ignored.
+Phase F requires no retained parser/import/project-configuration errors attributable to source/content. Generated `.godot/` cache data remains ignored. Legitimate new `.gd.uid` sidecars generated by the pinned editor are retained in Git.
+
+## Final staged-tree hygiene
+
+Before committing a verified phase baseline:
+
+```text
+git diff --cached --check
+```
+
+Do not commit generated editor/build caches, logs, runtime test output, failure artifacts, or temporary files.
 
 ## Launch shell
 
@@ -85,20 +135,11 @@ The launch shell remains deliberately minimal and must not become an owner of do
 If Godot is not on PATH, invoke the pinned console executable directly. Example PowerShell shape:
 
 ```text
-& "C:\\path\\to\\Godot_v4.7.2-stable_win64_console.exe" --headless --path . --script res://tests/runner.gd
+& "C:\path\to\Godot_v4.7.2-stable_win64_console.exe" --headless --path . --script res://tests/runner.gd
 ```
 
 Use the actual local filename/path rather than changing repository files to match one workstation.
 
 ## Phase boundary
 
-Not part of Phase B:
-
-- mutable CampaignState or runtime entity stores;
-- command/result mutation architecture;
-- RandomService and gameplay simulation formulas;
-- current-state save codecs/migrations;
-- knowledge projection implementation;
-- Chronicle runtime capture/reconstruction;
-- deep historical content accuracy or completed roster population;
-- final names, portraits, visual assets, full international map, or custom-map editor.
+Phase F now includes strategic rival AI, scouting/knowledge growth, talent negotiation, recovery and shallow diplomacy. It intentionally does not claim deep careers/injuries, ownership succession, acquisitions, sophisticated alliances, advanced national media/PPV/streaming, sponsorship/merchandise/debt, production UI or final balance/content.

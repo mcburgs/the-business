@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase B repository/content checks that do not require Godot."""
+"""Phase F repository/content/competitive-world checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -24,7 +24,7 @@ REQUIRED_DIRS = [
     "assets/audio", "assets/fonts", "tools/content_validator", "tools/campaign_builder",
     "tools/simulation_cli", "tests/unit", "tests/integration", "tests/golden",
     "tests/soak", "tests/fixtures/phase_b/valid/mini_campaign",
-    "tests/fixtures/phase_b/invalid",
+    "tests/fixtures/phase_b/invalid", "tests/helpers",
 ]
 
 REQUIRED_FILES = [
@@ -38,6 +38,60 @@ REQUIRED_FILES = [
     "app/content/version_constraint.gd", "content/schemas/we.phase0.schema.json",
     "content/schemas/DERIVATION.md", "content/base/manifest.json",
     "content/campaigns/great_lakes_1975/manifest.json", "docs/PHASE_B_ACCEPTANCE.md",
+    "app/commands/command_envelope.gd", "app/commands/command_result.gd",
+    "app/commands/command_router.gd", "app/session/random_service.gd",
+    "app/queries/knowledge_query_service.gd", "app/queries/debug_truth_query.gd",
+    "domain/core/campaign_state.gd", "domain/core/campaign_state_validator.gd",
+    "domain/core/domain_ids.gd", "domain/core/entity_store.gd",
+    "domain/core/ownership_seat_state.gd", "domain/core/random_state.gd",
+    "domain/core/victory_state.gd", "domain/people/person_state.gd",
+    "domain/people/contract_state.gd", "domain/people/relationship_state.gd",
+    "domain/promotions/promotion_state.gd", "domain/world/market_state.gd",
+    "domain/world/region_state.gd", "domain/world/venue_state.gd",
+    "domain/touring/touring_company_state.gd", "domain/booking/championship_state.gd",
+    "domain/booking/program_state.gd", "domain/media/media_deal_state.gd",
+    "domain/diplomacy/agreement_state.gd", "domain/knowledge/knowledge_base.gd",
+    "domain/knowledge/knowledge_projection.gd", "domain/events/event_state.gd",
+    "domain/audience/drawing_power_query.gd",
+    "persistence/codecs/campaign_state_codec.gd", "persistence/migrations/state_migrator.gd",
+    "tests/helpers/phase_c_fixture.gd", "docs/PHASE_C_ACCEPTANCE.md",
+    "tests/unit/test_phase_c_state_invariants.gd", "tests/unit/test_phase_c_commands.gd",
+    "tests/unit/test_phase_c_random_service.gd", "tests/unit/test_phase_c_knowledge_projection.gd",
+    "tests/unit/test_phase_c_entity_store.gd",
+    "tests/integration/test_phase_c_state_roundtrip.gd",
+    "app/session/turn_context.gd", "app/session/turn_result.gd", "app/session/month_pipeline.gd",
+    "domain/events/domain_event.gd", "domain/economy/ledger_service.gd",
+    "domain/chronicle/chronicle_store.gd", "domain/chronicle/chronicle_delta.gd",
+    "domain/chronicle/historical_projection.gd", "domain/chronicle/chronicle_committer.gd",
+    "domain/chronicle/chronicle_query_service.gd", "domain/chronicle/chronicle_validator.gd",
+    "domain/chronicle/identity_catalog_service.gd", "persistence/codecs/chronicle_codec.gd",
+    "persistence/services/save_service.gd", "tools/simulation_cli/run.gd",
+    "tests/helpers/phase_d_fixture.gd", "tests/unit/test_phase_d_pipeline.gd",
+    "tests/unit/test_phase_d_ledger.gd", "tests/integration/test_phase_d_chronicle_reconstruction.gd",
+    "tests/integration/test_phase_d_save_service.gd",
+    "docs/PHASE_D_ACCEPTANCE.md", "docs/PHASE_D_RUNTIME_RESULT.md",
+    "domain/core/phase_e_math.gd", "domain/touring/logistics_system.gd",
+    "domain/booking/show_plan.gd", "domain/booking/booking_system.gd",
+    "domain/booking/show_result.gd", "domain/booking/show_resolver.gd",
+    "domain/audience/audience_creative_system.gd", "domain/audience/hot_state_system.gd",
+    "domain/world/influence_query.gd", "domain/media/media_market_system.gd",
+    "domain/economy/economy_system.gd", "tests/helpers/phase_e_fixture.gd",
+    "tests/integration/test_phase_e_strategic_loop.gd", "tests/integration/test_phase_e_chronicle_save.gd",
+    "tests/unit/test_phase_e_commands_logistics.gd", "tests/unit/test_phase_e_booking_audience.gd",
+    "tests/unit/test_phase_e_economy_media_hot.gd", "docs/PHASE_E_ACCEPTANCE.md",
+    "docs/PHASE_E_RUNTIME_RESULT.md",
+    "domain/ai/ai_planning_view.gd", "domain/ai/ai_planning_service.gd",
+    "domain/ai/owner_strategy.gd", "domain/ai/talent_manager.gd",
+    "domain/ai/touring_planner.gd", "domain/ai/booker_ai.gd",
+    "domain/ai/recovery_ai.gd", "domain/ai/diplomacy_ai.gd",
+    "domain/people/contract_system.gd", "domain/knowledge/scouting_system.gd",
+    "domain/diplomacy/diplomacy_system.gd", "tests/helpers/phase_f_fixture.gd",
+    "tests/unit/test_phase_f_ai_boundary.gd", "tests/unit/test_phase_f_contracts.gd",
+    "tests/unit/test_phase_f_knowledge_ai.gd", "tests/unit/test_phase_f_recovery_diplomacy.gd",
+    "tests/integration/test_phase_f_competition.gd", "tests/integration/test_phase_f_chronicle_save.gd",
+    "tools/simulation_cli/phase_f_soak.gd", "docs/PHASE_F_ACCEPTANCE.md",
+    "docs/PHASE_F_RUNTIME_RESULT.md", "tests/soak/PHASE_F_SOAK_REPORT.md",
+    "tests/soak/phase_f_5_year_soak.json",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -256,7 +310,7 @@ def check() -> dict:
             if token in text:
                 failures.append(f"domain boundary violation token {token!r}: {script.relative_to(ROOT)}")
 
-    for code_root in (ROOT / "app", ROOT / "domain"):
+    for code_root in (ROOT / "app", ROOT / "domain", ROOT / "persistence"):
         for script in sorted(code_root.rglob("*.gd")):
             lowered = script.read_text(encoding="utf-8").lower()
             for token in FORBIDDEN_SCENARIO_TOKENS:
@@ -281,6 +335,193 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
+    # Phase F static competitive-world gates. These complement, not replace, the real Godot runtime tests.
+    try:
+        version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
+        if 'const BUILD_PHASE: String = "F"' not in version_text:
+            failures.append("Phase F metadata must report build phase F")
+        if 'const GAME_VERSION: String = "0.0.0-phase-f"' not in version_text:
+            failures.append("verified Phase F game version must be 0.0.0-phase-f")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E version metadata: {exc}")
+
+    expected_commands = {
+        "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
+        "command.create_touring_company", "command.assign_person", "command.set_route", "command.set_directive", "command.split_company", "command.merge_company",
+        "command.start_program", "command.end_program", "command.set_champion", "command.approve_major_outcome", "command.push_person", "command.protect_person",
+        "command.offer_contract", "command.counter_offer", "command.renew_contract", "command.release_person",
+        "command.book_market_focus", "command.set_local_media_spend", "command.sign_media_deal",
+        "command.propose_agreement", "command.violate_territory", "command.accept_talent_share",
+        "command.advance_month", "command.save_campaign",
+    }
+    try:
+        router_text = (ROOT / "app/commands/command_router.gd").read_text(encoding="utf-8")
+        observed_commands = set(re.findall(r'"(command\.[a-z_]+)"', router_text))
+        missing = sorted(expected_commands - observed_commands)
+        unexpected = sorted(observed_commands - expected_commands)
+        if missing:
+            failures.append(f"Phase C command catalog missing canonical commands: {missing}")
+        if unexpected:
+            failures.append(f"Phase C command catalog contains unexpected commands: {unexpected}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase C command catalog: {exc}")
+
+    random_service_path = ROOT / "app/session/random_service.gd"
+    for code_root in (ROOT / "app", ROOT / "domain", ROOT / "persistence"):
+        for script in sorted(code_root.rglob("*.gd")):
+            if script == random_service_path:
+                continue
+            text = script.read_text(encoding="utf-8")
+            for token in ("RandomNumberGenerator", "randf(", "randi(", "randi_range(", "randf_range("):
+                if token in text:
+                    failures.append(f"randomness boundary violation token {token!r}: {script.relative_to(ROOT)}")
+
+    try:
+        projection_text = (ROOT / "domain/knowledge/knowledge_projection.gd").read_text(encoding="utf-8")
+        if "true_value" in projection_text:
+            failures.append("KnowledgeProjection must not expose a true_value escape hatch")
+    except OSError as exc:
+        failures.append(f"unable to inspect knowledge projection: {exc}")
+
+    try:
+        for rel in ("domain/core/campaign_state.gd", "persistence/codecs/campaign_state_codec.gd"):
+            state_text = (ROOT / rel).read_text(encoding="utf-8").lower()
+            if "drawing_power" in state_text:
+                failures.append(f"derived drawing power must not be persisted in authoritative state: {rel}")
+    except OSError as exc:
+        failures.append(f"unable to inspect derived-state boundary: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase c runtime-contract reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase C controlled runtime-schema reconstruction must remain explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase C derivation record: {exc}")
+
+    try:
+        pipeline_text = (ROOT / "app/session/month_pipeline.gd").read_text(encoding="utf-8")
+        phase_names_match = re.search(r"const PHASE_NAMES: Array\[String\] = \[(.*?)\]", pipeline_text, re.S)
+        if not phase_names_match or len(re.findall(r'"[a-z_]+"', phase_names_match.group(1))) != 15:
+            failures.append("Phase D month pipeline must expose exactly 15 named phase boundaries")
+        if "ChronicleCommitter" not in pipeline_text or "_chronicle_commit" not in pipeline_text or "_postflight" not in pipeline_text:
+            failures.append("Phase D pipeline must retain explicit Chronicle commit and postflight boundaries")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase D month pipeline: {exc}")
+
+    try:
+        query_text = (ROOT / "domain/chronicle/chronicle_query_service.gd").read_text(encoding="utf-8")
+        for forbidden in ("month_pipeline", "RandomService", "random_service.gd", "CommandRouter"):
+            if forbidden in query_text:
+                failures.append(f"historical reconstruction must not depend on simulation/RNG mutation boundary: {forbidden}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Chronicle query boundary: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase d chronicle/save/ledger reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase D controlled Chronicle/save/ledger reconstruction must remain explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase D derivation record: {exc}")
+
+    # Phase E architecture-sensitive static gates.
+    try:
+        pipeline_text = (ROOT / "app/session/month_pipeline.gd").read_text(encoding="utf-8")
+        for seam in ("LogisticsSystem", "BookingSystem", "ShowResolver", "AudienceCreativeSystem", "MediaMarketSystem", "EconomySystem"):
+            if seam not in pipeline_text:
+                failures.append(f"Phase E pipeline is missing strategic-loop seam: {seam}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E pipeline integration: {exc}")
+
+    try:
+        resolver_text = (ROOT / "domain/booking/show_resolver.gd").read_text(encoding="utf-8")
+        for forbidden in ("AudienceCreativeSystem", "MediaMarketSystem", "EconomySystem", "ChronicleCommitter", "LedgerService"):
+            if forbidden in resolver_text:
+                failures.append(f"ShowResolver must return effects rather than mutate downstream systems directly: {forbidden}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E ShowResolver boundary: {exc}")
+
+    try:
+        market_text = (ROOT / "domain/world/market_state.gd").read_text(encoding="utf-8").lower()
+        for forbidden in ("owner_promotion_id", "owning_promotion_id", "market_owner"):
+            if forbidden in market_text:
+                failures.append(f"market influence must not become ownership state: {forbidden}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E market ownership boundary: {exc}")
+
+    try:
+        cli_text = (ROOT / "tools/simulation_cli/run.gd").read_text(encoding="utf-8")
+        for fixture in ("phase_e_good", "phase_e_bad"):
+            if fixture not in cli_text:
+                failures.append(f"Phase E CLI must expose acceptance fixture: {fixture}")
+        if "WE_SIM_SUMMARY" not in cli_text or "we.simulation_summary.v1" not in cli_text:
+            failures.append("Phase E CLI must expose generic structured simulation diagnostics")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E CLI: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase e strategic-loop reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase E controlled strategic-loop schema reconstruction must be explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase E derivation record: {exc}")
+
+    # Phase F architecture-sensitive static gates.
+    try:
+        pipeline_text = (ROOT / "app/session/month_pipeline.gd").read_text(encoding="utf-8")
+        for seam in ("AIPlanningService", "ContractSystem", "DiplomacySystem", "ScoutingSystem"):
+            if seam not in pipeline_text:
+                failures.append(f"Phase F pipeline is missing competitive-world seam: {seam}")
+        if "ai_planner_mutated_frozen_snapshot" not in pipeline_text:
+            failures.append("Phase F pipeline must enforce frozen planning-snapshot immutability")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F pipeline integration: {exc}")
+
+    try:
+        service_text = (ROOT / "domain/ai/ai_planning_service.gd").read_text(encoding="utf-8")
+        for module in ("OwnerStrategy", "TalentManager", "TouringPlanner", "BookerAI", "RecoveryAI", "DiplomacyAI"):
+            if module not in service_text:
+                failures.append(f"Phase F AI service is missing separated module: {module}")
+        if "CommandEnvelope" not in service_text:
+            failures.append("Phase F AI decisions must enter the canonical CommandEnvelope path")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F AI separation: {exc}")
+
+    try:
+        planner_view = (ROOT / "domain/ai/ai_planning_view.gd").read_text(encoding="utf-8")
+        if "KnowledgeQueryService" not in planner_view or '"external_talent"' not in planner_view:
+            failures.append("Phase F external-talent planning must use knowledge projections")
+        for rel in ("owner_strategy.gd", "talent_manager.gd", "touring_planner.gd", "booker_ai.gd", "recovery_ai.gd", "diplomacy_ai.gd"):
+            planner = (ROOT / "domain/ai" / rel).read_text(encoding="utf-8")
+            if 'state.get("people")' in planner or 'state.get("contracts")' in planner or "ShowPlan" in planner or "ShowResult" in planner:
+                failures.append(f"Phase F planner bypasses knowledge/card boundary: domain/ai/{rel}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F knowledge/card boundary: {exc}")
+
+    try:
+        soak_text = (ROOT / "tools/simulation_cli/phase_f_soak.gd").read_text(encoding="utf-8")
+        if "WE_PHASE_F_SOAK_SUMMARY" not in soak_text or "we.phase_f.soak.v1" not in soak_text:
+            failures.append("Phase F soak CLI must expose machine-readable diagnostics")
+        soak_data = load_json(ROOT / "tests/soak/phase_f_5_year_soak.json", failures)
+        if not isinstance(soak_data, dict) or not soak_data.get("passed") or soak_data.get("phase") != "F" or soak_data.get("game_version") != "0.0.0-phase-f" or soak_data.get("years_per_run", 0) < 5:
+            failures.append("Phase F must retain a passing multi-year soak artifact")
+        elif (
+            not soak_data.get("repeated_seed_deterministic")
+            or soak_data.get("distinct_world_fingerprints") != soak_data.get("unique_seed_count")
+            or soak_data.get("active_promotion_endings") != soak_data.get("run_count", 0) * 3
+            or soak_data.get("maximum_market_concentration", 1.0) >= 0.95
+            or len(soak_data.get("policy_wins", {})) < 2
+        ):
+            failures.append("Phase F soak artifact does not prove replay, divergence, survival, bounded concentration and policy variance")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F soak evidence: {exc}")
+
+    try:
+        derivation_text = (ROOT / "content/schemas/DERIVATION.md").read_text(encoding="utf-8").lower()
+        if "phase f competitive-world reconstruction addendum" not in derivation_text or "controlled reconstruction" not in derivation_text:
+            failures.append("Phase F controlled competitive-world reconstruction must be explicitly documented")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase F derivation record: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -298,7 +539,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_b.static_check.v1",
+        "schema": "we.phase_f.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,
