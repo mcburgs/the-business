@@ -8,6 +8,8 @@ const LedgerService = preload("res://domain/economy/ledger_service.gd")
 const SAVE_SCHEMA_VERSION: int = 1
 const CHRONICLE_SCHEMA_VERSION: int = 1
 const MIGRATABLE_ARCHITECTURE_VERSIONS: Array[String] = ["0.2.0"]
+const FLOAT64_BITS_KEY: String = "__we_float64_bits_v1"
+const INT64_TEXT_KEY: String = "__we_int64_text_v1"
 
 var root_path: String = "user://saves"
 var failure_injection_stage: String = ""
@@ -38,7 +40,7 @@ func save(save_id: String, display_name: String, state: RefCounted, chronicle: R
     }
     if not _write_json(temp_abs.path_join("state.json"), _state_to_json_safe(_state_codec.call("encode", state))):
         _remove_tree(temp_abs); return _failure("SAVE001", "state", {"reason": "temp_write_failed"})
-    if not _write_json(temp_abs.path_join("chronicle/chronicle.json"), _chronicle_codec.call("encode", chronicle)):
+    if not _write_json(temp_abs.path_join("chronicle/chronicle.json"), _float_exact_to_json_safe(_chronicle_codec.call("encode", chronicle))):
         _remove_tree(temp_abs); return _failure("SAVE001", "chronicle", {"reason": "temp_write_failed"})
     if not _write_json(temp_abs.path_join("chronicle/manifest.json"), chronicle_manifest):
         _remove_tree(temp_abs); return _failure("SAVE001", "chronicle.manifest", {"reason": "temp_write_failed"})
@@ -50,25 +52,41 @@ func save(save_id: String, display_name: String, state: RefCounted, chronicle: R
     if failure_injection_stage == "before_publish":
         _remove_tree(temp_abs)
         return _failure("SAVE001", "publish", {"reason": "injected_failure_before_publish"})
+    var previous_good_abs: String = ""
     if DirAccess.dir_exists_absolute(target_abs):
         var rename_old: Error = DirAccess.rename_absolute(target_abs, previous_abs)
         if rename_old != OK:
             _remove_tree(temp_abs); return _failure("SAVE001", "publish", {"reason": "unable_to_preserve_last_good", "error": rename_old})
+        previous_good_abs = _best_previous_snapshot(previous_abs, str(state.get("content_fingerprint")))
     var publish_error: Error = DirAccess.rename_absolute(temp_abs, target_abs)
     if publish_error != OK:
         if DirAccess.dir_exists_absolute(previous_abs): DirAccess.rename_absolute(previous_abs, target_abs)
         _remove_tree(temp_abs)
         return _failure("SAVE001", "publish", {"reason": "temp_publish_failed", "error": publish_error})
+    var recovery_available: bool = false
+    var recovery_warning: String = ""
     if DirAccess.dir_exists_absolute(previous_abs):
-        DirAccess.make_dir_recursive_absolute(target_abs.path_join("backups/last_good"))
-        _copy_file(previous_abs.path_join("manifest.json"), target_abs.path_join("backups/last_good/manifest.json"))
-        _copy_file(previous_abs.path_join("state.json"), target_abs.path_join("backups/last_good/state.json"))
-        _copy_file(previous_abs.path_join("chronicle/chronicle.json"), target_abs.path_join("backups/last_good/chronicle.json"))
+        if not previous_good_abs.is_empty():
+            recovery_available = _copy_snapshot(previous_good_abs, target_abs.path_join("backups/last_good"))
+            if not recovery_available:
+                recovery_warning = "last_good_snapshot_copy_failed"
+        else:
+            recovery_warning = "previous_save_and_nested_last_good_invalid"
         _remove_tree(previous_abs)
-    return {"passed": true, "errors": [], "manifest": manifest, "path": root_path.path_join(save_id)}
+    return {"passed": true, "errors": [], "manifest": manifest, "path": root_path.path_join(save_id), "recovery_available": recovery_available, "recovery_warning": recovery_warning}
+
+func has_save_artifact(save_id: String) -> bool:
+    return DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(root_path).path_join(save_id))
+
+func has_last_good(save_id: String) -> bool:
+    return DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(root_path).path_join(save_id).path_join("backups/last_good"))
 
 func load_save(save_id: String, expected_content_fingerprint: String = "") -> Dictionary:
     var absolute: String = ProjectSettings.globalize_path(root_path).path_join(save_id)
+    return _load_from_absolute(absolute, expected_content_fingerprint, true)
+
+func load_last_good(save_id: String, expected_content_fingerprint: String = "") -> Dictionary:
+    var absolute: String = ProjectSettings.globalize_path(root_path).path_join(save_id).path_join("backups/last_good")
     return _load_from_absolute(absolute, expected_content_fingerprint, true)
 
 func safe_checkpoint(save_id: String, display_name: String, state: RefCounted, chronicle: RefCounted, metadata: Dictionary = {}) -> Dictionary:
@@ -89,7 +107,7 @@ func _load_from_absolute(absolute: String, expected_content_fingerprint: String,
     if not bool(chronicle_data_result["passed"]): return chronicle_data_result
     var decoded_state: Dictionary = _state_codec.call("decode", _state_from_json_safe(state_result["data"]))
     if not bool(decoded_state["passed"]): return {"passed": false, "errors": decoded_state["errors"]}
-    var decoded_chronicle: Dictionary = _chronicle_codec.call("decode", chronicle_data_result["data"])
+    var decoded_chronicle: Dictionary = _chronicle_codec.call("decode", _float_exact_from_json_safe(chronicle_data_result["data"]))
     if not bool(decoded_chronicle["passed"]): return {"passed": false, "errors": decoded_chronicle["errors"]}
     if str(decoded_chronicle["chronicle"].get("head_date")) != str(manifest.get("chronicle_head_date")) or int(decoded_chronicle["chronicle"].get("head_sequence")) != int(manifest.get("chronicle_head_sequence")):
         return _failure("SAVE001", "manifest.chronicle_head", {"reason": "head_mismatch"})
@@ -150,7 +168,7 @@ func _state_to_json_safe(data: Dictionary) -> Dictionary:
         var rng: Dictionary = output["rng_state"]
         rng["internal_state"] = str(rng.get("internal_state"))
         output["rng_state"] = rng
-    return output
+    return _float_exact_to_json_safe(output) as Dictionary
 
 func _state_from_json_safe(data: Dictionary) -> Dictionary:
     var output: Dictionary = data.duplicate(true)
@@ -159,8 +177,59 @@ func _state_from_json_safe(data: Dictionary) -> Dictionary:
         var internal_value: Variant = rng.get("internal_state")
         if internal_value is String and str(internal_value).is_valid_int(): rng["internal_state"] = int(internal_value)
         output["rng_state"] = rng
+    output = _float_exact_from_json_safe(output)
     _restore_minor_units(output)
     return output
+
+func _float_exact_to_json_safe(value: Variant) -> Variant:
+    # Godot 4.7 JSON parsing does not preserve every Variant numeric type exactly: some
+    # binary64 decimals move by one ULP and integral JSON values decode as floats. A
+    # save/reload boundary must not perturb deterministic state or Chronicle fingerprints,
+    # so the physical JSON layer tags int64 values and stores float64 IEEE-754 bytes.
+    # Logical codecs/save schema remain unchanged, and untagged legacy JSON still loads.
+    if value is int:
+        return {INT64_TEXT_KEY: str(value)}
+    if value is float:
+        return {FLOAT64_BITS_KEY: PackedFloat64Array([float(value)]).to_byte_array().hex_encode()}
+    if value is Dictionary:
+        var encoded_dictionary: Dictionary = {}
+        for key: Variant in (value as Dictionary).keys():
+            encoded_dictionary[key] = _float_exact_to_json_safe((value as Dictionary)[key])
+        return encoded_dictionary
+    if value is Array:
+        var encoded_array: Array = []
+        for item: Variant in (value as Array):
+            encoded_array.append(_float_exact_to_json_safe(item))
+        return encoded_array
+    return value
+
+func _float_exact_from_json_safe(value: Variant) -> Variant:
+    if value is Dictionary:
+        var dictionary: Dictionary = value
+        if dictionary.size() == 1 and dictionary.has(INT64_TEXT_KEY):
+            var integer_text: Variant = dictionary.get(INT64_TEXT_KEY)
+            if integer_text is String and str(integer_text).is_valid_int():
+                return int(integer_text)
+            return value
+        if dictionary.size() == 1 and dictionary.has(FLOAT64_BITS_KEY):
+            var bits_text: Variant = dictionary.get(FLOAT64_BITS_KEY)
+            if bits_text is String:
+                var bytes: PackedByteArray = str(bits_text).hex_decode()
+                if bytes.size() == 8:
+                    var values: PackedFloat64Array = bytes.to_float64_array()
+                    if values.size() == 1:
+                        return values[0]
+            return value
+        var decoded_dictionary: Dictionary = {}
+        for key: Variant in dictionary.keys():
+            decoded_dictionary[key] = _float_exact_from_json_safe(dictionary[key])
+        return decoded_dictionary
+    if value is Array:
+        var decoded_array: Array = []
+        for item: Variant in (value as Array):
+            decoded_array.append(_float_exact_from_json_safe(item))
+        return decoded_array
+    return value
 
 func _restore_minor_units(value: Variant) -> void:
     if value is Dictionary:
@@ -200,8 +269,34 @@ func _read_json(path: String) -> Dictionary:
         return _failure("SAVE001", path, {"reason": "invalid_json", "line": json.get_error_line(), "message": json.get_error_message()})
     return {"passed": true, "errors": [], "data": json.data}
 
-func _copy_file(source: String, target: String) -> void:
-    if FileAccess.file_exists(source): DirAccess.copy_absolute(source, target)
+func _best_previous_snapshot(previous_abs: String, expected_content_fingerprint: String) -> String:
+    var primary: Dictionary = _load_from_absolute(previous_abs, expected_content_fingerprint, true)
+    if bool(primary.get("passed", false)):
+        return previous_abs
+    var nested: String = previous_abs.path_join("backups/last_good")
+    if DirAccess.dir_exists_absolute(nested):
+        var nested_result: Dictionary = _load_from_absolute(nested, expected_content_fingerprint, true)
+        if bool(nested_result.get("passed", false)):
+            return nested
+    return ""
+
+func _copy_snapshot(source_abs: String, target_abs: String) -> bool:
+    _remove_tree(target_abs)
+    if DirAccess.make_dir_recursive_absolute(target_abs.path_join("chronicle")) != OK:
+        return false
+    var files: Array[Array] = [
+        ["manifest.json", "manifest.json"],
+        ["state.json", "state.json"],
+        ["chronicle/manifest.json", "chronicle/manifest.json"],
+        ["chronicle/chronicle.json", "chronicle/chronicle.json"],
+    ]
+    for pair: Array in files:
+        var source: String = source_abs.path_join(str(pair[0]))
+        var target: String = target_abs.path_join(str(pair[1]))
+        if not FileAccess.file_exists(source) or DirAccess.copy_absolute(source, target) != OK:
+            _remove_tree(target_abs)
+            return false
+    return true
 
 func _remove_tree(path: String) -> void:
     if not DirAccess.dir_exists_absolute(path): return

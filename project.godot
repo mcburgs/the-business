@@ -8,17 +8,20 @@ config_version=5
 [application]
 config/name="The Business"
 config/description="Offline wrestling promotion strategy simulation"
-config/version="0.0.0-phase-g"
+config/version="0.0.0-phase-h"
 run/main_scene="res://presentation/shell/game_root.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+config/quit_on_go_back=false
 
 [display]
 
-window/size/viewport_width=1280
+window/size/viewport_width=720
 window/size/viewport_height=720
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=6
 
 [rendering]
 

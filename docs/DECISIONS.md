@@ -209,3 +209,41 @@ This file records implementation decisions made while translating the governing 
 **Historical presentation owns one replaceable transient inspection card.** Chronicle remains authoritative/read-only. The selector/card lifecycle is presentation-only and is replaced synchronously during hostile navigation so obsolete Controls cannot be reattached or survive as simultaneous historical views.
 
 **Presentation selections are validated against the current projection.** A market ID absent from the current Owner projection is not accepted merely because an old UI callback supplied it. This protects UI/domain agreement without turning selection into authoritative state.
+
+## Phase H — Android target integration decisions
+
+### ADR-H-001 - Android lifecycle adapts the application seam; it does not own game truth
+
+**Status:** Accepted for Phase H candidate
+**Decision:** `GameRoot` translates pause/background/resume/back/close host notifications into platform-neutral `CampaignSession` checkpoint/resume operations. `CampaignSession`, `SaveService`, Chronicle and `MonthPipeline` remain shared authority. Android `APPLICATION_PAUSED` synchronously flushes an already-resolved checkpoint because process suspension/kill may follow immediately; ordinary focus-out may defer the same file operation. Lifecycle callbacks never perform an alternate month resolution or create Android-only CampaignState.
+**Reason:** Android may suspend or kill the process at inconvenient times, but process lifecycle is an application/persistence concern, not a reason to fork simulation semantics.
+
+### ADR-H-002 - Successful authoritative month completion is the checkpoint boundary
+
+**Status:** Accepted for Phase H candidate
+**Decision:** A successful `CampaignSession.advance_month()` publishes the new authoritative state/Chronicle first and then performs the canonical save checkpoint. Failed save publication leaves the resolved in-memory state intact and marks a retryable checkpoint request. Duplicate background notifications coalesce; a later pause/resume/foreground opportunity retries the same current-state checkpoint.
+**Reason:** A save must never represent half-resolved state, and a storage failure must not roll back an otherwise successful authoritative month or destroy the last-good save.
+
+### ADR-H-003 - Physical JSON I/O preserves authoritative numeric identity exactly
+
+**Status:** Accepted for Phase H candidate
+**Decision:** SaveService tags arbitrary integers as decimal int64 text and floats as exact IEEE-754 binary64 bit patterns at the physical JSON I/O boundary. Logical CampaignState/Chronicle codecs and save schema remain authoritative and unchanged, and untagged legacy JSON remains readable.
+**Reason:** Godot JSON parsing normalizes numeric Variants and decimal float text can move some values by one representable step. A real save/relaunch boundary must not alter deterministic state/history fingerprints merely because JSON was used as transport.
+
+### ADR-H-004 - Last-good recovery is a complete canonical save snapshot
+
+**Status:** Accepted for Phase H candidate
+**Decision:** `backups/last_good` stores a complete previously validated save layout, including state, Chronicle data and both manifests. Recovery loads it through the same SaveService codecs/validation and republishes it as the primary save without treating a corrupt primary as new last-good material.
+**Reason:** Recovery is only meaningful if the fallback is independently loadable, complete, and validated through the same canonical persistence path.
+
+### ADR-H-005 - Phase H uses a square design base and sensor orientation until Pixel evidence decides preference
+
+**Status:** Accepted for Phase H candidate; physical orientation preference pending
+**Decision:** The project uses `canvas_items` + `expand`, a 720x720 design base and handheld `sensor` orientation during Phase H. The square base keeps the accepted 1280x720 desktop/landscape logical composition while giving tall portrait screens a comparable automatic scale. Presentation may switch layout by available viewport geometry; orientation has no domain meaning.
+**Reason:** The governing phase requires portrait-vs-landscape judgment from the actual Pixel rather than aesthetic decree. Off-device 1080x2424 and 2424x1080 renders show both are structurally viable.
+
+### ADR-H-006 - Android debug identity is reversible and arm64-only for the designated Pixel gate
+
+**Status:** Accepted for Phase H candidate
+**Decision:** The development preset uses package ID `com.mcburgs.thebusiness.dev`, application name `The Business`, debug signing and `arm64-v8a` only. No production keystore, Play Store release configuration, cloud service or native/Gradle customization is introduced.
+**Reason:** Phase H needs an installable target-device build, not a premature commercial identity/signing decision or broad device matrix.

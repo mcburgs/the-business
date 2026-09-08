@@ -72,3 +72,26 @@ The G→H gate adds no new authority layer. It hardens the existing Phase G boun
 - Chronicle/history churn remains read-only and knowledge-scoped.
 
 These protections are retained by `tests/integration/test_g2h_interaction_regressions.gd`, `tools/adversarial_runner/g2h_interaction_run.gd`, and the static repository gate.
+
+## Phase H Android / lifecycle boundary
+
+Android changes the host lifecycle and input surface, not the authority graph.
+
+`Android/desktop host notification -> GameRoot -> CampaignSession checkpoint/resume seam -> SaveService / Chronicle`
+
+`touch intent -> StrategicHome / StrategicMapView -> CampaignSession -> canonical CommandEnvelope / CommandRouter / MonthPipeline`
+
+Phase H rules:
+
+- `domain/` remains platform-agnostic: no Android package IDs, OS branches, display APIs, lifecycle callbacks or mobile-specific simulation state;
+- `CampaignSession` remains platform-neutral and owns only application orchestration, pending canonical commands and checkpoint requests;
+- `SaveService` remains the single save/recovery authority for desktop and Android; no mobile save schema or alternate Chronicle exists;
+- lifecycle notifications may request/flush a checkpoint only after an authoritative state exists and may not run month simulation inside the callback;
+- successful month resolution publishes state/Chronicle before checkpointing, so no half-resolved save can be created;
+- exact int64/binary64 tagging exists only in physical JSON I/O and does not change logical CampaignState/Chronicle contracts;
+- `backups/last_good` is a complete validated save snapshot, loaded through the same codecs as primary state;
+- orientation, viewport layout, touch contacts, pan/zoom and system Back are presentation/host concerns with no domain meaning;
+- the 720x720 design base is a presentation scaling choice for dual-orientation evidence, not a simulation constraint;
+- the Android export preset is build configuration only and may not leak package/ABI/signing assumptions into domain/persistence identity.
+
+The permanent G→H protections remain in force under touch input: setter coalescing, duplicate-month suppression, stale selection rejection, Chronicle transient-card ownership, cross-promotion authority rejection and knowledge-limited presentation.

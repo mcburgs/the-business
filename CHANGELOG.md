@@ -2,6 +2,18 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-h - 2026-09-08
+
+- Began the first real Android/Pixel target integration from the exact accepted G→H baseline without changing simulation/domain authority.
+- Added a reversible arm64 `Android Debug` export preset (`com.mcburgs.thebusiness.dev`) with no production credentials or Play Store configuration.
+- Adapted the map-first client for phone use with a 720x720 dual-orientation design base, sensor orientation, narrow bottom navigation, 48-logical-pixel touch targets, one-finger pan, two-finger pinch zoom, direct touch selection and system-Back-to-map behavior.
+- Added persistent startup/resume and platform-neutral lifecycle checkpoint seams around the existing CampaignSession/SaveService/Chronicle authority; successful months checkpoint only after authoritative resolution.
+- Fixed last-good recovery to preserve a complete loadable snapshot and restore a corrupt primary through the same canonical save path.
+- Fixed physical JSON persistence so int64 and binary64 values survive a genuine save/relaunch boundary exactly; no CampaignState/Chronicle schema or simulation semantics changed.
+- Added Phase-H lifecycle/save/recovery and touch/responsive regressions, bringing the candidate automated suite to 40 tests.
+- Reconfirmed G→H protections, F2G-001/002/003, competition, eight-run five-year soak, Chronicle/save and editor/import with zero simulation drift.
+- Matching Godot Android export templates/SDK and physical Pixel evidence remain required; Phase H is not yet certified complete and Phase I has not begun.
+
 ## G→H adversarial interaction gate - 2026-09-08
 
 - Added a retained hostile-interaction regression and rendered interaction harness over the real Phase G presentation/application boundary.

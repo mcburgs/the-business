@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase G repository/content/architecture checks that do not require Godot."""
+"""Phase H repository/content/architecture checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -116,6 +116,10 @@ REQUIRED_FILES = [
     "tests/integration/test_phase_g_command_and_month_flow.gd",
     "tests/integration/test_phase_g_presentation_scene_and_history.gd",
     "docs/PHASE_G_ACCEPTANCE.md", "docs/PHASE_G_RUNTIME_RESULT.md",
+    "export_presets.cfg",
+    "tests/integration/test_phase_h_lifecycle_save_recovery.gd",
+    "tests/integration/test_phase_h_touch_responsive.gd",
+    "docs/PHASE_H_ACCEPTANCE.md", "docs/PHASE_H_RUNTIME_RESULT.md", "docs/PHASE_H_DEVICE_RESULT.md",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -359,22 +363,30 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
-    # Phase G current metadata plus retained Phase F/F-R/F->G static gates.
+    # Phase H current metadata plus retained Phase F/F-R/F->G/G->H static gates.
     try:
         version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
-        if 'const BUILD_PHASE: String = "G"' not in version_text:
-            failures.append("Phase G metadata must report build phase G")
-        if 'const GAME_VERSION: String = "0.0.0-phase-g"' not in version_text:
-            failures.append("Phase G game version must be 0.0.0-phase-g")
+        if 'const BUILD_PHASE: String = "H"' not in version_text:
+            failures.append("Phase H metadata must report build phase H")
+        if 'const GAME_VERSION: String = "0.0.0-phase-h"' not in version_text:
+            failures.append("Phase H game version must be 0.0.0-phase-h")
         if 'const ARCHITECTURE_VERSION: String = "0.3.0"' not in version_text:
-            failures.append("Phase G architecture version must remain 0.3.0")
+            failures.append("Phase H architecture version must remain 0.3.0")
         if 'const CONTRACT_VERSION: String = "0.2.0"' not in version_text:
-            failures.append("Phase G contract version must remain 0.2.0")
+            failures.append("Phase H contract version must remain 0.2.0")
         project_text = (ROOT / "project.godot").read_text(encoding="utf-8")
-        if 'config/version="0.0.0-phase-g"' not in project_text:
-            failures.append("project.godot must report Phase G game version")
+        if 'config/version="0.0.0-phase-h"' not in project_text:
+            failures.append("project.godot must report Phase H game version")
+        if 'window/size/viewport_width=720' not in project_text or 'window/size/viewport_height=720' not in project_text:
+            failures.append("Phase H dual-orientation design base must remain square 720x720 while device evidence is gathered")
+        if 'window/stretch/mode="canvas_items"' not in project_text:
+            failures.append("Phase H must retain canvas_items stretch mode")
+        if 'window/stretch/aspect="expand"' not in project_text:
+            failures.append("Phase H must permit responsive aspect expansion")
+        if 'window/handheld/orientation=6' not in project_text:
+            failures.append("Phase H orientation must remain sensor-responsive while portrait/landscape device evidence is gathered")
     except OSError as exc:
-        failures.append(f"unable to inspect Phase G version metadata: {exc}")
+        failures.append(f"unable to inspect Phase H version/project metadata: {exc}")
 
     expected_commands = {
         "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
@@ -717,6 +729,83 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase G presentation architecture: {exc}")
 
+    # Phase H Android/mobile integration gates. Platform policy may adapt the client,
+    # but it must not introduce Android-specific domain authority, persistence identity,
+    # or a parallel command/month resolver.
+    try:
+        export_text = (ROOT / "export_presets.cfg").read_text(encoding="utf-8")
+        for token in (
+            'name="Android Debug"', 'platform="Android"',
+            'export_path="build/android/the-business-phase-h-debug.apk"',
+            'architectures/arm64-v8a=true', 'architectures/armeabi-v7a=false',
+            'architectures/x86=false', 'architectures/x86_64=false',
+            'version/name="0.0.0-phase-h"',
+            'package/unique_name="com.mcburgs.thebusiness.dev"',
+            'package/name="The Business"',
+            'permissions/internet=false',
+        ):
+            if token not in export_text:
+                failures.append(f"Phase H Android export preset missing required reversible debug configuration token: {token}")
+        if "keystore/" in export_text.lower() or "password" in export_text.lower():
+            failures.append("Phase H export preset must not commit signing credentials or keystore secrets")
+
+        for rel in ("domain",):
+            for script in sorted((ROOT / rel).rglob("*.gd")):
+                lowered = script.read_text(encoding="utf-8").lower()
+                for token in ("android", "com.mcburgs.thebusiness", "os.get_name", "displayserver"):
+                    if token in lowered:
+                        failures.append(f"Phase H platform isolation violation token {token!r}: {script.relative_to(ROOT)}")
+
+        session_text = (ROOT / "app/session/campaign_session.gd").read_text(encoding="utf-8")
+        for token in ("start_or_resume", "request_checkpoint", "flush_checkpoint", "safe_checkpoint", "MonthPipeline", "CommandRouter"):
+            if token not in session_text:
+                failures.append(f"Phase H CampaignSession missing lifecycle/persistence/canonical-authority seam: {token}")
+        if "android" in session_text.lower() or "os.get_name" in session_text.lower():
+            failures.append("Phase H CampaignSession must remain platform-neutral application logic")
+
+        save_text = (ROOT / "persistence/services/save_service.gd").read_text(encoding="utf-8")
+        for token in ("load_last_good", "_copy_snapshot", "FLOAT64_BITS_KEY", "INT64_TEXT_KEY"):
+            if token not in save_text:
+                failures.append(f"Phase H SaveService missing deterministic/recovery seam: {token}")
+        if "android" in save_text.lower() or "com.mcburgs.thebusiness" in save_text.lower():
+            failures.append("Phase H SaveService must not contain Android-specific save authority or identity")
+
+        project_text = (ROOT / "project.godot").read_text(encoding="utf-8")
+        if "config/quit_on_go_back=false" not in project_text:
+            failures.append("Phase H must disable Godot automatic Android Back exit so detail Back can return to the strategic map before explicit app exit")
+
+        root_text = (ROOT / "presentation/shell/game_root.gd").read_text(encoding="utf-8")
+        for token in ("NOTIFICATION_APPLICATION_PAUSED", "NOTIFICATION_APPLICATION_RESUMED", "NOTIFICATION_WM_GO_BACK_REQUEST", "start_or_resume"):
+            if token not in root_text:
+                failures.append(f"Phase H game root missing target lifecycle seam: {token}")
+        paused_block = root_text.split("NOTIFICATION_APPLICATION_PAUSED:", 1)[1].split("NOTIFICATION_APPLICATION_FOCUS_OUT:", 1)[0] if "NOTIFICATION_APPLICATION_PAUSED:" in root_text and "NOTIFICATION_APPLICATION_FOCUS_OUT:" in root_text else ""
+        if "_flush_lifecycle_checkpoint()" not in paused_block or "call_deferred" in paused_block:
+            failures.append("Phase H pause callback must synchronously flush an already-resolved checkpoint before Android can suspend/kill the process")
+
+        home_text = (ROOT / "presentation/shell/strategic_home.gd").read_text(encoding="utf-8")
+        for token in ("MIN_TOUCH_TARGET", "MOBILE_BREAKPOINT_WIDTH", "handle_system_back", "narrow_nav"):
+            if token not in home_text:
+                failures.append(f"Phase H responsive/touch shell missing required token: {token}")
+        for hover_only in ("mouse_entered.connect", "mouse_exited.connect"):
+            if hover_only in home_text:
+                failures.append(f"Phase H critical shell interaction must not be hover-only: {hover_only}")
+
+        map_text = (ROOT / "presentation/map/strategic_map_view.gd").read_text(encoding="utf-8")
+        for token in ("InputEventScreenTouch", "InputEventScreenDrag", "_begin_pinch", "_nearest_market"):
+            if token not in map_text:
+                failures.append(f"Phase H touch map missing required direct-touch seam: {token}")
+
+        lifecycle_test = (ROOT / "tests/integration/test_phase_h_lifecycle_save_recovery.gd").read_text(encoding="utf-8")
+        for token in ("start_or_resume", "restart", "last_good", "failure_injection_stage", "checkpoint_requested"):
+            if token not in lifecycle_test.lower():
+                failures.append(f"Phase H lifecycle/save regression missing coverage token: {token}")
+        touch_test = (ROOT / "tests/integration/test_phase_h_touch_responsive.gd").read_text(encoding="utf-8")
+        for token in ("1080, 2424", "2424, 1080", "48.0", "InputEventScreenTouch", "InputEventScreenDrag"):
+            if token not in touch_test:
+                failures.append(f"Phase H touch/responsive regression missing coverage token: {token}")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase H Android/mobile integration architecture: {exc}")
+
     # G->H adversarial interaction gate scar-tissue checks.
     try:
         session_text = (ROOT / "app/session/campaign_session.gd").read_text(encoding="utf-8")
@@ -758,7 +847,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.g2h.static_check.v1",
+        "schema": "we.phase_h.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

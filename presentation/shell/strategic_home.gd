@@ -12,6 +12,10 @@ var _narrow: bool = false
 var _advance_locked_until_idle: bool = false
 var _historical_card: Control = null
 
+const MOBILE_BREAKPOINT_WIDTH: float = 1180.0
+const PORTRAIT_RATIO_TRIGGER: float = 1.15
+const MIN_TOUCH_TARGET: float = 48.0
+
 var top_panel: PanelContainer
 var context_label: Label
 var date_label: Label
@@ -63,6 +67,7 @@ func prepare_capture(capture_name: String) -> void:
             if not (view.get("markets", []) as Array).is_empty(): selected_market_id = str((view.get("markets", []) as Array)[0].get("market_id", ""))
         "roster": surface = "roster"
         "touring": surface = "touring"
+        "wrestling": surface = "wrestling"
         "history": surface = "history"
         "post_month":
             var result: Dictionary = _advance_month()
@@ -81,7 +86,7 @@ func _build_interface() -> void:
     context_label = _label("Ownership", 12, Color("7f959e")); brand_box.add_child(context_label)
     var metrics := HBoxContainer.new(); metrics.add_theme_constant_override("separation", 18); top_h.add_child(metrics)
     date_label = _metric(metrics, "DATE"); cash_label = _metric(metrics, "CASH"); prestige_label = _metric(metrics, "PRESTIGE"); momentum_label = _metric(metrics, "MOMENTUM")
-    advance_button = Button.new(); advance_button.text = "Advance Month"; advance_button.custom_minimum_size = Vector2(138, 46); advance_button.pressed.connect(_on_advance_pressed); top_h.add_child(advance_button)
+    advance_button = Button.new(); advance_button.text = "Advance Month"; advance_button.custom_minimum_size = Vector2(138, MIN_TOUCH_TARGET); advance_button.pressed.connect(_on_advance_pressed); top_h.add_child(advance_button)
 
     wide_nav = PanelContainer.new(); wide_nav.add_theme_stylebox_override("panel", ThemeFactory.panel_style("0e171c", "20323b")); add_child(wide_nav)
     var nav_v := VBoxContainer.new(); wide_nav.add_child(nav_v); nav_v.add_child(_label("OFFICE", 11, Color("6f858e")))
@@ -92,28 +97,28 @@ func _build_interface() -> void:
     narrow_nav = PanelContainer.new(); narrow_nav.add_theme_stylebox_override("panel", ThemeFactory.panel_style("0e171c", "20323b", 8)); add_child(narrow_nav)
     var nav_h := HBoxContainer.new(); nav_h.alignment = BoxContainer.ALIGNMENT_CENTER; nav_h.add_theme_constant_override("separation", 5); narrow_nav.add_child(nav_h)
     for item: Array in [["Map", "map"], ["People", "roster"], ["Tour", "touring"], ["Card", "wrestling"], ["History", "history"]]:
-        var b := _nav_button(str(item[0]), str(item[1])); b.size_flags_horizontal = Control.SIZE_EXPAND_FILL; b.custom_minimum_size = Vector2(72, 44); nav_h.add_child(b)
+        var b := _nav_button(str(item[0]), str(item[1])); b.size_flags_horizontal = Control.SIZE_EXPAND_FILL; b.custom_minimum_size = Vector2(72, MIN_TOUCH_TARGET); nav_h.add_child(b)
 
     map_panel = PanelContainer.new(); map_panel.add_theme_stylebox_override("panel", ThemeFactory.panel_style("0b1419", "263c46", 12)); add_child(map_panel)
     var map_v := VBoxContainer.new(); map_panel.add_child(map_v)
     var map_header := HBoxContainer.new(); map_v.add_child(map_header)
     var map_header_left := VBoxContainer.new(); map_header_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL; map_header.add_child(map_header_left)
     map_header_left.add_child(_label("STRATEGIC MAP", 12, Color("718993"))); map_signal_label = _label("World conditions", 17, Color("e1eaed")); map_header_left.add_child(map_signal_label)
-    var reset := Button.new(); reset.text = "Reset View"; reset.custom_minimum_size = Vector2(104, 42); reset.pressed.connect(func(): map_view.call("reset_view")); map_header.add_child(reset)
+    var reset := Button.new(); reset.text = "Reset View"; reset.custom_minimum_size = Vector2(104, MIN_TOUCH_TARGET); reset.pressed.connect(func(): map_view.call("reset_view")); map_header.add_child(reset)
     map_view = StrategicMapView.new(); map_view.size_flags_vertical = Control.SIZE_EXPAND_FILL; map_view.size_flags_horizontal = Control.SIZE_EXPAND_FILL; map_view.market_selected.connect(_on_market_selected); map_v.add_child(map_view)
 
     detail_panel = PanelContainer.new(); detail_panel.add_theme_stylebox_override("panel", ThemeFactory.panel_style("111a20", "2c414a", 12)); add_child(detail_panel)
     var detail_v := VBoxContainer.new(); detail_panel.add_child(detail_v)
     var detail_head := VBoxContainer.new(); detail_v.add_child(detail_head)
-    back_button = Button.new(); back_button.text = "← Back to Map"; back_button.custom_minimum_size = Vector2(140, 42); back_button.pressed.connect(_set_surface.bind("map")); detail_head.add_child(back_button)
+    back_button = Button.new(); back_button.text = "← Back to Map"; back_button.custom_minimum_size = Vector2(140, MIN_TOUCH_TARGET); back_button.pressed.connect(_set_surface.bind("map")); detail_head.add_child(back_button)
     detail_title = _label("Market", 22, Color("eff5f6")); detail_head.add_child(detail_title); detail_subtitle = _label("Known strategic context", 12, Color("78909a")); detail_head.add_child(detail_subtitle)
     detail_v.add_child(HSeparator.new())
     var scroll := ScrollContainer.new(); scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL; scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED; detail_v.add_child(scroll)
     detail_content = VBoxContainer.new(); detail_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL; detail_content.add_theme_constant_override("separation", 12); scroll.add_child(detail_content)
 
 func _apply_layout() -> void:
-    if not is_inside_tree(): return
-    _narrow = size.x < 900.0
+    if top_panel == null: return
+    _narrow = size.x < MOBILE_BREAKPOINT_WIDTH or size.y > size.x * PORTRAIT_RATIO_TRIGGER
     var margin := 14.0; var top_h := 82.0 if not _narrow else 78.0
     top_panel.position = Vector2.ZERO; top_panel.size = Vector2(size.x, top_h)
     if not _narrow:
@@ -123,15 +128,25 @@ func _apply_layout() -> void:
         map_panel.visible = true; map_panel.position = Vector2(154 + margin * 2.0, top_h + margin); map_panel.size = Vector2(maxf(420.0, size.x - 154.0 - 358.0 - margin * 4.0), maxf(250.0, size.y - top_h - margin * 2.0))
     else:
         wide_nav.visible = false; narrow_nav.visible = true
-        narrow_nav.position = Vector2(margin, top_h + 8.0); narrow_nav.size = Vector2(maxf(320.0, size.x - margin * 2.0), 58.0)
-        var body_y := top_h + 74.0; var body_size := Vector2(maxf(320.0, size.x - margin * 2.0), maxf(300.0, size.y - body_y - margin)); var detail_active := surface != "map"
+        var nav_height := 58.0
+        narrow_nav.position = Vector2(margin, size.y - nav_height - margin); narrow_nav.size = Vector2(maxf(320.0, size.x - margin * 2.0), nav_height)
+        var body_y := top_h + 8.0
+        var body_bottom := narrow_nav.position.y - 8.0
+        var body_size := Vector2(maxf(320.0, size.x - margin * 2.0), maxf(300.0, body_bottom - body_y))
+        var detail_active := surface != "map"
         map_panel.visible = not detail_active; detail_panel.visible = detail_active; map_panel.position = Vector2(margin, body_y); map_panel.size = body_size; detail_panel.position = Vector2(margin, body_y); detail_panel.size = body_size; back_button.visible = detail_active
     _refresh_top_visibility()
+
+func layout_mode_name() -> String:
+    return "narrow" if _narrow else "wide"
+
+func minimum_touch_target() -> float:
+    return MIN_TOUCH_TARGET
 
 func _refresh_top_visibility() -> void:
     if date_label == null: return
     cash_label.visible = not _narrow; prestige_label.visible = not _narrow; momentum_label.visible = not _narrow
-    advance_button.text = "Advance" if _narrow else "Advance Month"; advance_button.custom_minimum_size = Vector2(92 if _narrow else 138, 46)
+    advance_button.text = "Advance" if _narrow else "Advance Month"; advance_button.custom_minimum_size = Vector2(96 if _narrow else 138, MIN_TOUCH_TARGET)
 
 func _refresh_header() -> void:
     var promotion: Dictionary = view.get("promotion", {})
@@ -183,7 +198,7 @@ func _render_roster() -> void:
         if not local.is_empty(): card.add_child(_label("In " + _clean(str(local.get("market_name", ""))) + ": " + _presence(float(local.get("overness", 0.0))) + " audience standing", 12, Color("a6bbc2")))
         var ids := _controlled_company_ids_for_person(str(person.get("person_id", "")))
         if not ids.is_empty() and "role.wrestler" in (person.get("roles", []) as Array):
-            var push := Button.new(); push.text = "Queue featured push"; push.custom_minimum_size = Vector2(180, 44); push.pressed.connect(_queue_push.bind(str(ids[0]), str(person.get("person_id", "")))); card.add_child(push)
+            var push := Button.new(); push.text = "Queue featured push"; push.custom_minimum_size = Vector2(180, MIN_TOUCH_TARGET); push.pressed.connect(_queue_push.bind(str(ids[0]), str(person.get("person_id", "")))); card.add_child(push)
 
 func _render_touring() -> void:
     detail_title.text = "Touring"; detail_subtitle.text = "Geography in motion  •  known routes and current directives"
@@ -193,7 +208,7 @@ func _render_touring() -> void:
         card.add_child(_label(" → ".join(route_names) if not route_names.is_empty() else "Route not known", 12, Color("9eb0b7")))
         if own:
             card.add_child(_label("Budget " + _money(company.get("budget", {})) + "  ·  fatigue " + _signal_percent(float(company.get("fatigue_pressure", 0.0))) + "  ·  cohesion " + _percent(float(company.get("cohesion", 0.0))), 11, Color("7f959e")))
-            var row := HBoxContainer.new(); card.add_child(row); var down := Button.new(); down.text = "Budget −10%"; down.custom_minimum_size = Vector2(116, 44); down.pressed.connect(_queue_budget.bind(str(company.get("company_id", "")), -0.10, company.get("budget", {}))); row.add_child(down); var up := Button.new(); up.text = "Budget +10%"; up.custom_minimum_size = Vector2(116, 44); up.pressed.connect(_queue_budget.bind(str(company.get("company_id", "")), 0.10, company.get("budget", {}))); row.add_child(up)
+            var row := HBoxContainer.new(); card.add_child(row); var down := Button.new(); down.text = "Budget −10%"; down.custom_minimum_size = Vector2(116, MIN_TOUCH_TARGET); down.pressed.connect(_queue_budget.bind(str(company.get("company_id", "")), -0.10, company.get("budget", {}))); row.add_child(down); var up := Button.new(); up.text = "Budget +10%"; up.custom_minimum_size = Vector2(116, MIN_TOUCH_TARGET); up.pressed.connect(_queue_budget.bind(str(company.get("company_id", "")), 0.10, company.get("budget", {}))); row.add_child(up)
         else: card.add_child(_label("Observed " + str(company.get("observed_on", "")) + "  ·  " + str(round(float(company.get("confidence", 0.0)) * 100.0)) + "% confidence", 11, Color("9b8569")))
 
 func _render_wrestling() -> void:
@@ -217,7 +232,7 @@ func _render_history() -> void:
     var dates: Array = view.get("history_dates", [])
     if dates.is_empty(): return
     var option := OptionButton.new()
-    option.custom_minimum_size = Vector2(220, 44)
+    option.custom_minimum_size = Vector2(220, MIN_TOUCH_TARGET)
     for date_value: Variant in dates:
         option.add_item(_format_date(str(date_value)))
     option.item_selected.connect(func(index: int): _show_historical(str(dates[index])))
@@ -262,7 +277,10 @@ func _advance_month() -> Dictionary:
     if bool(result.get("passed", false)):
         var turn: Dictionary = result.get("turn", {})
         var events: Array = turn.get("events", [])
-        status_message = "Month resolved. " + str(events.size()) + " material simulation event" + ("s" if events.size() != 1 else "") + " recorded."
+        if result.has("persistence_passed") and not bool(result.get("persistence_passed", false)):
+            status_message = "Month resolved, but the safety checkpoint failed and will be retried."
+        else:
+            status_message = "Month resolved. " + str(events.size()) + " material simulation event" + ("s" if events.size() != 1 else "") + " recorded."
         view = result.get("projection", {})
         _repair_selected_market()
         _refresh_header()
@@ -282,6 +300,12 @@ func _on_market_selected(market_id: String) -> void:
     selected_market_id = market_id
     surface = "market" if _narrow else "map"
     _render_detail()
+func handle_system_back() -> bool:
+    if surface == "map":
+        return false
+    _set_surface("map")
+    return true
+
 func _set_surface(value: String) -> void:
     if not value in ["map", "market", "roster", "touring", "wrestling", "history"]: return
     surface = value
@@ -318,9 +342,9 @@ func _section(text: String) -> void: detail_content.add_child(_label(text, 11, C
 func _key_value(key: String, value: String) -> void:
     var box := HBoxContainer.new(); box.size_flags_horizontal = Control.SIZE_EXPAND_FILL; detail_content.add_child(box); var key_label := _label(key, 13, Color("9fb1b8")); key_label.custom_minimum_size = Vector2(116, 0); box.add_child(key_label); var value_label := _label(value, 13, Color("e1e9eb")); value_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL; value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT; value_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; box.add_child(value_label)
 func _body(text: String, color: Color) -> void: var label := _label(text, 13, color); label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; detail_content.add_child(label)
-func _action_button(text: String, callable: Callable) -> void: var button := Button.new(); button.text = text; button.custom_minimum_size = Vector2(220, 46); button.pressed.connect(callable); detail_content.add_child(button)
+func _action_button(text: String, callable: Callable) -> void: var button := Button.new(); button.text = text; button.custom_minimum_size = Vector2(220, MIN_TOUCH_TARGET); button.pressed.connect(callable); detail_content.add_child(button)
 func _card() -> VBoxContainer: var panel := PanelContainer.new(); panel.add_theme_stylebox_override("panel", ThemeFactory.panel_style("0d161b", "21333b", 9)); detail_content.add_child(panel); var box := VBoxContainer.new(); box.add_theme_constant_override("separation", 5); panel.add_child(box); return box
-func _nav_button(text: String, target: String) -> Button: var button := Button.new(); button.text = text; button.custom_minimum_size = Vector2(122, 46); button.alignment = HORIZONTAL_ALIGNMENT_LEFT if text.length() > 4 else HORIZONTAL_ALIGNMENT_CENTER; button.pressed.connect(_set_surface.bind(target)); return button
+func _nav_button(text: String, target: String) -> Button: var button := Button.new(); button.text = text; button.custom_minimum_size = Vector2(122, MIN_TOUCH_TARGET); button.alignment = HORIZONTAL_ALIGNMENT_LEFT if text.length() > 4 else HORIZONTAL_ALIGNMENT_CENTER; button.pressed.connect(_set_surface.bind(target)); return button
 func _label(text: String, font_size: int, color: Color) -> Label: var label := Label.new(); label.text = text; label.add_theme_font_size_override("font_size", font_size); label.add_theme_color_override("font_color", color); return label
 func _metric(parent: HBoxContainer, key: String) -> Label: var label := _label(_metric_text(key, "—"), 12, Color("d2dde1")); label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT; parent.add_child(label); return label
 func _metric_text(key: String, value: String) -> String: return key + "\n" + value
