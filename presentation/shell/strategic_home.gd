@@ -9,6 +9,8 @@ var surface: String = "map"
 var selected_market_id: String = ""
 var status_message: String = ""
 var _narrow: bool = false
+var _advance_locked_until_idle: bool = false
+var _historical_card: Control = null
 
 var top_panel: PanelContainer
 var context_label: Label
@@ -47,11 +49,7 @@ func refresh() -> void:
         status_message = "Presentation projection unavailable."
         return
     view = projected
-    if selected_market_id.is_empty() and not (view.get("markets", []) as Array).is_empty():
-        var home_market: Dictionary = {}
-        for market: Dictionary in view.get("markets", []):
-            if bool(market.get("is_home_market", false)): home_market = market; break
-        selected_market_id = str((home_market if not home_market.is_empty() else (view.get("markets", []) as Array)[0]).get("market_id", ""))
+    _repair_selected_market()
     _refresh_header()
     map_view.call("set_model", view)
     map_view.call("select_market", selected_market_id, false)
@@ -145,7 +143,8 @@ func _refresh_header() -> void:
 
 func _render_detail() -> void:
     if detail_content == null: return
-    for child: Node in detail_content.get_children(): child.queue_free()
+    _historical_card = null
+    for child: Node in detail_content.get_children(): child.free()
     match surface:
         "roster": _render_roster()
         "touring": _render_touring()
@@ -206,16 +205,37 @@ func _render_wrestling() -> void:
     _section("CHAMPIONSHIPS"); for title: Dictionary in view.get("championships", []): _key_value(_clean(str(title.get("name", "Championship"))), ", ".join(title.get("holder_names", [])) if not (title.get("holder_names", []) as Array).is_empty() else "Vacant")
 
 func _render_history() -> void:
-    detail_title.text = "Chronicle"; detail_subtitle.text = "Recorded history  •  inspection never re-simulates the past"; _section("RECENT HISTORY")
-    var events: Array = view.get("recent_history", []); if events.is_empty(): _body("The campaign has only its opening checkpoint so far. Advance a month and the Chronicle will begin accumulating history.", Color("788e97"))
-    for event: Dictionary in events: _history_row(event)
-    _section("HISTORICAL INSPECTION"); var dates: Array = view.get("history_dates", []); if dates.is_empty(): return
-    var option := OptionButton.new(); option.custom_minimum_size = Vector2(220, 44); for date_value: Variant in dates: option.add_item(_format_date(str(date_value))); option.item_selected.connect(func(index: int): _show_historical(str(dates[index]))); detail_content.add_child(option); _show_historical(str(dates[0]))
+    detail_title.text = "Chronicle"
+    detail_subtitle.text = "Recorded history  •  inspection never re-simulates the past"
+    _section("RECENT HISTORY")
+    var events: Array = view.get("recent_history", [])
+    if events.is_empty():
+        _body("The campaign has only its opening checkpoint so far. Advance a month and the Chronicle will begin accumulating history.", Color("788e97"))
+    for event: Dictionary in events:
+        _history_row(event)
+    _section("HISTORICAL INSPECTION")
+    var dates: Array = view.get("history_dates", [])
+    if dates.is_empty(): return
+    var option := OptionButton.new()
+    option.custom_minimum_size = Vector2(220, 44)
+    for date_value: Variant in dates:
+        option.add_item(_format_date(str(date_value)))
+    option.item_selected.connect(func(index: int): _show_historical(str(dates[index])))
+    detail_content.add_child(option)
+    _show_historical(str(dates[0]))
 
 func _show_historical(date_value: String) -> void:
     if session == null: return
-    var historical: Dictionary = session.call("historical_projection", date_value); if not bool(historical.get("passed", false)): return
-    var promo: Dictionary = historical.get("promotion", {}); var card := _card(); card.name = "HistoricalProjectionCard"; card.add_child(_label(_format_date(date_value) + "  ·  " + _clean(str(promo.get("name", ""))), 15, Color("dfe8eb"))); card.add_child(_label("Cash " + _money(promo.get("cash", {})) + "  ·  prestige " + _percent(float(promo.get("prestige", 0.0))) + "  ·  momentum " + _signed_percent(float(promo.get("momentum", 0.0))), 11, Color("81969e")))
+    var historical: Dictionary = session.call("historical_projection", date_value)
+    if not bool(historical.get("passed", false)): return
+    if _historical_card != null and is_instance_valid(_historical_card):
+        _historical_card.free()
+    var promo: Dictionary = historical.get("promotion", {})
+    var card := _card()
+    _historical_card = card.get_parent() as Control
+    _historical_card.name = "HistoricalProjectionCard"
+    card.add_child(_label(_format_date(date_value) + "  ·  " + _clean(str(promo.get("name", ""))), 15, Color("dfe8eb")))
+    card.add_child(_label("Cash " + _money(promo.get("cash", {})) + "  ·  prestige " + _percent(float(promo.get("prestige", 0.0))) + "  ·  momentum " + _signed_percent(float(promo.get("momentum", 0.0))), 11, Color("81969e")))
 
 func _history_row(event: Dictionary) -> void:
     var card := _card(); var place := ("  ·  " + _clean(str(event.get("market_name", "")))) if not str(event.get("market_name", "")).is_empty() else ""; card.add_child(_label(_event_title(str(event.get("event_type", "Event"))) + place, 14, Color("d9e5e8"))); var names := ", ".join(event.get("entity_names", [])); card.add_child(_label(_format_date(str(event.get("date", ""))) + (("  ·  " + names) if not names.is_empty() else ""), 11, Color("7b9098")))
@@ -233,13 +253,55 @@ func _queue_result(result: Dictionary, success_text: String) -> void: status_mes
 func _on_advance_pressed() -> void: _advance_month()
 func _advance_month() -> Dictionary:
     if session == null: return {"passed": false}
-    advance_button.disabled = true; var result: Dictionary = session.call("advance_month"); advance_button.disabled = false
+    if _advance_locked_until_idle:
+        return {"passed": false, "suppressed": true, "errors": [{"code": "G2H001", "path": "presentation.advance_month", "message": "Duplicate month activation suppressed."}]}
+    _advance_locked_until_idle = true
+    advance_button.disabled = true
+    call_deferred("_release_advance_lock")
+    var result: Dictionary = session.call("advance_month")
     if bool(result.get("passed", false)):
-        var turn: Dictionary = result.get("turn", {}); var events: Array = turn.get("events", []); status_message = "Month resolved. " + str(events.size()) + " material simulation event" + ("s" if events.size() != 1 else "") + " recorded."; view = result.get("projection", {}); _refresh_header(); map_view.call("set_model", view); map_view.call("select_market", selected_market_id, false); _render_detail()
-    else: status_message = "Month could not advance; the current state was not replaced."; _refresh_header()
+        var turn: Dictionary = result.get("turn", {})
+        var events: Array = turn.get("events", [])
+        status_message = "Month resolved. " + str(events.size()) + " material simulation event" + ("s" if events.size() != 1 else "") + " recorded."
+        view = result.get("projection", {})
+        _repair_selected_market()
+        _refresh_header()
+        map_view.call("set_model", view)
+        map_view.call("select_market", selected_market_id, false)
+        _render_detail()
+    else:
+        status_message = "Month could not advance; the current state was not replaced."
+        _refresh_header()
     return result
-func _on_market_selected(market_id: String) -> void: selected_market_id = market_id; surface = "market" if _narrow else "map"; _render_detail()
-func _set_surface(value: String) -> void: surface = value; _render_detail()
+func _release_advance_lock() -> void:
+    _advance_locked_until_idle = false
+    if advance_button != null:
+        advance_button.disabled = false
+func _on_market_selected(market_id: String) -> void:
+    if not _market_exists(market_id): return
+    selected_market_id = market_id
+    surface = "market" if _narrow else "map"
+    _render_detail()
+func _set_surface(value: String) -> void:
+    if not value in ["map", "market", "roster", "touring", "wrestling", "history"]: return
+    surface = value
+    _render_detail()
+func _market_exists(market_id: String) -> bool:
+    for market: Dictionary in view.get("markets", []):
+        if str(market.get("market_id", "")) == market_id:
+            return true
+    return false
+func _repair_selected_market() -> void:
+    if _market_exists(selected_market_id): return
+    var markets: Array = view.get("markets", [])
+    if markets.is_empty():
+        selected_market_id = ""
+        return
+    for market: Dictionary in markets:
+        if bool(market.get("is_home_market", false)):
+            selected_market_id = str(market.get("market_id", ""))
+            return
+    selected_market_id = str((markets[0] as Dictionary).get("market_id", ""))
 func _selected_market() -> Dictionary:
     for market: Dictionary in view.get("markets", []):
         if str(market.get("market_id", "")) == selected_market_id: return market

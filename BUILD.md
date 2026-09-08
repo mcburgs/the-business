@@ -59,6 +59,20 @@ godot --path .
 
 Phase G visual QA uses the built-in capture arguments on the default scene under a graphical display. Android export is intentionally not part of this phase.
 
+## G→H adversarial interaction gate
+
+The accepted G→H gate attacks the complete Phase G player-facing interaction path before Android integration. It retains the non-person Ownership Seat, knowledge-limited presentation and canonical command/month authority while adding hostile-input regression coverage. Governing records are `docs/G2H_ACCEPTANCE.md`, `docs/G2H_FINDINGS.md`, and `docs/G2H_RUNTIME_RESULT.md`.
+
+Run the deterministic interaction harness headlessly:
+
+```text
+godot --headless --path . --script res://tools/adversarial_runner/g2h_interaction_run.gd
+```
+
+The harness exercises real `StrategicHome`/`StrategicMapView` touch tap/drag, repeated setter callbacks, immediate duplicate month activation, surface churn, stale market selection, repeated historical inspection and knowledge-boundary checks. The complete automated suite also retains the same behaviors in `test_g2h_interaction_regressions.gd`.
+
+G→H does **not** perform Android export/package work. That remains Phase H.
+
 ## Phase F-R reconciliation gates
 
 Phase F-R does not replace historical Phase F evidence. It adds the player-identity reconciliation and reruns the complete Phase F runtime surface. Current evidence is recorded in `docs/PHASE_F_R_ACCEPTANCE.md` and `docs/PHASE_F_R_RUNTIME_RESULT.md`; audit records are `docs/PHASE_F_R_OWNERSHIP_AUDIT.md` and `docs/PHASE_F_R_ARCHITECTURE_SEAM_AUDIT.md`.

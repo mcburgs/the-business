@@ -58,3 +58,17 @@ Rules enforced by the static gate:
 - map interaction retains tap/drag/zoom support and required information is not hover-only.
 
 Presentation may own ephemeral concerns such as selected market, active surface, map pan/zoom and layout mode. Those values have no simulation meaning and are discarded/rebuilt without changing CampaignState.
+
+## G→H interaction-boundary hardening
+
+The G→H gate adds no new authority layer. It hardens the existing Phase G boundary against hostile input timing and stale presentation state:
+
+- repeated setter-style UI intents are normalized inside `CampaignSession` before month resolution; exact duplicates are suppressed and same-target replacements supersede the prior pending intent;
+- every new/replacement intent is still validated through `CommandRouter` on a clone of current authoritative state with other pending canonical commands preview-applied;
+- presentation cannot use coalescing to bypass cross-promotion, stale-turn/date, availability or payload validation;
+- `StrategicHome` owns only a deferred-frame advance lock, current surface/selection and transient historical-card lifecycle;
+- `CampaignSession` owns only an in-progress re-entry guard around the existing `MonthPipeline`; it does not create a second turn resolver;
+- invalid/stale market selection is rejected against the current Owner projection;
+- Chronicle/history churn remains read-only and knowledge-scoped.
+
+These protections are retained by `tests/integration/test_g2h_interaction_regressions.gd`, `tools/adversarial_runner/g2h_interaction_run.gd`, and the static repository gate.

@@ -2,6 +2,16 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## G→H adversarial interaction gate - 2026-09-08
+
+- Added a retained hostile-interaction regression and rendered interaction harness over the real Phase G presentation/application boundary.
+- Fixed `G2H-001`: repeated route/budget/market-focus/push UI setter intents now suppress exact duplicates and supersede prior same-target pending intent while retaining canonical CommandRouter validation.
+- Fixed `G2H-002`: Chronicle historical navigation now owns one selector and one replaceable transient historical card, avoiding same-frame node reuse/queued-free churn.
+- Fixed `G2H-003`: duplicate month activation in one input burst is suppressed through a deferred presentation lock plus an application re-entry guard.
+- Fixed `G2H-004`: stale/invalid market IDs can no longer become current presentation selection.
+- Reconfirmed stale-envelope `CMD002`, F2G cross-promotion authority, knowledge limits, non-mutating historical inspection and deterministic touring-churn equivalence.
+- Preserved the Phase G game/build version because this is an interphase validation gate; Android integration remains Phase H.
+
 ## 0.0.0-phase-g - 2026-09-08
 
 - Replaced the development shell as the default gameplay experience with a map-first strategic home.

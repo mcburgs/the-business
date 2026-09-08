@@ -199,3 +199,13 @@ This file records implementation decisions made while translating the governing 
 **Opening-state provenance:** The current campaign pack is seed content, not a serialized CampaignState. `CampaignRuntimeFactory` therefore performs deterministic, generic vertical-slice materialization using content identities/records plus retained Phase E/F tuning. The resulting CampaignState is authoritative before UI projection; the presentation never treats bootstrap values as its own truth.
 
 **Deferred:** Android export/package work remains Phase H. Deeper presentation polish, full manual microbooking, additional content depth and balance remain later work.
+
+## G→H interaction-gate decisions
+
+**Phase G setter intents coalesce at the application presentation seam.** Route, touring budget, market focus and featured push are setter-like Phase G interactions. Repeated touch callbacks for the same governed target must not accumulate duplicate authoritative commands. `CampaignSession` therefore suppresses exact duplicates and supersedes the prior pending setter for the same target, but validates the candidate through the existing `CommandRouter` against a cloned current-state preview including all other pending canonical commands. This is interaction normalization, not a second command engine.
+
+**Month advance has a presentation burst lock and an application re-entry guard.** The UI keeps the advance control locked through the deferred frame so one physical input burst cannot resolve two months. `CampaignSession` independently rejects true re-entry while `MonthPipeline` is active. The normal later deliberate month remains legal; no cooldown or domain timer is introduced.
+
+**Historical presentation owns one replaceable transient inspection card.** Chronicle remains authoritative/read-only. The selector/card lifecycle is presentation-only and is replaced synchronously during hostile navigation so obsolete Controls cannot be reattached or survive as simultaneous historical views.
+
+**Presentation selections are validated against the current projection.** A market ID absent from the current Owner projection is not accepted merely because an old UI callback supplied it. This protects UI/domain agreement without turning selection into authoritative state.

@@ -717,6 +717,30 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase G presentation architecture: {exc}")
 
+    # G->H adversarial interaction gate scar-tissue checks.
+    try:
+        session_text = (ROOT / "app/session/campaign_session.gd").read_text(encoding="utf-8")
+        for token in ("_player_intent_key", "duplicate_suppressed", "superseded", "preview_state", "_advance_in_progress"):
+            if token not in session_text:
+                failures.append(f"G->H interaction boundary missing command/month protection token: {token}")
+        home_text = (ROOT / "presentation/shell/strategic_home.gd").read_text(encoding="utf-8")
+        for token in ("_advance_locked_until_idle", "_repair_selected_market", "_historical_card", "child.free()"):
+            if token not in home_text:
+                failures.append(f"G->H presentation interaction protection missing token: {token}")
+        regression_text = (ROOT / "tests/integration/test_g2h_interaction_regressions.gd").read_text(encoding="utf-8")
+        for token in ("duplicate_suppressed", "CMD002", "STALEG2H", "touring churn", "HistoricalProjectionCard"):
+            if token not in regression_text:
+                failures.append(f"G->H retained interaction regression missing attack token: {token}")
+        harness_text = (ROOT / "tools/adversarial_runner/g2h_interaction_run.gd").read_text(encoding="utf-8")
+        for token in ("InputEventScreenTouch", "InputEventScreenDrag", "pending_after_48_repeated_callbacks", "historical_reselections", "we.g2h.interaction.v1"):
+            if token not in harness_text:
+                failures.append(f"G->H rendered interaction harness missing required token: {token}")
+        for required_doc in ("docs/G2H_ACCEPTANCE.md", "docs/G2H_FINDINGS.md", "docs/G2H_RUNTIME_RESULT.md"):
+            if not (ROOT / required_doc).is_file():
+                failures.append(f"G->H acceptance evidence missing: {required_doc}")
+    except OSError as exc:
+        failures.append(f"unable to inspect G->H interaction scar tissue: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -734,7 +758,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_g.static_check.v1",
+        "schema": "we.g2h.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,
