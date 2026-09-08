@@ -20,7 +20,7 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-For the verified F-R + F→G baseline this preserves the complete Phase A-F-R gate and additionally checks the retained adversarial runner, the accepted F2G evidence package, fixed command-authority/lifecycle defects, repro bundles, and regression coverage. It does not replace an engine run.
+For Phase G this preserves the complete Phase A-F-R/F→G gate and additionally checks the map-first presentation boundary: presentation code may not import authoritative domain/persistence/command internals, OwnerPresentationQuery must retain knowledge/Chronicle seams, the default root must contain StrategicHome, and the map must retain touch-capable selection/navigation. It does not replace an engine run.
 
 ## Canonical headless gate
 
@@ -32,7 +32,7 @@ The runner:
 
 - boots under stock Godot without an editor plugin;
 - recursively discovers `test_*.gd` scripts under `tests/unit/` and `tests/integration/`;
-- executes all retained Phase A-F tests plus F-R ownership-seat/migration regressions and the F→G adversarial defect regressions;
+- executes all retained Phase A-F tests plus F-R ownership-seat/migration regressions, the F→G adversarial defect regressions, and Phase G presentation/query/command tests;
 - emits JSON-line diagnostics prefixed `WE_DIAG`;
 - emits one machine-readable summary prefixed `WE_TEST_SUMMARY`;
 - writes a JSON result artifact to `user://diagnostics/headless-results.json` by default;
@@ -46,6 +46,18 @@ godot --headless --path . --script res://tests/runner.gd -- --output=res://tests
 
 `tests/output/*.json` is intentionally ignored by Git.
 
+
+## Phase G presentation gates
+
+Phase G acceptance is controlled by `docs/PHASE_G_ACCEPTANCE.md` and recorded in `docs/PHASE_G_RUNTIME_RESULT.md`. The default scene is the strategic map home. Presentation reads through `OwnerPresentationQuery` and writes through `CampaignSession -> CommandEnvelope -> CommandRouter`; month advancement remains `MonthPipeline`.
+
+A playable/reference render can be launched normally with the pinned engine:
+
+```text
+godot --path .
+```
+
+Phase G visual QA uses the built-in capture arguments on the default scene under a graphical display. Android export is intentionally not part of this phase.
 
 ## Phase F-R reconciliation gates
 

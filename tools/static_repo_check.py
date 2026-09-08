@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""F-R plus F->G repository/content/adversarial checks that do not require Godot."""
+"""Phase G repository/content/architecture checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -107,6 +107,15 @@ REQUIRED_FILES = [
     "tests/adversarial/repro/F2G-001/manifest.json", "tests/adversarial/repro/F2G-001/reproduce_pre_fix.gd",
     "tests/adversarial/repro/F2G-002/manifest.json", "tests/adversarial/repro/F2G-002/reproduce_pre_fix.gd",
     "tests/adversarial/repro/F2G-003/manifest.json", "tests/adversarial/repro/F2G-003/reproduce_pre_fix.gd",
+    "app/session/slice_tuning.gd", "app/session/campaign_runtime_factory.gd",
+    "app/session/campaign_session.gd", "app/queries/owner_presentation_query.gd",
+    "presentation/common/ui_theme_factory.gd", "presentation/map/strategic_map_view.gd",
+    "presentation/shell/strategic_home.gd", "presentation/shell/strategic_home.tscn",
+    "tests/unit/test_phase_g_owner_projection.gd",
+    "tests/integration/test_phase_g_runtime_bootstrap.gd",
+    "tests/integration/test_phase_g_command_and_month_flow.gd",
+    "tests/integration/test_phase_g_presentation_scene_and_history.gd",
+    "docs/PHASE_G_ACCEPTANCE.md", "docs/PHASE_G_RUNTIME_RESULT.md",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -350,19 +359,22 @@ def check() -> dict:
 
     validate_valid_content(failures)
 
-    # Phase F-R current metadata plus retained Phase F competitive-world static gates.
+    # Phase G current metadata plus retained Phase F/F-R/F->G static gates.
     try:
         version_text = (ROOT / "app/bootstrap/project_version.gd").read_text(encoding="utf-8")
-        if 'const BUILD_PHASE: String = "F-R"' not in version_text:
-            failures.append("Phase F-R metadata must report build phase F-R")
-        if 'const GAME_VERSION: String = "0.0.0-phase-f-r"' not in version_text:
-            failures.append("Phase F-R game version must be 0.0.0-phase-f-r")
+        if 'const BUILD_PHASE: String = "G"' not in version_text:
+            failures.append("Phase G metadata must report build phase G")
+        if 'const GAME_VERSION: String = "0.0.0-phase-g"' not in version_text:
+            failures.append("Phase G game version must be 0.0.0-phase-g")
         if 'const ARCHITECTURE_VERSION: String = "0.3.0"' not in version_text:
-            failures.append("Phase F-R architecture version must be 0.3.0")
+            failures.append("Phase G architecture version must remain 0.3.0")
         if 'const CONTRACT_VERSION: String = "0.2.0"' not in version_text:
-            failures.append("Phase F-R contract version must be 0.2.0")
+            failures.append("Phase G contract version must remain 0.2.0")
+        project_text = (ROOT / "project.godot").read_text(encoding="utf-8")
+        if 'config/version="0.0.0-phase-g"' not in project_text:
+            failures.append("project.godot must report Phase G game version")
     except OSError as exc:
-        failures.append(f"unable to inspect Phase F-R version metadata: {exc}")
+        failures.append(f"unable to inspect Phase G version metadata: {exc}")
 
     expected_commands = {
         "command.hire_staff", "command.assign_role", "command.fire_person", "command.set_booker", "command.adjust_budget",
@@ -662,6 +674,49 @@ def check() -> dict:
             if not (repro / name).is_file():
                 failures.append(f"F->G repro bundle incomplete: {finding_id}/{name}")
 
+    # Phase G presentation/client-boundary gates.
+    try:
+        presentation_scripts = sorted((ROOT / "presentation").rglob("*.gd"))
+        forbidden_presentation_tokens = (
+            "res://domain/", "res://persistence/", "res://app/commands/",
+            "CommandRouter", "CommandEnvelope", "CampaignState", "owner_person_id",
+            "player_person", "true_value", "influence_by_promotion", "state.get(",
+        )
+        for script in presentation_scripts:
+            source = script.read_text(encoding="utf-8")
+            lowered = source.lower()
+            for token in forbidden_presentation_tokens:
+                if token.lower() in lowered:
+                    failures.append(f"Phase G presentation must remain a client of application/query state; forbidden token {token!r}: {script.relative_to(ROOT)}")
+
+        session_text = (ROOT / "app/session/campaign_session.gd").read_text(encoding="utf-8")
+        for token in ("OwnerPresentationQuery", "CommandEnvelope", "CommandRouter", "MonthPipeline", "queue_player_command", "advance_month"):
+            if token not in session_text:
+                failures.append(f"Phase G CampaignSession missing authoritative application seam: {token}")
+
+        owner_query_text = (ROOT / "app/queries/owner_presentation_query.gd").read_text(encoding="utf-8")
+        for token in ("KnowledgeQueryService", "ChronicleQueryService", "ownership_seat"):
+            if token not in owner_query_text:
+                failures.append(f"Phase G OwnerPresentationQuery missing governed query seam: {token}")
+        if "DebugTruthQuery" in owner_query_text or "debug_truth_query" in owner_query_text.lower() or "true_value" in owner_query_text:
+            failures.append("Phase G OwnerPresentationQuery must not use a debug/true-value escape hatch")
+
+        home_text = (ROOT / "presentation/shell/strategic_home.gd").read_text(encoding="utf-8")
+        for token in ("queue_player_command", "advance_month", "roster", "touring", "programs", "recent_history"):
+            if token not in home_text:
+                failures.append(f"Phase G strategic home missing required map-loop presentation seam: {token}")
+
+        map_text = (ROOT / "presentation/map/strategic_map_view.gd").read_text(encoding="utf-8")
+        for token in ("market_selected", "InputEventScreenDrag", "zoom"):
+            if token not in map_text:
+                failures.append(f"Phase G map must retain touch-capable selection/navigation seam: {token}")
+
+        root_scene_text = (ROOT / "presentation/shell/game_root.tscn").read_text(encoding="utf-8")
+        if "StrategicHome" not in root_scene_text:
+            failures.append("Phase G map-first StrategicHome must be present in the default game root scene")
+    except OSError as exc:
+        failures.append(f"unable to inspect Phase G presentation architecture: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -679,7 +734,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.f2g.static_check.v1",
+        "schema": "we.phase_g.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

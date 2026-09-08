@@ -182,3 +182,20 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted from F→G adversarial gate
 **Decision:** Assigning a booker requires a live same-promotion employment contract, and contract deactivation clears a matching `booker_by_promotion` reference. The same principle governs future staff appointments unless a specific governed loan/share contract says otherwise.
 **Reason:** F2G-003 showed that stale staff references can supply free skill after employment ends, contradicting the contract and economy model.
+
+
+## Phase G — map-first presentation as an application client
+
+**Decision:** The default playable surface is `StrategicHome`, dominated by `StrategicMapView`. Presentation owns transient selection/navigation state only. It may not own or directly mutate CampaignState, construct authoritative domain entities, call CommandRouter, or read debug truth.
+
+**Read seam:** `OwnerPresentationQuery` projects controlled-promotion context, markets, people, touring, wrestling and Chronicle/history. Rival market information is obtained through `KnowledgeQueryService` and remains estimated where the Ownership Seat's knowledge is uncertain. Historical inspection uses `ChronicleQueryService` reconstruction and is subsequently scoped for the Ownership Seat.
+
+**Write seam:** `CampaignSession` converts presentation intent into canonical `CommandEnvelope`s, validates them with `CommandRouter` on a cloned state, queues accepted commands, advances the authoritative month through the existing `MonthPipeline`, then rebuilds the presentation projection.
+
+**Ownership:** The player remains the non-person `OwnershipSeatState`; no player Person or avatar metadata is introduced. NPC owners/promoters remain Persons where the simulation already models them.
+
+**Map provenance:** Phase G consumes the existing normalized market coordinates and map connections from campaign content. No Great Lakes/1975 branch is added to domain/application simulation. A deterministic fallback layout exists only in presentation for content lacking coordinates.
+
+**Opening-state provenance:** The current campaign pack is seed content, not a serialized CampaignState. `CampaignRuntimeFactory` therefore performs deterministic, generic vertical-slice materialization using content identities/records plus retained Phase E/F tuning. The resulting CampaignState is authoritative before UI projection; the presentation never treats bootstrap values as its own truth.
+
+**Deferred:** Android export/package work remains Phase H. Deeper presentation polish, full manual microbooking, additional content depth and balance remain later work.

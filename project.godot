@@ -8,7 +8,7 @@ config_version=5
 [application]
 config/name="The Business"
 config/description="Offline wrestling promotion strategy simulation"
-config/version="0.0.0-phase-f"
+config/version="0.0.0-phase-g"
 run/main_scene="res://presentation/shell/game_root.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 

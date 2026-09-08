@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://presentation/shell/game_root.gd" id="1_game_root"]
+[ext_resource type="PackedScene" path="res://presentation/shell/strategic_home.tscn" id="2_home"]
 
 [node name="GameRoot" type="Node"]
 script = ExtResource("1_game_root")
@@ -12,6 +13,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+
+[node name="StrategicHome" parent="PresentationRoot" instance=ExtResource("2_home")]
+layout_mode = 1
 
 [node name="AudioRoot" type="Node" parent="."]

@@ -2,6 +2,17 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## 0.0.0-phase-g - 2026-09-08
+
+- Replaced the development shell as the default gameplay experience with a map-first strategic home.
+- Added deterministic campaign runtime materialization from governed content and retained generic slice tuning.
+- Added `CampaignSession` as the presentation-facing application boundary and `OwnerPresentationQuery` as the knowledge-limited view-model seam.
+- Added market, controlled-promotion, roster/people, touring, wrestling/program and Chronicle/history presentation surfaces.
+- Added canonical UI command flow for market focus, touring route, featured-person push and touring-budget adjustment, plus complete strategic month advancement through `MonthPipeline`.
+- Preserved the non-person Ownership Seat and knowledge-limited rival estimates; presentation exposes neither player Person state nor raw authoritative rival truth.
+- Added touch-capable map pan/zoom/tap and responsive desktop/narrow layouts in preparation for Phase H without performing Android packaging.
+- Added four Phase G automated tests and Phase G static presentation-boundary gates while retaining F2G-001/002/003 regressions and all earlier evidence.
+
 ## F→G adversarial strategic gate - 2026-09-07
 
 - Added the canonical `F2G-STRAT-001` adversarial harness using knowledge-filtered player views, validated command envelopes, the normal MonthPipeline, deterministic replay, per-run transcripts/metrics/invariants, Chronicle reconstruction, and save-roundtrip evidence.

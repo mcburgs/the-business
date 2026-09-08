@@ -2,14 +2,14 @@
 
 **The Business** is the working repository for the Wrestling Empire game project: an offline, simulation-first wrestling-promotion strategy game built in Godot.
 
-This repository is currently at the **verified Phase F-R baseline with the F→G adversarial strategic gate passed**, under the pinned Godot 4.7.2-stable runtime. Phase F remains historically accepted; F-R aligns the implementation with the reconciled GDD/Architecture v0.3, and the F→G gate has now attacked that baseline through the canonical player query/command path, fixed three reproducible defects, converted them into regressions, and cleared the repository to begin Phase G presentation.
+This repository is currently at **Phase G: Strategic Map / Playable Presentation**. Phase F-R and the F→G adversarial strategic gate remain accepted historical baselines. Phase G adds the first map-first playable client over that simulation: knowledge-limited market context, controlled-promotion HUD, people, touring, wrestling/program, Chronicle/history and canonical month flow without moving simulation authority into the UI.
 
 ## Current baseline
 
 - Engine: **Godot 4.7.2-stable**
 - Verified runtime: **4.7.2.stable.official.ed1daf0bf**
-- Game version: **0.0.0-phase-f-r**
-- Build phase: **F-R**
+- Game version: **0.0.0-phase-g**
+- Build phase: **G**
 - Language: **typed GDScript**
 - Runtime posture: offline, single-process simulation with a replaceable presentation shell
 - Primary future target: Android phone
@@ -24,7 +24,7 @@ Great Lakes is data. The 1975 start date is content. Authored promotion/market/r
 
 The canonical 15-phase monthly pipeline remains the only turn-resolution spine. Phase F freezes a planning snapshot in phase 2, gives every controlled promotion a knowledge-filtered planning view, and commits resulting AI/automation commands through the same phase-3 CommandRouter used by players. Owner, Talent, Touring, Booker, Recovery and Diplomacy decisions are separate modules. Booker AI supplies priorities and constraints; the Phase E BookingSystem still creates routine cards. Markets remain component influence spaces rather than owned flags, money remains ledger-backed, and Chronicle reconstruction remains checkpoint-plus-delta replay without AI, commands, RNG or simulation.
 
-Phase F-R preserves Phase F mechanics and deliberately keeps careers, clauses, diplomacy, recovery and scouting shallow. It does **not** implement deep injuries/medical systems, ownership succession, acquisitions, sophisticated alliances, advanced national media/PPV/streaming, merchandise/sponsorship/debt depth, production UI, final balance, or final campaign population.
+Phase G preserves the Phase F/F-R/F→G simulation and deliberately keeps later depth shallow. It does **not** implement Android packaging, deep injuries/medical systems, ownership succession, acquisitions, sophisticated alliances, advanced national media/PPV/streaming, merchandise/sponsorship/debt depth, a complete manual card editor, final balance, or final campaign population.
 
 ## Schema note
 
@@ -32,7 +32,7 @@ The original standalone Phase 0 machine-readable schema package referenced by th
 
 ## Start here
 
-1. Read `BUILD.md`, `docs/PHASE_F_R_ACCEPTANCE.md`, `docs/F2G_ACCEPTANCE.md`, and `docs/F2G_FINDINGS.md`.
+1. Read `BUILD.md`, `docs/PHASE_G_ACCEPTANCE.md`, `docs/PHASE_F_R_ACCEPTANCE.md`, `docs/F2G_ACCEPTANCE.md`, and `docs/F2G_FINDINGS.md`.
 2. Run `python tools/static_repo_check.py`.
 3. Run the stock-Godot headless test gate:
 
@@ -46,6 +46,6 @@ The original standalone Phase 0 machine-readable schema package referenced by th
 
    `godot --headless --path . --script res://tools/simulation_cli/phase_f_soak.gd -- --years=5 --seeds=424242,424242,424243,424244,424245,424246,424247,424248`
 
-6. Preserve historical Phase F evidence, the verified F-R baseline, and the accepted F→G adversarial corpus. See `docs/F2G_RUNTIME_RESULT.md` and `tests/adversarial/evidence/F2G-STRAT-001/` for the current gate evidence.
+6. Launch the default project scene to enter the Phase G map-first playable presentation. Preserve all historical Phase F/F-R/F→G evidence; Phase G verification is recorded in `docs/PHASE_G_RUNTIME_RESULT.md`.
 
 The full governing documents are preserved under `docs/governing/`.
