@@ -1,0 +1,981 @@
+{
+  "checks": [
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 0,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 0,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 1,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 1,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 2,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 2,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 3,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 3,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 4,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 4,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 5,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 5,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 5,
+      "passed": true,
+      "target_date": "2001-04-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 6,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 6,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 7,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 7,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 8,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 8,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 9,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 9,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 10,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 10,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 11,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 11,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 11,
+      "passed": true,
+      "target_date": "2001-10-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 12,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 12,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 13,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 13,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 14,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 14,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 15,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 15,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 16,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 16,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 17,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 17,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 17,
+      "passed": true,
+      "target_date": "2002-04-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 18,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 18,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 19,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 19,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 20,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 20,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 21,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 21,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 22,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 22,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 23,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 23,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 23,
+      "passed": true,
+      "target_date": "2002-10-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 24,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 24,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 25,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 25,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 26,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 26,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 27,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 27,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 28,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 28,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 29,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 29,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 29,
+      "passed": true,
+      "target_date": "2003-04-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 30,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 30,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 31,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 31,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 32,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 32,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 33,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 33,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 34,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 34,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 35,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 35,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 35,
+      "passed": true,
+      "target_date": "2003-10-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 36,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 36,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 37,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 37,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 38,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 38,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 39,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 39,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 40,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 40,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 41,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 41,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 41,
+      "passed": true,
+      "target_date": "2004-04-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 42,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 42,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 43,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 43,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 44,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 44,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 45,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 45,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 46,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 46,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 47,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 47,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 47,
+      "passed": true,
+      "target_date": "2004-10-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 48,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 48,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 49,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 49,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 50,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 50,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 51,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 51,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 52,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 52,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 53,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 53,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 53,
+      "passed": true,
+      "target_date": "2005-04-01"
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 54,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 54,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 55,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 55,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 56,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 56,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 57,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 57,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 58,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 58,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "knowledge_surface",
+      "errors": [],
+      "month": 59,
+      "passed": true
+    },
+    {
+      "check": "authoritative_state",
+      "chronicle_errors": [],
+      "ledger_errors": [],
+      "month": 59,
+      "ownership_seat_ok": true,
+      "passed": true,
+      "state_errors": []
+    },
+    {
+      "check": "historical_reconstruction",
+      "errors": [],
+      "month": 59,
+      "passed": true,
+      "target_date": "2005-10-01"
+    },
+    {
+      "check": "save_roundtrip",
+      "errors": [],
+      "month": 60,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

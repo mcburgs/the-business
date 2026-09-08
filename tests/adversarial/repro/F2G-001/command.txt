@@ -1,0 +1,1 @@
+godot --headless --path <repository> --script res://tests/adversarial/repro/F2G-001/reproduce_pre_fix.gd

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase F-R repository/content/reconciliation checks that do not require Godot."""
+"""F-R plus F->G repository/content/adversarial checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -22,8 +22,8 @@ REQUIRED_DIRS = [
     "presentation/markets", "presentation/finance", "presentation/inbox",
     "presentation/chronicle", "presentation/common", "assets/ui", "assets/portraits",
     "assets/audio", "assets/fonts", "tools/content_validator", "tools/campaign_builder",
-    "tools/simulation_cli", "tests/unit", "tests/integration", "tests/golden",
-    "tests/soak", "tests/fixtures/phase_b/valid/mini_campaign",
+    "tools/simulation_cli", "tools/adversarial_runner", "tests/unit", "tests/integration", "tests/golden",
+    "tests/soak", "tests/adversarial", "tests/adversarial/evidence", "tests/adversarial/repro", "tests/fixtures/phase_b/valid/mini_campaign",
     "tests/fixtures/phase_b/invalid", "tests/helpers",
 ]
 
@@ -98,6 +98,15 @@ REQUIRED_FILES = [
     "tests/soak/PHASE_F_R_SOAK_REPORT.md", "tests/soak/phase_f_r_5_year_soak.json",
     "docs/governing/The_Business_Creative_Direction_and_Experience_Bible_v0_1.docx",
     "docs/governing/The_Business_Creative_to_Systems_Impact_Matrix_v0_1.docx",
+    "tools/adversarial_runner/run.gd", "tests/integration/test_f2g_adversarial_regressions.gd",
+    "docs/F2G_ACCEPTANCE.md", "docs/F2G_RUNTIME_RESULT.md", "docs/F2G_FINDINGS.md",
+    "tests/adversarial/evidence/F2G-STRAT-001/PACKAGE_MANIFEST.json",
+    "tests/adversarial/evidence/F2G-STRAT-001/aggregate_summary.json",
+    "tests/adversarial/evidence/F2G-STRAT-001/SUMMARY.md",
+    "tests/adversarial/evidence/F2G-STRAT-001/RUN_COMMANDS.md",
+    "tests/adversarial/repro/F2G-001/manifest.json", "tests/adversarial/repro/F2G-001/reproduce_pre_fix.gd",
+    "tests/adversarial/repro/F2G-002/manifest.json", "tests/adversarial/repro/F2G-002/reproduce_pre_fix.gd",
+    "tests/adversarial/repro/F2G-003/manifest.json", "tests/adversarial/repro/F2G-003/reproduce_pre_fix.gd",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -605,6 +614,54 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect Phase F-R soak evidence: {exc}")
 
+    # F->G adversarial strategic gate retention and scar-tissue checks.
+    try:
+        runner_text = (ROOT / "tools/adversarial_runner/run.gd").read_text(encoding="utf-8")
+        for token in ("AIPlanningView", "MonthPipeline", "CommandEnvelope", "F2G-STRAT-001", "rational_optimizer", "turn_boundary_attacker", "_save_roundtrip", "historical_reconstruction"):
+            if token not in runner_text:
+                failures.append(f"F->G adversarial runner missing required boundary/evidence token: {token}")
+        if "DebugTruthQuery" in runner_text or "debug_truth_query" in runner_text.lower():
+            failures.append("F->G legal-gameplay adversarial runner must not use debug truth as policy input")
+    except OSError as exc:
+        failures.append(f"unable to inspect F->G adversarial runner: {exc}")
+
+    try:
+        router_text = (ROOT / "app/commands/command_router.gd").read_text(encoding="utf-8")
+        contract_text = (ROOT / "domain/people/contract_system.gd").read_text(encoding="utf-8")
+        for token in ("promotion_scope_mismatch", "media_deal_terms_require_authoritative_offer", "booker_requires_active_contract", "person_not_available_to_promotion"):
+            if token not in router_text:
+                failures.append(f"F->G corrected command boundary missing guard: {token}")
+        if 'bookers.erase(promotion_id)' not in contract_text:
+            failures.append("F2G-003 regression: contract deactivation must clear a matching booker appointment")
+    except OSError as exc:
+        failures.append(f"unable to inspect F->G corrected command/contract boundaries: {exc}")
+
+    try:
+        evidence = load_json(ROOT / "tests/adversarial/evidence/F2G-STRAT-001/aggregate_summary.json", failures)
+        if not isinstance(evidence, dict) or evidence.get("gate_result") != "PASS" or evidence.get("baseline_commit") != "20ddeaa45bfdbfce98be066cdc13d656d5d6363a":
+            failures.append("F->G accepted evidence must retain PASS against the frozen Phase F-R baseline")
+        else:
+            directed = evidence.get("directed", {})
+            totals = evidence.get("totals", {})
+            findings = evidence.get("findings", [])
+            if directed.get("run_count") != 30 or directed.get("months_completed") != 720 or len(directed.get("profiles", [])) != 10:
+                failures.append("F->G directed evidence must retain 10 profiles / 30 runs / 720 months")
+            if not directed.get("all_runs_passed") or not directed.get("same_seed_deterministic") or not directed.get("varied_seed_divergence"):
+                failures.append("F->G directed evidence must retain pass, same-seed replay and varied-seed divergence")
+            if totals.get("runs", 0) < 32 or totals.get("months_completed", 0) < 845:
+                failures.append("F->G evidence must retain the accepted long-horizon supplement")
+            fixed_ids = {str(f.get("id")) for f in findings if isinstance(f, dict) and f.get("status") == "fixed"}
+            if not {"F2G-001", "F2G-002", "F2G-003"}.issubset(fixed_ids):
+                failures.append("F->G evidence must retain fixed material finding records F2G-001..003")
+    except OSError as exc:
+        failures.append(f"unable to inspect F->G accepted evidence: {exc}")
+
+    for finding_id in ("F2G-001", "F2G-002", "F2G-003"):
+        repro = ROOT / "tests/adversarial/repro" / finding_id
+        for name in ("manifest.json", "reproduce_pre_fix.gd", "pre_fix_output.log", "post_fix_output.log", "expected_vs_observed.md", "command.txt"):
+            if not (repro / name).is_file():
+                failures.append(f"F->G repro bundle incomplete: {finding_id}/{name}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -622,7 +679,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_f_r.static_check.v1",
+        "schema": "we.f2g.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,

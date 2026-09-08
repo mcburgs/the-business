@@ -31,3 +31,10 @@ Phase A implements only the shell and enforcement scaffolding required to keep t
 - Reality remains CampaignState/domain truth. Perception remains knowledge/projection state. Presentation intent is explicit context and cannot be used as a hidden-truth channel.
 - WrestlingLanguage context may enter the existing ShowPlan/BookingSystem/ShowResolver path; future microbooking must use that same path rather than create a second resolution authority.
 - Relationship/identity/Chronicle seams support future lineage without replacing Person IDs. `presentation/map/` remains a non-authoritative client for the future map-first home surface.
+
+## F→G adversarial enforcement clarifications
+
+- A validated command does not gain authority merely because its payload references a valid entity. Player/AI/automation issuers are promotion-scoped; resource-targeted handlers must verify that the target resource belongs to the issuer promotion. System authority is separate and explicit.
+- Player-visible commands may choose among governed economic opportunities but may not author arbitrary authoritative economic terms. `command.sign_media_deal` is system-authority only until a real offer/proposal seam owns the terms.
+- Staff appointments that consume Person skill require live employment/availability. Contract expiry/release must reconcile stale appointments and assignments rather than leave free capability in world state.
+- Adversarial tests are clients of the same knowledge/query and command/month-pipeline boundaries as gameplay. Direct authoritative mutation is diagnostic/fault-injection evidence only and cannot establish a legal-player exploit.

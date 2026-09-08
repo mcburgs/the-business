@@ -129,6 +129,10 @@ func _deactivate(state: RefCounted, contract: RefCounted, status: String) -> voi
         var person: RefCounted = (state.get("people") as Dictionary)[person_id]; var ids: Array = person.get("active_contract_ids"); ids.erase(contract_id); person.set("active_contract_ids", ids)
     if (state.get("promotions") as Dictionary).has(promotion_id):
         var promotion: RefCounted = (state.get("promotions") as Dictionary)[promotion_id]; var ids: Array = promotion.get("contract_ids"); ids.erase(contract_id); promotion.set("contract_ids", ids)
+    var bookers: Dictionary = (state.get("world_state") as Dictionary).get("booker_by_promotion", {})
+    if str(bookers.get(promotion_id, "")) == person_id:
+        bookers.erase(promotion_id)
+        (state.get("world_state") as Dictionary)["booker_by_promotion"] = bookers
     for company_value: Variant in (state.get("touring_companies") as Dictionary).values():
         var company: RefCounted = company_value
         if str(company.get("promotion_id")) == promotion_id:

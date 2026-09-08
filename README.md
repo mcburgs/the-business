@@ -2,7 +2,7 @@
 
 **The Business** is the working repository for the Wrestling Empire game project: an offline, simulation-first wrestling-promotion strategy game built in Godot.
 
-This repository is currently at **Phase F-R: Post-Phase-F Reconciled Baseline**, verified under the pinned Godot 4.7.2-stable runtime. Phase F remains historically accepted; F-R aligns the implementation with the reconciled GDD/Architecture v0.3 by making player control a non-person Ownership Seat, preserving NPC owner/promoter Persons, adding explicit save migration, and freezing the creative/system seams required before F->G adversarial testing.
+This repository is currently at the **verified Phase F-R baseline with the F→G adversarial strategic gate passed**, under the pinned Godot 4.7.2-stable runtime. Phase F remains historically accepted; F-R aligns the implementation with the reconciled GDD/Architecture v0.3, and the F→G gate has now attacked that baseline through the canonical player query/command path, fixed three reproducible defects, converted them into regressions, and cleared the repository to begin Phase G presentation.
 
 ## Current baseline
 
@@ -32,7 +32,7 @@ The original standalone Phase 0 machine-readable schema package referenced by th
 
 ## Start here
 
-1. Read `BUILD.md`, `docs/PHASE_F_R_ACCEPTANCE.md`, and the two F-R audit records.
+1. Read `BUILD.md`, `docs/PHASE_F_R_ACCEPTANCE.md`, `docs/F2G_ACCEPTANCE.md`, and `docs/F2G_FINDINGS.md`.
 2. Run `python tools/static_repo_check.py`.
 3. Run the stock-Godot headless test gate:
 
@@ -46,6 +46,6 @@ The original standalone Phase 0 machine-readable schema package referenced by th
 
    `godot --headless --path . --script res://tools/simulation_cli/phase_f_soak.gd -- --years=5 --seeds=424242,424242,424243,424244,424245,424246,424247,424248`
 
-6. Preserve historical Phase F evidence and the verified F-R baseline. See `docs/PHASE_F_R_RUNTIME_RESULT.md` for the current pinned-engine evidence.
+6. Preserve historical Phase F evidence, the verified F-R baseline, and the accepted F→G adversarial corpus. See `docs/F2G_RUNTIME_RESULT.md` and `tests/adversarial/evidence/F2G-STRAT-001/` for the current gate evidence.
 
 The full governing documents are preserved under `docs/governing/`.

@@ -1,0 +1,713 @@
+{
+  "active_promotion_endings": 24,
+  "distinct_world_fingerprints": 7,
+  "engine_expected": "4.7.2-stable",
+  "errors": [],
+  "game_version": "0.0.0-phase-f-r",
+  "maximum_market_concentration": 0.7584463303,
+  "months_per_run": 60,
+  "passed": true,
+  "phase": "F-R",
+  "policy_wins": {
+    "strategy.balanced": 2,
+    "strategy.defensive": 1,
+    "strategy.expansionist": 5
+  },
+  "repeated_seed_deterministic": true,
+  "run_count": 8,
+  "runs": [
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1054,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.7584463303,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 28,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 134,
+          "touring": 67
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 232,
+          "ContractRenewed": 22,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 18,
+          "HotStateStarted": 21,
+          "MarketInfluenceChanged": 41,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 88,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 4,
+          "TerritoryViolated": 23
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 67,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 148566505,
+          "lifecycle": "active",
+          "momentum": -0.016721606,
+          "prestige": 0.5,
+          "score": 149066505.0,
+          "strategy_profile_id": "strategy.balanced"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 168225749,
+          "lifecycle": "active",
+          "momentum": 0.035520384,
+          "prestige": 0.4,
+          "score": 168625749.0,
+          "strategy_profile_id": "strategy.expansionist"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 133428963,
+          "lifecycle": "active",
+          "momentum": -0.066037294,
+          "prestige": 0.44,
+          "score": 133868963.0,
+          "strategy_profile_id": "strategy.defensive"
+        }
+      },
+      "seed": 424242,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.expansionist",
+      "world_fingerprint": "5b0fa75bdbabd2775caea3356cf597ca617934c17212978d326548685543b765"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1054,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.7584463303,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 28,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 134,
+          "touring": 67
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 232,
+          "ContractRenewed": 22,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 18,
+          "HotStateStarted": 21,
+          "MarketInfluenceChanged": 41,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 88,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 4,
+          "TerritoryViolated": 23
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 67,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 148566505,
+          "lifecycle": "active",
+          "momentum": -0.016721606,
+          "prestige": 0.5,
+          "score": 149066505.0,
+          "strategy_profile_id": "strategy.balanced"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 168225749,
+          "lifecycle": "active",
+          "momentum": 0.035520384,
+          "prestige": 0.4,
+          "score": 168625749.0,
+          "strategy_profile_id": "strategy.expansionist"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 133428963,
+          "lifecycle": "active",
+          "momentum": -0.066037294,
+          "prestige": 0.44,
+          "score": 133868963.0,
+          "strategy_profile_id": "strategy.defensive"
+        }
+      },
+      "seed": 424242,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.expansionist",
+      "world_fingerprint": "5b0fa75bdbabd2775caea3356cf597ca617934c17212978d326548685543b765"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1140,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.7155023969,
+      "metrics": {
+        "contested_market_months": 145,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 22,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 132,
+          "touring": 38
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 216,
+          "ContractRenewed": 23,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 72,
+          "HotStateStarted": 76,
+          "MarketInfluenceChanged": 27,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 101,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 3,
+          "TerritoryViolated": 17
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 38,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 144764035,
+          "lifecycle": "active",
+          "momentum": -0.027996274,
+          "prestige": 0.5,
+          "score": 145264035.0,
+          "strategy_profile_id": "strategy.expansionist"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 127260747,
+          "lifecycle": "active",
+          "momentum": -0.061821013,
+          "prestige": 0.4,
+          "score": 127660747.0,
+          "strategy_profile_id": "strategy.defensive"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 131593605,
+          "lifecycle": "active",
+          "momentum": -0.06988314,
+          "prestige": 0.44,
+          "score": 132033605.0,
+          "strategy_profile_id": "strategy.balanced"
+        }
+      },
+      "seed": 424243,
+      "winner_promotion_id": "promotion:PRO00001",
+      "winner_strategy": "strategy.expansionist",
+      "world_fingerprint": "fe61caff14d087fd7127163b3cae972493e18c2a2cacd3a672e53e7311e1f077"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1091,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.7215881568,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 35,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 132,
+          "touring": 57
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 232,
+          "ContractRenewed": 24,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 29,
+          "HotStateStarted": 30,
+          "MarketInfluenceChanged": 41,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 98,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 2,
+          "TerritoryViolated": 30
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 57,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 144912544,
+          "lifecycle": "active",
+          "momentum": -0.055465735,
+          "prestige": 0.5,
+          "score": 145412544.0,
+          "strategy_profile_id": "strategy.defensive"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 160880762,
+          "lifecycle": "active",
+          "momentum": 0.017628725,
+          "prestige": 0.4,
+          "score": 161280762.0,
+          "strategy_profile_id": "strategy.balanced"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 137105821,
+          "lifecycle": "active",
+          "momentum": -0.048992373,
+          "prestige": 0.44,
+          "score": 137545821.0,
+          "strategy_profile_id": "strategy.expansionist"
+        }
+      },
+      "seed": 424244,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.balanced",
+      "world_fingerprint": "d0e72c25998a838131925fab1eaa4b0f6771dd337f5619283520e6a361ec2752"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1116,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.7225016525,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 28,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 134,
+          "touring": 42
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 209,
+          "ContractRenewed": 22,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 63,
+          "HotStateStarted": 66,
+          "MarketInfluenceChanged": 31,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 93,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 4,
+          "TerritoryViolated": 23
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 42,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 138076505,
+          "lifecycle": "active",
+          "momentum": -0.023420184,
+          "prestige": 0.5,
+          "score": 138576505.0,
+          "strategy_profile_id": "strategy.balanced"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 155793249,
+          "lifecycle": "active",
+          "momentum": 0.011407213,
+          "prestige": 0.4,
+          "score": 156193249.0,
+          "strategy_profile_id": "strategy.expansionist"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 113761463,
+          "lifecycle": "active",
+          "momentum": -0.082344378,
+          "prestige": 0.44,
+          "score": 114201463.0,
+          "strategy_profile_id": "strategy.defensive"
+        }
+      },
+      "seed": 424245,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.expansionist",
+      "world_fingerprint": "f688e425c9987ef9459b53abf461cc393054d337cc0513ecb3cd2894d95af5e1"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1098,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.72077756445,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 33,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 132,
+          "touring": 67
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 244,
+          "ContractRenewed": 23,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 28,
+          "HotStateStarted": 31,
+          "MarketInfluenceChanged": 32,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 104,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 3,
+          "TerritoryViolated": 28
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 67,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 145476535,
+          "lifecycle": "active",
+          "momentum": -0.03407904,
+          "prestige": 0.5,
+          "score": 145976535.0,
+          "strategy_profile_id": "strategy.expansionist"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 159343247,
+          "lifecycle": "active",
+          "momentum": 0.022464425,
+          "prestige": 0.4,
+          "score": 159743247.0,
+          "strategy_profile_id": "strategy.defensive"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 134466105,
+          "lifecycle": "active",
+          "momentum": -0.068960512,
+          "prestige": 0.44,
+          "score": 134906105.0,
+          "strategy_profile_id": "strategy.balanced"
+        }
+      },
+      "seed": 424246,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.defensive",
+      "world_fingerprint": "a0f3b884fb63e7b8992c2b22e5b3b4e51d139c15f289b6c6dcfde10300a14ef7"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1099,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.71492250565,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 30,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 132,
+          "touring": 55
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 232,
+          "ContractRenewed": 24,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 30,
+          "HotStateStarted": 31,
+          "MarketInfluenceChanged": 34,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 116,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 2,
+          "TerritoryViolated": 25
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 55,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 149362544,
+          "lifecycle": "active",
+          "momentum": -0.008639613,
+          "prestige": 0.5,
+          "score": 149862544.0,
+          "strategy_profile_id": "strategy.defensive"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 150040762,
+          "lifecycle": "active",
+          "momentum": -0.029868064,
+          "prestige": 0.4,
+          "score": 150440762.0,
+          "strategy_profile_id": "strategy.balanced"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 133400821,
+          "lifecycle": "active",
+          "momentum": -0.058752527,
+          "prestige": 0.44,
+          "score": 133840821.0,
+          "strategy_profile_id": "strategy.expansionist"
+        }
+      },
+      "seed": 424247,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.balanced",
+      "world_fingerprint": "789b5e398d6e29992c350526bddb8053dcf064935dda1e10f18938d04d7540b6"
+    },
+    {
+      "chronicle_counts": {
+        "checkpoints": 6,
+        "deltas": 54,
+        "events": 1057,
+        "identities": 43,
+        "metrics": 360
+      },
+      "maximum_market_concentration": 0.7306034772,
+      "metrics": {
+        "contested_market_months": 180,
+        "decisions": {
+          "booker": 363,
+          "diplomacy": 18,
+          "owner_strategy": 180,
+          "recovery": 2,
+          "talent": 134,
+          "touring": 55
+        },
+        "events": {
+          "AgreementCreated": 2,
+          "AiStrategicDecision": 215,
+          "ContractRenewed": 22,
+          "FinancialMonthResolved": 180,
+          "HotStateEnded": 48,
+          "HotStateStarted": 51,
+          "MarketInfluenceChanged": 28,
+          "MediaExposureApplied": 180,
+          "MonthAdvanced": 60,
+          "ProgramDeveloped": 71,
+          "ProgramStarted": 2,
+          "ShowResolved": 180,
+          "TalentReleased": 1,
+          "TalentSigned": 4,
+          "TerritoryViolated": 13
+        },
+        "negative_cash_months": {},
+        "peak_stress": {
+          "promotion:PRO00001": 0.04,
+          "promotion:PRO00002": 0.14,
+          "promotion:PRO00003": 0.58
+        },
+        "recovery_actions": 2,
+        "route_changes": 55,
+        "scouting_reports": 1080,
+        "shows": {
+          "promotion:PRO00001": 60,
+          "promotion:PRO00002": 60,
+          "promotion:PRO00003": 60
+        }
+      },
+      "promotions": {
+        "promotion:PRO00001": {
+          "active_contracts": 3,
+          "cash_minor_units": 146624005,
+          "lifecycle": "active",
+          "momentum": -0.016590223,
+          "prestige": 0.5,
+          "score": 147124005.0,
+          "strategy_profile_id": "strategy.balanced"
+        },
+        "promotion:PRO00002": {
+          "active_contracts": 4,
+          "cash_minor_units": 159325749,
+          "lifecycle": "active",
+          "momentum": 0.014657554,
+          "prestige": 0.4,
+          "score": 159725749.0,
+          "strategy_profile_id": "strategy.expansionist"
+        },
+        "promotion:PRO00003": {
+          "active_contracts": 2,
+          "cash_minor_units": 113263963,
+          "lifecycle": "active",
+          "momentum": -0.08121946,
+          "prestige": 0.44,
+          "score": 113703963.0,
+          "strategy_profile_id": "strategy.defensive"
+        }
+      },
+      "seed": 424248,
+      "winner_promotion_id": "promotion:PRO00002",
+      "winner_strategy": "strategy.expansionist",
+      "world_fingerprint": "1dccce25968dffdae522d5edec309af3295d19ac2c1b0ee26cbc6c2368b3fb9a"
+    }
+  ],
+  "schema": "we.phase_f.soak.v1",
+  "seeds": [
+    424242,
+    424242,
+    424243,
+    424244,
+    424245,
+    424246,
+    424247,
+    424248
+  ],
+  "unique_seed_count": 7,
+  "years_per_run": 5
+}

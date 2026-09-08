@@ -1,0 +1,16 @@
+{
+  "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+  "classification": "defect",
+  "finding_id": "F2G-003",
+  "godot_runtime": "4.7.2.stable.official.ed1daf0bf",
+  "post_fix_output": "post_fix_output.log",
+  "pre_fix_output": "pre_fix_output.log",
+  "regression": "tests/integration/test_f2g_adversarial_regressions.gd::_test_booker_requires_live_employment_and_clears_on_expiry",
+  "schema": "we.f2g.finding_repro.v1",
+  "script": "reproduce_pre_fix.gd",
+  "seed": 424242,
+  "severity": "material",
+  "status": "fixed_and_regressed",
+  "test_class": "contract timing / lifecycle defect",
+  "title": "Expired booker remains active without employment"
+}

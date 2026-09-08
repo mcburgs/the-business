@@ -1,0 +1,143 @@
+{
+  "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+  "by_profile": {
+    "ultra_conservative_operator": {
+      "all_passed": true,
+      "final_cash_range": {
+        "max": 45641012,
+        "min": 45458512
+      },
+      "max_month_cash_delta": 3031584,
+      "runs": 3,
+      "unique_fingerprints": 2
+    }
+  },
+  "engine_expected": "4.7.2-stable",
+  "errors": [],
+  "months_per_run": 24,
+  "package_id": "F2G-STRAT-001",
+  "passed": true,
+  "policy_version": "f2g.policy.v1",
+  "profiles": [
+    "ultra_conservative_operator"
+  ],
+  "run_count": 3,
+  "runs": [
+    {
+      "accepted_player_commands": 104,
+      "active_contracts": 1,
+      "architecture_version": "0.3.0",
+      "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+      "chronicle_counts": {
+        "checkpoints": 5,
+        "deltas": 19,
+        "events": 404,
+        "identities": 43,
+        "metrics": 144
+      },
+      "engine_expected": "4.7.2-stable",
+      "errors": [],
+      "expected_rejections": 0,
+      "final_cash_minor_units": 45641012,
+      "final_date": "2003-01-01",
+      "final_momentum": -0.049014469,
+      "final_prestige": 0.5,
+      "game_version": "0.0.0-phase-f-r",
+      "max_abs_month_cash_delta": 2989084,
+      "maximum_market_concentration": 0.61759356305,
+      "months_completed": 24,
+      "months_requested": 24,
+      "observed_expected_rejections": 0,
+      "package_id": "F2G-STRAT-001",
+      "passed": true,
+      "policy_id": "ultra_conservative_operator",
+      "policy_version": "f2g.policy.v1",
+      "promotions_active": 3,
+      "rejected_player_commands": 0,
+      "schema": "we.f2g.adversarial_run.v1",
+      "seed": 424242,
+      "tree": "ae2ec32af6d5f8af4c91a22fcaf67723849d0c30",
+      "world_fingerprint": "7ca87c196aa70e0e48e70c8a92c05f5fb1a1f69b9d632243ed3d66506cd736b2"
+    },
+    {
+      "accepted_player_commands": 104,
+      "active_contracts": 1,
+      "architecture_version": "0.3.0",
+      "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+      "chronicle_counts": {
+        "checkpoints": 5,
+        "deltas": 19,
+        "events": 404,
+        "identities": 43,
+        "metrics": 144
+      },
+      "engine_expected": "4.7.2-stable",
+      "errors": [],
+      "expected_rejections": 0,
+      "final_cash_minor_units": 45641012,
+      "final_date": "2003-01-01",
+      "final_momentum": -0.049014469,
+      "final_prestige": 0.5,
+      "game_version": "0.0.0-phase-f-r",
+      "max_abs_month_cash_delta": 2989084,
+      "maximum_market_concentration": 0.61759356305,
+      "months_completed": 24,
+      "months_requested": 24,
+      "observed_expected_rejections": 0,
+      "package_id": "F2G-STRAT-001",
+      "passed": true,
+      "policy_id": "ultra_conservative_operator",
+      "policy_version": "f2g.policy.v1",
+      "promotions_active": 3,
+      "rejected_player_commands": 0,
+      "schema": "we.f2g.adversarial_run.v1",
+      "seed": 424242,
+      "tree": "ae2ec32af6d5f8af4c91a22fcaf67723849d0c30",
+      "world_fingerprint": "7ca87c196aa70e0e48e70c8a92c05f5fb1a1f69b9d632243ed3d66506cd736b2"
+    },
+    {
+      "accepted_player_commands": 104,
+      "active_contracts": 1,
+      "architecture_version": "0.3.0",
+      "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+      "chronicle_counts": {
+        "checkpoints": 5,
+        "deltas": 19,
+        "events": 415,
+        "identities": 43,
+        "metrics": 144
+      },
+      "engine_expected": "4.7.2-stable",
+      "errors": [],
+      "expected_rejections": 0,
+      "final_cash_minor_units": 45458512,
+      "final_date": "2003-01-01",
+      "final_momentum": -0.054493772,
+      "final_prestige": 0.5,
+      "game_version": "0.0.0-phase-f-r",
+      "max_abs_month_cash_delta": 3031584,
+      "maximum_market_concentration": 0.5570514129499999,
+      "months_completed": 24,
+      "months_requested": 24,
+      "observed_expected_rejections": 0,
+      "package_id": "F2G-STRAT-001",
+      "passed": true,
+      "policy_id": "ultra_conservative_operator",
+      "policy_version": "f2g.policy.v1",
+      "promotions_active": 3,
+      "rejected_player_commands": 0,
+      "schema": "we.f2g.adversarial_run.v1",
+      "seed": 424243,
+      "tree": "ae2ec32af6d5f8af4c91a22fcaf67723849d0c30",
+      "world_fingerprint": "d3fe8fe69e640d8f9dafdbcec8fb60792708999167179f3946e870604ad0eaa8"
+    }
+  ],
+  "same_seed_deterministic": true,
+  "schema": "we.f2g.adversarial_matrix.v1",
+  "seeds": [
+    424242,
+    424242,
+    424243
+  ],
+  "varied_seeds_diverge": true
+}

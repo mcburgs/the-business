@@ -2,6 +2,17 @@
 
 All notable architecture/build baseline changes are recorded here.
 
+## F→G adversarial strategic gate - 2026-09-07
+
+- Added the canonical `F2G-STRAT-001` adversarial harness using knowledge-filtered player views, validated command envelopes, the normal MonthPipeline, deterministic replay, per-run transcripts/metrics/invariants, Chronicle reconstruction, and save-roundtrip evidence.
+- Executed all ten required attacker profiles across duplicate/varied seeds for 30 directed 24-month runs, plus 65-month financial-idiot and 60-month randomized-valid-command hostile campaigns.
+- Fixed `F2G-001`: player/AI/automation promotion scope is now enforced across resource-targeted command handlers, blocking cross-promotion authoritative mutation and tightening person/program/title availability checks.
+- Fixed `F2G-002`: direct media-deal economic terms can no longer be authored by player/AI callers; authoritative system/offer provenance is required until a governed media-offer flow exists.
+- Fixed `F2G-003`: expired employment now clears a matching booker appointment, and `command.set_booker` requires a live same-promotion contract.
+- Added permanent adversarial regressions and retained pre-fix/post-fix repro bundles for all three material findings.
+- Classified talent-hoarder cash advantage as a tuning observation, negative player cash without a full bankruptcy lifecycle as an accepted shallow-slice limitation, and sub-1e-12 JSON float comparison noise as a fixed harness issue.
+- Cleared the F→G gate for Phase G only after the complete retained Phase F-R test/competition/soak/import/static/hygiene verification remained green.
+
 ## 0.0.0-phase-f-r - 2026-09-07
 
 - Reconciled player control with GDD/Architecture v0.3: `OwnershipSeatState` is a non-person control seat and no longer stores or validates a player `PersonState` identity.

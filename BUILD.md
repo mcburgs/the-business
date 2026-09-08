@@ -20,7 +20,7 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-For Phase F-R this preserves the complete Phase A-F gate and adds checks for the non-person Ownership Seat, explicit state migration, player issuer scoping, separate Presentation/WrestlingLanguage ShowPlan seams, F-R documentation/artifacts and retained historical Phase F soak evidence. It does not replace an engine run.
+For the verified F-R + F→G baseline this preserves the complete Phase A-F-R gate and additionally checks the retained adversarial runner, the accepted F2G evidence package, fixed command-authority/lifecycle defects, repro bundles, and regression coverage. It does not replace an engine run.
 
 ## Canonical headless gate
 
@@ -32,7 +32,7 @@ The runner:
 
 - boots under stock Godot without an editor plugin;
 - recursively discovers `test_*.gd` scripts under `tests/unit/` and `tests/integration/`;
-- executes all retained Phase A-F tests plus F-R ownership-seat, migration, command-boundary, Chronicle and architecture-seam regressions;
+- executes all retained Phase A-F tests plus F-R ownership-seat/migration regressions and the F→G adversarial defect regressions;
 - emits JSON-line diagnostics prefixed `WE_DIAG`;
 - emits one machine-readable summary prefixed `WE_TEST_SUMMARY`;
 - writes a JSON result artifact to `user://diagnostics/headless-results.json` by default;
@@ -52,6 +52,14 @@ godot --headless --path . --script res://tests/runner.gd -- --output=res://tests
 Phase F-R does not replace historical Phase F evidence. It adds the player-identity reconciliation and reruns the complete Phase F runtime surface. Current evidence is recorded in `docs/PHASE_F_R_ACCEPTANCE.md` and `docs/PHASE_F_R_RUNTIME_RESULT.md`; audit records are `docs/PHASE_F_R_OWNERSHIP_AUDIT.md` and `docs/PHASE_F_R_ARCHITECTURE_SEAM_AUDIT.md`.
 
 The required competition and soak commands remain the Phase F commands shown below. The F-R soak result is copied to `tests/soak/phase_f_r_5_year_soak.json`; the historically accepted `tests/soak/phase_f_5_year_soak.json` remains unchanged.
+
+## F→G adversarial strategic gate
+
+The accepted package is `F2G-STRAT-001`. It targets frozen Phase F-R commit `20ddeaa45bfdbfce98be066cdc13d656d5d6363a` through `AIPlanningView -> policy -> CommandEnvelope -> CommandRouter -> MonthPipeline`. Gameplay policies do not receive debug truth or direct authoritative mutation.
+
+The required directed pass is ten profiles × three runs, using seeds `424242,424242,424243` for 24 months each. Long-horizon supplements retain a 65-month financial self-destruction run and a 60-month random-valid-command run. Exact commands, raw logs, transcripts, diagnostics, invariant checks, findings and repro bundles live under `tests/adversarial/evidence/F2G-STRAT-001/` and `tests/adversarial/repro/`.
+
+Gate records are `docs/F2G_ACCEPTANCE.md`, `docs/F2G_RUNTIME_RESULT.md`, and `docs/F2G_FINDINGS.md`. The gate passes only when no known stop-the-line exploit remains, accepted fixes/regressions are green, same-seed determinism holds, and remaining observations are classified.
 
 ## Phase E headless strategic-loop gates
 

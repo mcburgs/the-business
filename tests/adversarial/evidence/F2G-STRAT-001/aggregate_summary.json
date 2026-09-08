@@ -1,0 +1,121 @@
+{
+  "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+  "baseline_tree": "ae2ec32af6d5f8af4c91a22fcaf67723849d0c30",
+  "content_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "directed": {
+    "accepted_player_commands": 1820,
+    "all_promotion_endings_active": true,
+    "all_runs_passed": true,
+    "max_abs_month_cash_delta": 3031584,
+    "maximum_market_concentration": 0.71264,
+    "months_completed": 720,
+    "months_per_run": 24,
+    "profiles": [
+      "rational_optimizer",
+      "hyper_aggressive_expansionist",
+      "ultra_conservative_operator",
+      "talent_hoarder",
+      "market_spammer",
+      "contract_timing_exploiter",
+      "creative_system_exploiter",
+      "financial_idiot",
+      "random_valid_command_chaos",
+      "turn_boundary_attacker"
+    ],
+    "rejected_player_commands": 123,
+    "run_count": 30,
+    "same_seed_deterministic": true,
+    "seeds": [
+      424242,
+      424242,
+      424243
+    ],
+    "varied_seed_divergence": true
+  },
+  "findings": [
+    {
+      "classification": "defect",
+      "id": "F2G-001",
+      "regression": "tests/integration/test_f2g_adversarial_regressions.gd",
+      "repro": "tests/adversarial/repro/F2G-001",
+      "severity": "stop-the-line",
+      "status": "fixed"
+    },
+    {
+      "classification": "defect",
+      "id": "F2G-002",
+      "regression": "tests/integration/test_f2g_adversarial_regressions.gd",
+      "repro": "tests/adversarial/repro/F2G-002",
+      "severity": "stop-the-line",
+      "status": "fixed"
+    },
+    {
+      "classification": "defect",
+      "id": "F2G-003",
+      "regression": "tests/integration/test_f2g_adversarial_regressions.gd",
+      "repro": "tests/adversarial/repro/F2G-003",
+      "severity": "material",
+      "status": "fixed"
+    }
+  ],
+  "gate": "F->G adversarial strategic validation",
+  "gate_decision": "Proceed to Phase G; no known stop-the-line exploit remains.",
+  "gate_result": "PASS",
+  "godot_runtime": "4.7.2.stable.official.ed1daf0bf",
+  "long_horizon": {
+    "all_runs_passed": true,
+    "months_completed": 125,
+    "run_count": 2,
+    "runs": [
+      {
+        "active_contracts": 1,
+        "final_cash_minor_units": -2076404,
+        "maximum_market_concentration": 0.7483422461,
+        "months_completed": 65,
+        "policy_id": "financial_idiot",
+        "promotions_active": 3,
+        "seed": 424242,
+        "world_fingerprint": "adf9de56c2d72999f607ed3eaff6c18b69ee127b48853c5dfda0813206039888"
+      },
+      {
+        "active_contracts": 1,
+        "final_cash_minor_units": 50385588,
+        "maximum_market_concentration": 0.8332556192,
+        "months_completed": 60,
+        "policy_id": "random_valid_command_chaos",
+        "promotions_active": 3,
+        "seed": 424242,
+        "world_fingerprint": "858693f764f864d398fa7f49098f8cd80ca0852e9776b4b0aa04777a292f9c90"
+      }
+    ]
+  },
+  "open_observations": [
+    {
+      "classification": "tuning",
+      "id": "F2G-OBS-001",
+      "severity": "minor",
+      "summary": "Talent-hoarder profile finished the 24-month fixture with the largest cash balance, but growth was bounded, rivals remained active, no invariant failed, and no cross-seed self-feeding loop was observed."
+    },
+    {
+      "classification": "accepted limitation",
+      "id": "F2G-OBS-002",
+      "severity": "minor",
+      "summary": "A deliberately bad player can drive cash below zero while financial stress remains capped at 1.0; the current shallow slice has no full player-bankruptcy lifecycle. State, ledger, save and Chronicle invariants remained valid."
+    },
+    {
+      "classification": "harness",
+      "id": "F2G-HARNESS-001",
+      "severity": "minor",
+      "summary": "Exact JSON float bit equality produced false save/Chronicle mismatch at sub-1e-12 scale; semantic round-trip comparison now uses 1e-12 numeric tolerance. No production persistence contract was weakened."
+    }
+  ],
+  "package_id": "F2G-STRAT-001",
+  "policy_version": "f2g.policy.v1",
+  "schema": "we.f2g.accepted_evidence.v1",
+  "totals": {
+    "accepted_player_commands": 2139,
+    "months_completed": 845,
+    "rejected_player_commands": 123,
+    "runs": 32
+  }
+}

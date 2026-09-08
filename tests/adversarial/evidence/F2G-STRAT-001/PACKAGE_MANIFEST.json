@@ -1,0 +1,64 @@
+{
+  "agent_policy": {
+    "profiles": [
+      "rational_optimizer",
+      "hyper_aggressive_expansionist",
+      "ultra_conservative_operator",
+      "talent_hoarder",
+      "market_spammer",
+      "contract_timing_exploiter",
+      "creative_system_exploiter",
+      "financial_idiot",
+      "random_valid_command_chaos",
+      "turn_boundary_attacker"
+    ],
+    "version": "f2g.policy.v1"
+  },
+  "allowed_surface": {
+    "commands": "CommandEnvelope -> CommandRouter -> MonthPipeline",
+    "forbidden": [
+      "direct authoritative state mutation for gameplay evidence",
+      "debug truth as policy input",
+      "player Person/avatar identity"
+    ],
+    "queries": "AIPlanningView knowledge-filtered player projection"
+  },
+  "baseline": {
+    "architecture_version": "0.3.0",
+    "commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+    "contract_version": "0.2.0",
+    "game_version": "0.0.0-phase-f-r",
+    "tree": "ae2ec32af6d5f8af4c91a22fcaf67723849d0c30"
+  },
+  "campaign_identity": "phase_f_competition fixture",
+  "content_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "directed_matrix": {
+    "months": 24,
+    "seeds": [
+      424242,
+      424242,
+      424243
+    ]
+  },
+  "fixture": "tests/helpers/phase_f_fixture.gd",
+  "gate": "F->G",
+  "long_horizon": [
+    {
+      "months": 65,
+      "profile": "financial_idiot",
+      "seed": 424242
+    },
+    {
+      "months": 60,
+      "profile": "random_valid_command_chaos",
+      "seed": 424242
+    }
+  ],
+  "package_id": "F2G-STRAT-001",
+  "result": "PASS",
+  "runtime": {
+    "godot": "4.7.2.stable.official.ed1daf0bf"
+  },
+  "schema": "we.adversarial.package_manifest.v1",
+  "test_class": "legal_gameplay_adversarial"
+}

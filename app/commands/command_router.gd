@@ -136,6 +136,8 @@ func _apply_create_touring_company(state: RefCounted, command: RefCounted, conte
         return _reject(command, "STATE002", "payload.touring_company_id", {"id": company_id, "reason": "already_exists"})
     var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
     var assignments: Array = payload["person_assignment_ids"]
     var assignment_error: Dictionary = _validate_assignments(state, promotion_id, assignments, "", command)
     if not assignment_error.is_empty(): return assignment_error
@@ -144,6 +146,11 @@ func _apply_create_touring_company(state: RefCounted, command: RefCounted, conte
     var titles: Array = payload.get("carried_championship_ids", [])
     var title_error: Dictionary = _validate_titles(state, promotion_id, titles, command)
     if not title_error.is_empty(): return title_error
+    var directive_probe: RefCounted = TouringCompanyState.new()
+    directive_probe.set("promotion_id", promotion_id); directive_probe.set("person_assignment_ids", assignments.duplicate(true))
+    for directive_value: Variant in payload.get("directives", []):
+        var directive_error: Dictionary = _validate_directive(state, directive_probe, directive_value, command)
+        if not directive_error.is_empty(): return directive_error
     var money_error: Dictionary = _validate_money(payload["monthly_budget"], command, "payload.monthly_budget")
     if not money_error.is_empty(): return money_error
     var company: RefCounted = TouringCompanyState.new()
@@ -175,6 +182,8 @@ func _apply_assign_person(state: RefCounted, command: RefCounted) -> Dictionary:
     var person_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), person_id, "person", state.get("people"), "payload.person_id")
     if not person_error.is_empty(): return person_error
     var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(company.get("promotion_id")), "payload.touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     var assigned: bool = bool(payload.get("assigned", true))
     var assignments: Array = company.get("person_assignment_ids")
     if assigned:
@@ -195,6 +204,9 @@ func _apply_set_route(state: RefCounted, command: RefCounted, content_index: Dic
     var company_id: String = str(payload["touring_company_id"])
     var company_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), company_id, "touring", state.get("touring_companies"), "payload.touring_company_id")
     if not company_error.is_empty(): return company_error
+    var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(company.get("promotion_id")), "payload.touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     var route_error: Dictionary = _validate_route(state, payload["route"], content_index, command)
     if not route_error.is_empty(): return route_error
     ((state.get("touring_companies") as Dictionary)[company_id] as RefCounted).set("route", (payload["route"] as Array).duplicate(true))
@@ -207,6 +219,9 @@ func _apply_set_directive(state: RefCounted, command: RefCounted) -> Dictionary:
     var company_id: String = str(payload["touring_company_id"])
     var company_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), company_id, "touring", state.get("touring_companies"), "payload.touring_company_id")
     if not company_error.is_empty(): return company_error
+    var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(company.get("promotion_id")), "payload.touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     if not payload["directive"] is Dictionary:
         return _reject(command, "CMD001", "payload.directive", {"reason": "expected_object"})
     var directive_error: Dictionary = _validate_directive(state, (state.get("touring_companies") as Dictionary)[company_id], payload["directive"], command)
@@ -229,6 +244,8 @@ func _apply_split_company(state: RefCounted, command: RefCounted, content_index:
     if not payload["person_ids"] is Array or (payload["person_ids"] as Array).is_empty():
         return _reject(command, "CMD001", "payload.person_ids", {"reason": "nonempty_array_required"})
     var source: RefCounted = (state.get("touring_companies") as Dictionary)[source_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(source.get("promotion_id")), "payload.source_touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     var source_people: Array = source.get("person_assignment_ids")
     for person_value: Variant in payload["person_ids"]:
         if not str(person_value) in source_people:
@@ -274,6 +291,8 @@ func _apply_merge_company(state: RefCounted, command: RefCounted) -> Dictionary:
     var source: RefCounted = (state.get("touring_companies") as Dictionary)[source_id]
     if str(target.get("promotion_id")) != str(source.get("promotion_id")):
         return _reject(command, "STATE003", "payload", {"reason": "promotion_mismatch"})
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(source.get("promotion_id")), "payload.source_touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     if str(source.get("status")) != "active":
         return _reject(command, "STATE002", "payload.source_touring_company_id", {"reason": "source_not_active"})
     var people: Array = target.get("person_assignment_ids")
@@ -300,6 +319,8 @@ func _apply_start_program(state: RefCounted, command: RefCounted) -> Dictionary:
     if (state.get("programs") as Dictionary).has(program_id): return _reject(command, "STATE002", "payload.program_id", {"reason": "already_exists"})
     var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
     for field: String in ["side_a_person_ids", "side_b_person_ids"]:
         if not payload[field] is Array or (payload[field] as Array).is_empty(): return _reject(command, "CMD001", "payload." + field, {"reason": "nonempty_array_required"})
         var seen: Dictionary = {}
@@ -309,6 +330,8 @@ func _apply_start_program(state: RefCounted, command: RefCounted) -> Dictionary:
             seen[person_id] = true
             var person_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), person_id, "person", state.get("people"), "payload." + field)
             if not person_error.is_empty(): return person_error
+            if not _person_available_to_promotion(state, promotion_id, person_id):
+                return _reject(command, "STATE003", "payload." + field, {"reason": "person_not_available_to_promotion", "person_id": person_id, "promotion_id": promotion_id})
     var program: RefCounted = ProgramState.new()
     program.set("id", program_id); program.set("promotion_id", promotion_id); program.set("started_on", str(state.get("current_date")))
     program.set("side_a", {"person_ids": (payload["side_a_person_ids"] as Array).duplicate()})
@@ -330,6 +353,8 @@ func _apply_end_program(state: RefCounted, command: RefCounted) -> Dictionary:
     var error: Dictionary = _runtime_ref_error(str(command.get("command_id")), program_id, "program", state.get("programs"), "payload.program_id")
     if not error.is_empty(): return error
     var program: RefCounted = (state.get("programs") as Dictionary)[program_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(program.get("promotion_id")), "payload.program_id")
+    if not scope_error.is_empty(): return scope_error
     program.set("status", "ended"); program.set("ended_on", str(state.get("current_date")))
     return CommandResult.success(str(command.get("command_id")), {"mutation": "program_ended", "program_id": program_id})
 
@@ -341,16 +366,24 @@ func _apply_approve_major_outcome(state: RefCounted, command: RefCounted) -> Dic
     var promotion_id: String = str(payload["promotion_id"])
     var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
     for field: String in ["winner_person_id", "loser_person_id"]:
         if payload.has(field) and payload[field] != null:
             var person_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload[field]), "person", state.get("people"), "payload." + field)
             if not person_error.is_empty(): return person_error
+            if not _person_available_to_promotion(state, promotion_id, str(payload[field])):
+                return _reject(command, "STATE003", "payload." + field, {"reason": "person_not_available_to_promotion", "person_id": payload[field], "promotion_id": promotion_id})
     if payload.has("championship_id") and payload["championship_id"] != null:
         var title_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload["championship_id"]), "championship", state.get("championships"), "payload.championship_id")
         if not title_error.is_empty(): return title_error
+        if str(((state.get("championships") as Dictionary)[str(payload["championship_id"])] as RefCounted).get("promotion_id")) != promotion_id:
+            return _reject(command, "STATE003", "payload.championship_id", {"reason": "championship_promotion_mismatch"})
     if payload.has("program_id") and payload["program_id"] != null:
         var program_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload["program_id"]), "program", state.get("programs"), "payload.program_id")
         if not program_error.is_empty(): return program_error
+        if str(((state.get("programs") as Dictionary)[str(payload["program_id"])] as RefCounted).get("promotion_id")) != promotion_id:
+            return _reject(command, "STATE003", "payload.program_id", {"reason": "program_promotion_mismatch"})
     var approved: Dictionary = (state.get("world_state") as Dictionary).get("approved_major_outcomes", {})
     approved[promotion_id] = payload.duplicate(true)
     (state.get("world_state") as Dictionary)["approved_major_outcomes"] = approved
@@ -366,6 +399,8 @@ func _apply_person_directive(state: RefCounted, command: RefCounted, kind: Strin
     var person_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload["person_id"]), "person", state.get("people"), "payload.person_id")
     if not person_error.is_empty(): return person_error
     var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(company.get("promotion_id")), "payload.touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     if not str(payload["person_id"]) in (company.get("person_assignment_ids") as Array):
         return _reject(command, "STATE002", "payload.person_id", {"reason": "person_not_assigned_to_company"})
     var directive: Dictionary = {"kind": kind, "person_id": str(payload["person_id"]), "weight": float(payload.get("weight", 1.0))}
@@ -379,6 +414,9 @@ func _apply_adjust_budget(state: RefCounted, command: RefCounted) -> Dictionary:
     var company_id: String = str(payload["touring_company_id"])
     var company_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), company_id, "touring", state.get("touring_companies"), "payload.touring_company_id")
     if not company_error.is_empty(): return company_error
+    var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
+    var scope_error: Dictionary = _issuer_promotion_scope(command, str(company.get("promotion_id")), "payload.touring_company_id")
+    if not scope_error.is_empty(): return scope_error
     var money_error: Dictionary = _validate_money(payload["monthly_budget"], command, "payload.monthly_budget")
     if not money_error.is_empty(): return money_error
     ((state.get("touring_companies") as Dictionary)[company_id] as RefCounted).set("monthly_budget", (payload["monthly_budget"] as Dictionary).duplicate(true))
@@ -388,10 +426,15 @@ func _apply_set_booker(state: RefCounted, command: RefCounted) -> Dictionary:
     var payload: Dictionary = command.get("payload")
     var closed: Dictionary = _closed_payload(command, ["promotion_id", "person_id"], ["promotion_id", "person_id"])
     if not closed.is_empty(): return closed
-    var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload["promotion_id"]), "promotion", state.get("promotions"), "payload.promotion_id")
+    var promotion_id: String = str(payload["promotion_id"])
+    var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
     var person_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload["person_id"]), "person", state.get("people"), "payload.person_id")
     if not person_error.is_empty(): return person_error
+    if not _person_has_active_contract(state, promotion_id, str(payload["person_id"])):
+        return _reject(command, "STATE003", "payload.person_id", {"reason": "booker_requires_active_contract", "person_id": payload["person_id"], "promotion_id": promotion_id})
     var map: Dictionary = (state.get("world_state") as Dictionary).get("booker_by_promotion", {})
     map[str(payload["promotion_id"])] = str(payload["person_id"])
     (state.get("world_state") as Dictionary)["booker_by_promotion"] = map
@@ -401,8 +444,11 @@ func _apply_book_market_focus(state: RefCounted, command: RefCounted) -> Diction
     var payload: Dictionary = command.get("payload")
     var closed: Dictionary = _closed_payload(command, ["promotion_id", "market_id", "intensity"], ["promotion_id", "market_id", "intensity"])
     if not closed.is_empty(): return closed
-    var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(payload["promotion_id"]), "promotion", state.get("promotions"), "payload.promotion_id")
+    var promotion_id: String = str(payload["promotion_id"])
+    var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
     if not (state.get("markets") as Dictionary).has(str(payload["market_id"])): return _reject(command, "REF001", "payload.market_id", {"id": payload["market_id"]})
     var intensity: float = float(payload["intensity"])
     if intensity < 0.0 or intensity > 1.0: return _reject(command, "STATE001", "payload.intensity", {"minimum": 0.0, "maximum": 1.0, "value": intensity})
@@ -418,6 +464,8 @@ func _apply_local_media_spend(state: RefCounted, command: RefCounted) -> Diction
     var promotion_id: String = str(payload["promotion_id"])
     var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
     var money_error: Dictionary = _validate_money(payload["spend"], command, "payload.spend")
     if not money_error.is_empty(): return money_error
     var spend: Dictionary = (state.get("world_state") as Dictionary).get("local_media_spend_by_promotion", {})
@@ -436,6 +484,10 @@ func _apply_sign_media_deal(state: RefCounted, command: RefCounted) -> Dictionar
     if (state.get("media_deals") as Dictionary).has(deal_id): return _reject(command, "STATE002", "payload.media_deal_id", {"reason": "already_exists"})
     var promotion_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), promotion_id, "promotion", state.get("promotions"), "payload.promotion_id")
     if not promotion_error.is_empty(): return promotion_error
+    var scope_error: Dictionary = _issuer_promotion_scope(command, promotion_id, "payload.promotion_id")
+    if not scope_error.is_empty(): return scope_error
+    if str((command.get("issuer") as Dictionary).get("kind")) != "system":
+        return _reject(command, "STATE003", "command_type", {"reason": "media_deal_terms_require_authoritative_offer", "command_type": "command.sign_media_deal"})
     if not payload["reach_market_ids"] is Array or (payload["reach_market_ids"] as Array).is_empty(): return _reject(command, "CMD001", "payload.reach_market_ids", {"reason": "nonempty_array_required"})
     for market_value: Variant in payload["reach_market_ids"]:
         if not (state.get("markets") as Dictionary).has(str(market_value)): return _reject(command, "REF001", "payload.reach_market_ids", {"id": market_value})
@@ -468,6 +520,10 @@ func _apply_set_champion(state: RefCounted, command: RefCounted) -> Dictionary:
         return CommandResult.rejection(command_id, "ID001", "payload.championship_id", "validation.id001", {"id": championship_id})
     if not championships.has(championship_id):
         return CommandResult.rejection(command_id, "REF001", "payload.championship_id", "validation.ref001", {"id": championship_id})
+    var championship: RefCounted = championships[championship_id]
+    var championship_promotion_id: String = str(championship.get("promotion_id"))
+    var scope_error: Dictionary = _issuer_promotion_scope(command, championship_promotion_id, "payload.championship_id")
+    if not scope_error.is_empty(): return scope_error
     var people: Dictionary = state.get("people")
     var holders: Array = payload["holder_person_ids"]
     var seen: Dictionary = {}
@@ -482,9 +538,31 @@ func _apply_set_champion(state: RefCounted, command: RefCounted) -> Dictionary:
         if seen.has(person_id):
             return CommandResult.rejection(command_id, "STATE002", "payload.holder_person_ids", "validation.state002", {"id": person_id, "reason": "duplicate_holder"})
         seen[person_id] = true
-    var championship: RefCounted = championships[championship_id]
     championship.set("holder_person_ids", holders.duplicate(true))
     return CommandResult.success(command_id, {"mutation": "championship_holders_updated", "championship_id": championship_id})
+
+func _issuer_promotion_scope(command: RefCounted, target_promotion_id: String, path: String) -> Dictionary:
+    var issuer: Dictionary = command.get("issuer")
+    if str(issuer.get("kind")) in ["player", "ai", "automation"] and str(issuer.get("promotion_id", "")) != target_promotion_id:
+        return _reject(command, "STATE003", path, {"reason": "promotion_scope_mismatch", "target_promotion_id": target_promotion_id})
+    return {}
+
+func _person_has_active_contract(state: RefCounted, promotion_id: String, person_id: String) -> bool:
+    for contract_value: Variant in (state.get("contracts") as Dictionary).values():
+        var contract: RefCounted = contract_value
+        if str(contract.get("status")) == "active" and str(contract.get("promotion_id")) == promotion_id and str(contract.get("person_id")) == person_id:
+            return true
+    return false
+
+func _person_available_to_promotion(state: RefCounted, promotion_id: String, person_id: String) -> bool:
+    if _person_has_active_contract(state, promotion_id, person_id):
+        return true
+    var shares: Variant = (state.get("world_state") as Dictionary).get("talent_shares_v1", [])
+    if shares is Array:
+        for share_value: Variant in shares:
+            if share_value is Dictionary and str((share_value as Dictionary).get("borrowing_promotion_id")) == promotion_id and str((share_value as Dictionary).get("person_id")) == person_id:
+                return true
+    return false
 
 func _validate_route(state: RefCounted, route_value: Variant, content_index: Dictionary, command: RefCounted) -> Dictionary:
     if not route_value is Array or (route_value as Array).is_empty():
@@ -515,6 +593,8 @@ func _validate_assignments(state: RefCounted, promotion_id: String, assignments:
         seen[person_id] = true
         var person_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), person_id, "person", state.get("people"), "payload.person_assignment_ids")
         if not person_error.is_empty(): return person_error
+        if not _person_available_to_promotion(state, promotion_id, person_id):
+            return _reject(command, "STATE003", "payload.person_assignment_ids", {"reason": "person_not_available_to_promotion", "person_id": person_id, "promotion_id": promotion_id})
         for company_id: String in DomainIds.sorted_keys(state.get("touring_companies")):
             if company_id == exempt_company_id: continue
             var company: RefCounted = (state.get("touring_companies") as Dictionary)[company_id]
@@ -552,10 +632,14 @@ func _validate_directive(state: RefCounted, company: RefCounted, directive_value
         if not directive.has("program_id"): return _reject(command, "CMD001", "payload.directive.program_id", {"reason": "required"})
         var program_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(directive["program_id"]), "program", state.get("programs"), "payload.directive.program_id")
         if not program_error.is_empty(): return program_error
+        if str(((state.get("programs") as Dictionary)[str(directive["program_id"])] as RefCounted).get("promotion_id")) != str(company.get("promotion_id")):
+            return _reject(command, "STATE003", "payload.directive.program_id", {"reason": "program_promotion_mismatch"})
     if kind == "title_priority":
         if not directive.has("championship_id"): return _reject(command, "CMD001", "payload.directive.championship_id", {"reason": "required"})
         var title_error: Dictionary = _runtime_ref_error(str(command.get("command_id")), str(directive["championship_id"]), "championship", state.get("championships"), "payload.directive.championship_id")
         if not title_error.is_empty(): return title_error
+        if str(((state.get("championships") as Dictionary)[str(directive["championship_id"])] as RefCounted).get("promotion_id")) != str(company.get("promotion_id")):
+            return _reject(command, "STATE003", "payload.directive.championship_id", {"reason": "championship_promotion_mismatch"})
     if directive.has("weight") and (float(directive["weight"]) < 0.0 or float(directive["weight"]) > 1.0): return _reject(command, "STATE001", "payload.directive.weight", {"minimum": 0.0, "maximum": 1.0})
     return {}
 

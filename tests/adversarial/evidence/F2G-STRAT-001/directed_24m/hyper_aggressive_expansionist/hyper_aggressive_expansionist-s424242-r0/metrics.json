@@ -1,0 +1,244 @@
+{
+  "months": [
+    {
+      "active_contracts": 3,
+      "cash_minor_units": 4908084,
+      "chronicle_head_sequence": 19,
+      "date": "2001-02-01",
+      "financial_stress": 0.04,
+      "max_market_concentration": 0.52687768965,
+      "month": 0,
+      "shows": 1
+    },
+    {
+      "active_contracts": 3,
+      "cash_minor_units": 7828668,
+      "chronicle_head_sequence": 41,
+      "date": "2001-03-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5350379438,
+      "month": 1,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 10574252,
+      "chronicle_head_sequence": 60,
+      "date": "2001-04-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5398341394,
+      "month": 2,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 13274836,
+      "chronicle_head_sequence": 76,
+      "date": "2001-05-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5422408823,
+      "month": 3,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 15992920,
+      "chronicle_head_sequence": 94,
+      "date": "2001-06-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5478245395,
+      "month": 4,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 18726004,
+      "chronicle_head_sequence": 110,
+      "date": "2001-07-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5501986647,
+      "month": 5,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 21349088,
+      "chronicle_head_sequence": 128,
+      "date": "2001-08-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.54811316955,
+      "month": 6,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 23874672,
+      "chronicle_head_sequence": 146,
+      "date": "2001-09-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.54332625045,
+      "month": 7,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 26325256,
+      "chronicle_head_sequence": 166,
+      "date": "2001-10-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5531375864500001,
+      "month": 8,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 28758340,
+      "chronicle_head_sequence": 183,
+      "date": "2001-11-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.56320659405,
+      "month": 9,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 30983924,
+      "chronicle_head_sequence": 200,
+      "date": "2001-12-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.56996173645,
+      "month": 10,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 33112008,
+      "chronicle_head_sequence": 219,
+      "date": "2002-01-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5733145052499999,
+      "month": 11,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 35187592,
+      "chronicle_head_sequence": 240,
+      "date": "2002-02-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5731628260500001,
+      "month": 12,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 37203176,
+      "chronicle_head_sequence": 258,
+      "date": "2002-03-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.56896246345,
+      "month": 13,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 39026260,
+      "chronicle_head_sequence": 276,
+      "date": "2002-04-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5609793905,
+      "month": 14,
+      "shows": 1
+    },
+    {
+      "active_contracts": 4,
+      "cash_minor_units": 40841844,
+      "chronicle_head_sequence": 298,
+      "date": "2002-05-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.54941416265,
+      "month": 15,
+      "shows": 1
+    },
+    {
+      "active_contracts": 3,
+      "cash_minor_units": 42712428,
+      "chronicle_head_sequence": 320,
+      "date": "2002-06-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5333108481000001,
+      "month": 16,
+      "shows": 1
+    },
+    {
+      "active_contracts": 3,
+      "cash_minor_units": 44644012,
+      "chronicle_head_sequence": 337,
+      "date": "2002-07-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5370108481,
+      "month": 17,
+      "shows": 1
+    },
+    {
+      "active_contracts": 2,
+      "cash_minor_units": 46585596,
+      "chronicle_head_sequence": 359,
+      "date": "2002-08-01",
+      "financial_stress": 0.0,
+      "max_market_concentration": 0.5439246559,
+      "month": 18,
+      "shows": 1
+    },
+    {
+      "active_contracts": 2,
+      "cash_minor_units": 46488596,
+      "chronicle_head_sequence": 372,
+      "date": "2002-09-01",
+      "financial_stress": 0.08,
+      "max_market_concentration": 0.5508485700500001,
+      "month": 19,
+      "shows": 0
+    },
+    {
+      "active_contracts": 2,
+      "cash_minor_units": 46391596,
+      "chronicle_head_sequence": 387,
+      "date": "2002-10-01",
+      "financial_stress": 0.16,
+      "max_market_concentration": 0.55454857005,
+      "month": 20,
+      "shows": 0
+    },
+    {
+      "active_contracts": 2,
+      "cash_minor_units": 46294596,
+      "chronicle_head_sequence": 403,
+      "date": "2002-11-01",
+      "financial_stress": 0.24,
+      "max_market_concentration": 0.5582485700500001,
+      "month": 21,
+      "shows": 0
+    },
+    {
+      "active_contracts": 1,
+      "cash_minor_units": 46197596,
+      "chronicle_head_sequence": 417,
+      "date": "2002-12-01",
+      "financial_stress": 0.32,
+      "max_market_concentration": 0.56194857005,
+      "month": 22,
+      "shows": 0
+    },
+    {
+      "active_contracts": 1,
+      "cash_minor_units": 46100596,
+      "chronicle_head_sequence": 435,
+      "date": "2003-01-01",
+      "financial_stress": 0.4,
+      "max_market_concentration": 0.56564857005,
+      "month": 23,
+      "shows": 0
+    }
+  ]
+}

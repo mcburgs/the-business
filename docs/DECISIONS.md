@@ -164,3 +164,21 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted as a narrow Phase F-R seam
 **Decision:** `ShowPlan` carries separate `presentation_context` and `wrestling_language_context` dictionaries. BookingSystem may populate them from governed state/content context and ShowResolver carries them as explicit causal context. They have no Phase F-R balance effect. Future hands-on booking must continue to reuse this same ShowPlan/command/resolution architecture.
 **Reason:** Reality, Perception and deliberate Presentation must not collapse into one concept, and era/region/audience wrestling language must have a place to enter booking resolution without requiring a future resolver rewrite. Deep psychology, formal language profiles and production UI remain deferred.
+
+## ADR-F2G-001 - Resource command authority is target-promotion scoped
+
+**Status:** Accepted from F→G adversarial gate
+**Decision:** Every player/AI/automation command that mutates a promotion-owned resource must validate the target resource promotion against `issuer.promotion_id`, even when the referenced entity itself is valid. Cross-promotion references reject atomically.
+**Reason:** F2G-001 proved that issuer validation at envelope level is insufficient when a handler accepts an ID belonging to a rival. Authority belongs to the controlled promotion, not to any valid entity ID the caller can guess.
+
+## ADR-F2G-002 - Economic offer terms require authoritative provenance
+
+**Status:** Accepted from F→G adversarial gate
+**Decision:** Direct `command.sign_media_deal` term creation is system-authority only until an authoritative offer/proposal model exists. Future player/UI flow must select or respond to governed terms rather than submit arbitrary revenue/cost payloads.
+**Reason:** F2G-002 demonstrated an unbounded money-mint exploit through otherwise valid command payloads. Blocking authored terms is the minimum architecture-compatible fix; inventing a full media negotiation system during F→G would be scope expansion.
+
+## ADR-F2G-003 - Skill-bearing staff appointments require live employment
+
+**Status:** Accepted from F→G adversarial gate
+**Decision:** Assigning a booker requires a live same-promotion employment contract, and contract deactivation clears a matching `booker_by_promotion` reference. The same principle governs future staff appointments unless a specific governed loan/share contract says otherwise.
+**Reason:** F2G-003 showed that stale staff references can supply free skill after employment ends, contradicting the contract and economy model.

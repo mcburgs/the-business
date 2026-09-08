@@ -1,0 +1,3 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WE_F2G_REPRO {"accepted":false,"baseline_expected_vulnerable":true,"deal_exists":false,"finding_id":"F2G-002","reproduced":false,"result":{"accepted":false,"command_id":"command:F2G002REPRO","details":{},"errors":[{"code":"STATE003","details":{"command_type":"command.sign_media_deal","reason":"media_deal_terms_require_authoritative_offer"},"localization_key":"validation.state003","path":"command_type"}]}}

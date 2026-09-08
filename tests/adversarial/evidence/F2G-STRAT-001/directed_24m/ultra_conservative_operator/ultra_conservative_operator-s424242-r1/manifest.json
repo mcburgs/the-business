@@ -1,0 +1,11 @@
+{
+  "baseline_commit": "20ddeaa45bfdbfce98be066cdc13d656d5d6363a",
+  "content_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "engine_expected": "4.7.2-stable",
+  "months": 24,
+  "package_id": "F2G-STRAT-001",
+  "policy_id": "ultra_conservative_operator",
+  "policy_version": "f2g.policy.v1",
+  "run_id": "ultra_conservative_operator-s424242-r1",
+  "seed": 424242
+}
