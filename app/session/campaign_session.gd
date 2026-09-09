@@ -8,6 +8,7 @@ const CommandRouter = preload("res://app/commands/command_router.gd")
 const MonthPipeline = preload("res://app/session/month_pipeline.gd")
 const CampaignStateCodec = preload("res://persistence/codecs/campaign_state_codec.gd")
 const ChronicleCodec = preload("res://persistence/codecs/chronicle_codec.gd")
+const SaveService = preload("res://persistence/services/save_service.gd")
 
 var _registry: RefCounted = null
 var _state: RefCounted = null
@@ -21,7 +22,20 @@ var _state_codec: RefCounted = CampaignStateCodec.new()
 var _chronicle_codec: RefCounted = ChronicleCodec.new()
 var _advance_in_progress: bool = false
 
+# Persistence remains an application/session concern. Domain state and Chronicle are the
+# only authoritative saved game truth; pending UI intentions are deliberately transient
+# until the canonical month pipeline commits them.
+var _persistence_enabled: bool = false
+var _save_service: RefCounted = null
+var _save_id: String = ""
+var _save_display_name: String = "The Business"
+var _checkpoint_requested: bool = false
+var _checkpoint_reason: String = ""
+var _last_checkpoint_signature: String = ""
+var _last_checkpoint_result: Dictionary = {}
+
 func start(campaign_directory: String, seed: int = 424242) -> Dictionary:
+    _disable_persistence()
     var loader: RefCounted = ContentLoader.new()
     var search_roots: Array[String] = ["res://content/base", "res://content/campaigns"]
     var loaded: Dictionary = loader.call("load_campaign", campaign_directory, search_roots)
@@ -34,10 +48,83 @@ func start(campaign_directory: String, seed: int = 424242) -> Dictionary:
     _state = built.get("state")
     _chronicle = built.get("chronicle")
     _content_index = (built.get("content_index", {}) as Dictionary).duplicate(true)
-    _pending_commands.clear()
-    _command_serial = 0
-    _advance_in_progress = false
-    return {"passed": true, "errors": [], "projection": current_projection()}
+    _reset_transient_application_state()
+    return {"passed": true, "errors": [], "projection": current_projection(), "start_mode": "fresh_ephemeral"}
+
+func start_or_resume(campaign_directory: String, save_id: String, seed: int = 424242, save_root: String = "user://saves", display_name: String = "The Business") -> Dictionary:
+    if save_id.is_empty():
+        return {"passed": false, "errors": [{"code": "SAVE001", "path": "session.save_id", "details": {"reason": "required"}}]}
+    var fresh: Dictionary = start(campaign_directory, seed)
+    if not bool(fresh.get("passed", false)):
+        return fresh
+
+    _persistence_enabled = true
+    _save_id = save_id
+    _save_display_name = display_name
+    _save_service = SaveService.new()
+    _save_service.set("root_path", save_root)
+    var expected_fingerprint: String = str(_state.get("content_fingerprint"))
+
+    if bool(_save_service.call("has_save_artifact", _save_id)):
+        var primary: Dictionary = _save_service.call("load_save", _save_id, expected_fingerprint)
+        if bool(primary.get("passed", false)):
+            _adopt_loaded_save(primary)
+            _last_checkpoint_signature = _checkpoint_signature()
+            _last_checkpoint_result = {"passed": true, "disposition": "loaded_primary"}
+            return {
+                "passed": true,
+                "errors": [],
+                "projection": current_projection(),
+                "start_mode": "resumed",
+                "recovered": false,
+                "manifest": primary.get("manifest", {}),
+            }
+
+        var recovery: Dictionary = _save_service.call("load_last_good", _save_id, expected_fingerprint)
+        if bool(recovery.get("passed", false)):
+            _adopt_loaded_save(recovery)
+            _last_checkpoint_signature = ""
+            var restored: Dictionary = _checkpoint_current_state("recovery_restore")
+            if not bool(restored.get("passed", false)):
+                return {
+                    "passed": false,
+                    "errors": restored.get("errors", []),
+                    "recovery_errors": primary.get("errors", []),
+                    "details": {"reason": "last_good_loaded_but_primary_restore_failed"},
+                }
+            return {
+                "passed": true,
+                "errors": [],
+                "projection": current_projection(),
+                "start_mode": "recovered_last_good",
+                "recovered": true,
+                "manifest": recovery.get("manifest", {}),
+                "primary_errors": primary.get("errors", []),
+                "checkpoint": restored,
+            }
+
+        return {
+            "passed": false,
+            "errors": primary.get("errors", []),
+            "recovery_errors": recovery.get("errors", []),
+            "details": {"reason": "current_save_invalid_and_last_good_unavailable"},
+        }
+
+    var initial_checkpoint: Dictionary = _checkpoint_current_state("initial_campaign")
+    if not bool(initial_checkpoint.get("passed", false)):
+        return {
+            "passed": false,
+            "errors": initial_checkpoint.get("errors", []),
+            "details": {"reason": "initial_checkpoint_failed"},
+        }
+    return {
+        "passed": true,
+        "errors": [],
+        "projection": current_projection(),
+        "start_mode": "new_persistent",
+        "recovered": false,
+        "checkpoint": initial_checkpoint,
+    }
 
 func is_started() -> bool:
     return _state != null and _chronicle != null and _registry != null
@@ -111,7 +198,49 @@ func advance_month() -> Dictionary:
     _chronicle = turn_result.get("chronicle")
     _pending_commands.clear()
     _advance_in_progress = false
-    return {"passed": true, "errors": [], "turn": turn_result.call("to_summary"), "projection": current_projection()}
+
+    var checkpoint: Dictionary = {"passed": true, "disposition": "persistence_disabled"}
+    if _persistence_enabled:
+        checkpoint = _checkpoint_current_state("month_resolved")
+    return {
+        "passed": true,
+        "errors": [],
+        "turn": turn_result.call("to_summary"),
+        "projection": current_projection(),
+        "persistence_passed": bool(checkpoint.get("passed", false)),
+        "checkpoint": checkpoint,
+    }
+
+func request_checkpoint(reason: String = "lifecycle") -> Dictionary:
+    if not _persistence_enabled:
+        return {"passed": true, "requested": false, "disposition": "persistence_disabled"}
+    if not is_started():
+        return {"passed": false, "requested": false, "errors": [{"code": "STATE001", "path": "session.checkpoint"}]}
+    var signature: String = _checkpoint_signature()
+    if not _checkpoint_requested and signature == _last_checkpoint_signature:
+        return {"passed": true, "requested": false, "disposition": "already_checkpointed", "signature": signature}
+    if _checkpoint_requested:
+        return {"passed": true, "requested": true, "disposition": "duplicate_suppressed", "reason": _checkpoint_reason, "signature": signature}
+    _checkpoint_requested = true
+    _checkpoint_reason = reason
+    return {"passed": true, "requested": true, "disposition": "scheduled", "reason": reason, "signature": signature}
+
+func flush_checkpoint() -> Dictionary:
+    if not _persistence_enabled:
+        return {"passed": true, "disposition": "persistence_disabled"}
+    if not _checkpoint_requested:
+        return {"passed": true, "disposition": "nothing_pending"}
+    return _checkpoint_current_state(_checkpoint_reason if not _checkpoint_reason.is_empty() else "lifecycle")
+
+func persistence_status() -> Dictionary:
+    return {
+        "enabled": _persistence_enabled,
+        "save_id": _save_id,
+        "checkpoint_requested": _checkpoint_requested,
+        "checkpoint_reason": _checkpoint_reason,
+        "last_checkpoint_signature": _last_checkpoint_signature,
+        "last_checkpoint_result": _last_checkpoint_result.duplicate(true),
+    }
 
 func pending_count() -> int:
     return _pending_commands.size()
@@ -136,6 +265,54 @@ func test_route_command_for(promotion_id: String, touring_company_id: String, ro
     if not bool(clone_result.get("passed", false)): return {"accepted": false, "errors": clone_result.get("errors", [])}
     return _router.call("apply", clone_result.get("state"), command, _content_index)
 
+func _checkpoint_current_state(reason: String) -> Dictionary:
+    if not _persistence_enabled or _save_service == null:
+        return {"passed": true, "disposition": "persistence_disabled"}
+    if not is_started():
+        return {"passed": false, "errors": [{"code": "STATE001", "path": "session.checkpoint"}]}
+    var signature: String = _checkpoint_signature()
+    var result: Dictionary = _save_service.call("safe_checkpoint", _save_id, _save_display_name, _state, _chronicle, {"checkpoint_reason": reason})
+    if bool(result.get("passed", false)):
+        _last_checkpoint_signature = signature
+        _checkpoint_requested = false
+        _checkpoint_reason = ""
+        result["disposition"] = "saved"
+        result["signature"] = signature
+        result["reason"] = reason
+    else:
+        _checkpoint_requested = true
+        _checkpoint_reason = reason
+        result["disposition"] = "save_failed_retry_pending"
+        result["signature"] = signature
+        result["reason"] = reason
+    _last_checkpoint_result = result.duplicate(true)
+    return result
+
+func _checkpoint_signature() -> String:
+    if not is_started(): return ""
+    return str(_state.get("turn_number")) + "|" + str(_state.get("current_date")) + "|" + str(_chronicle.get("head_sequence")) + "|" + str(_chronicle.get("checkpoint_generation"))
+
+func _adopt_loaded_save(loaded: Dictionary) -> void:
+    _state = loaded.get("state")
+    _chronicle = loaded.get("chronicle")
+    _reset_transient_application_state()
+
+func _reset_transient_application_state() -> void:
+    _pending_commands.clear()
+    _command_serial = 0
+    _advance_in_progress = false
+    _checkpoint_requested = false
+    _checkpoint_reason = ""
+
+func _disable_persistence() -> void:
+    _persistence_enabled = false
+    _save_service = null
+    _save_id = ""
+    _save_display_name = "The Business"
+    _last_checkpoint_signature = ""
+    _last_checkpoint_result = {}
+    _checkpoint_requested = false
+    _checkpoint_reason = ""
 
 func _player_intent_key(command_type: String, payload_value: Variant) -> String:
     if not payload_value is Dictionary:

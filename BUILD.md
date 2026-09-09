@@ -20,7 +20,7 @@ From the repository root:
 python tools/static_repo_check.py
 ```
 
-For Phase G this preserves the complete Phase A-F-R/F→G gate and additionally checks the map-first presentation boundary: presentation code may not import authoritative domain/persistence/command internals, OwnerPresentationQuery must retain knowledge/Chronicle seams, the default root must contain StrategicHome, and the map must retain touch-capable selection/navigation. It does not replace an engine run.
+For Phase H this preserves the complete Phase A-F-R/F→G/G/G→H gate and additionally checks Android/mobile isolation: the reversible arm64 debug preset, square dual-orientation design base, lifecycle/persistence seams, exact save/recovery encoding, direct-touch map behavior, and absence of Android-specific domain authority. It does not replace an engine run or physical Pixel evidence.
 
 ## Canonical headless gate
 
@@ -72,6 +72,26 @@ godot --headless --path . --script res://tools/adversarial_runner/g2h_interactio
 The harness exercises real `StrategicHome`/`StrategicMapView` touch tap/drag, repeated setter callbacks, immediate duplicate month activation, surface churn, stale market selection, repeated historical inspection and knowledge-boundary checks. The complete automated suite also retains the same behaviors in `test_g2h_interaction_regressions.gd`.
 
 G→H does **not** perform Android export/package work. That remains Phase H.
+
+## Phase H Android / Pixel target build
+
+Phase H is governed by `docs/PHASE_H_ACCEPTANCE.md`, with measured off-device evidence in `docs/PHASE_H_RUNTIME_RESULT.md` and physical evidence in `docs/PHASE_H_DEVICE_RESULT.md`.
+
+The Android debug preset is `Android Debug` and deliberately uses the reversible development package ID `com.mcburgs.thebusiness.dev`. It exports an arm64 APK only and commits no production signing credentials.
+
+The verified Phase-H Android build used Temurin OpenJDK 17.0.20.1+1, Android Platform 35, Build-Tools 35.0.1, Platform-Tools/adb 37.0.1, command-line tools 16.0, NDK 28.1.13356709, CMake 3.10.2.4988404, and matching **Godot 4.7.2-stable export templates**. Keep all SDK/JDK/template/cache paths outside the repository.
+
+Godot editor-local paths must point to the installed JDK and SDK. Then export from the repository root:
+
+```text
+godot --headless --path . --export-debug "Android Debug" build/android/the-business-phase-h-debug.apk
+```
+
+The generated APK is intentionally ignored by Git. Record its filename, byte size and SHA-256 in the Phase-H device/runtime evidence rather than committing it.
+
+The project uses `canvas_items` + `expand` with a square 720x720 design base and sensor orientation. Pixel 9a acceptance confirmed that both portrait and landscape remain functional, including repeated rotation; Phase H therefore retains responsive dual-orientation behavior rather than imposing a domain-significant lock. Landscape is visibly dense and is a Phase-I presentation-quality target.
+
+Normal startup uses the canonical `CampaignSession`/`SaveService` persistence seam. Successful month resolution checkpoints only after authoritative completion; lifecycle callbacks request/flush the same checkpoint seam and never run a second month resolver. The verified APK is `the-business-phase-h-debug.apk` (SHA-256 `43fd8d26529fc7bdf90456bd47326943da01fe6f715d1512cd5780db6d122040`) and passed install/launch/touch/lifecycle/relaunch acceptance on a Google Pixel 9a running Android 17.
 
 ## Phase F-R reconciliation gates
 

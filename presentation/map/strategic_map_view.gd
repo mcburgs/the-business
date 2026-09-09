@@ -10,6 +10,9 @@ var _dragging: bool = false
 var _drag_origin: Vector2 = Vector2.ZERO
 var _pan_origin: Vector2 = Vector2.ZERO
 var _mouse_down: Vector2 = Vector2.ZERO
+var _touches: Dictionary = {}
+var _pinch_distance: float = 0.0
+var _touch_gesture_consumed: bool = false
 
 const BG := Color("0b1419")
 const GRID := Color("18282f")
@@ -28,7 +31,7 @@ func _ready() -> void:
     mouse_filter = Control.MOUSE_FILTER_STOP
     clip_contents = true
     focus_mode = Control.FOCUS_ALL
-    custom_minimum_size = Vector2(460, 380)
+    custom_minimum_size = Vector2(320, 300)
 
 func set_model(value: Dictionary) -> void:
     model = value.duplicate(true)
@@ -121,8 +124,15 @@ func _draw_markets() -> void:
 
 func _draw_legend() -> void:
     var y := size.y - 24.0
-    draw_line(Vector2(22, y), Vector2(54, y), CONTROLLED, 4.0); draw_string(ThemeDB.fallback_font, Vector2(62, y + 4), "Your touring route", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, TEXT_DIM)
-    _draw_dashed_polyline(PackedVector2Array([Vector2(174, y), Vector2(206, y)]), RIVAL, 2.5); draw_string(ThemeDB.fallback_font, Vector2(214, y + 4), "Observed rival route", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, TEXT_DIM)
+    draw_line(Vector2(22, y), Vector2(54, y), CONTROLLED, 4.0)
+    if size.x < 620.0:
+        draw_string(ThemeDB.fallback_font, Vector2(62, y + 4), "Your route", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, TEXT_DIM)
+        _draw_dashed_polyline(PackedVector2Array([Vector2(142, y), Vector2(174, y)]), RIVAL, 2.5)
+        draw_string(ThemeDB.fallback_font, Vector2(182, y + 4), "Rival route", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, TEXT_DIM)
+    else:
+        draw_string(ThemeDB.fallback_font, Vector2(62, y + 4), "Your touring route", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, TEXT_DIM)
+        _draw_dashed_polyline(PackedVector2Array([Vector2(174, y), Vector2(206, y)]), RIVAL, 2.5)
+        draw_string(ThemeDB.fallback_font, Vector2(214, y + 4), "Observed rival route", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, TEXT_DIM)
 
 func _draw_empty() -> void: draw_string(ThemeDB.fallback_font, size * 0.5 - Vector2(100, 0), "Map data unavailable", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, TEXT_DIM)
 func _market(market_id: String) -> Dictionary:
@@ -157,16 +167,73 @@ func _gui_input(event: InputEvent) -> void:
         var motion := event as InputEventMouseMotion; pan = _pan_origin + (motion.position - _drag_origin); queue_redraw(); accept_event()
     elif event is InputEventScreenTouch:
         var touch := event as InputEventScreenTouch
-        if touch.pressed: _mouse_down = touch.position; _drag_origin = touch.position; _pan_origin = pan; _dragging = true
+        if touch.pressed:
+            _touches[touch.index] = touch.position
+            if _touches.size() == 1:
+                _mouse_down = touch.position
+                _drag_origin = touch.position
+                _pan_origin = pan
+                _dragging = true
+                _touch_gesture_consumed = false
+            elif _touches.size() == 2:
+                _begin_pinch()
         else:
-            if _dragging and _mouse_down.distance_to(touch.position) < 12.0:
-                var market_id := _nearest_market(touch.position, 44.0)
+            var may_select: bool = _touches.size() == 1 and _touches.has(touch.index) and not _touch_gesture_consumed
+            if may_select and _dragging and _mouse_down.distance_to(touch.position) < 12.0:
+                var market_id := _nearest_market(touch.position, 48.0)
                 if not market_id.is_empty(): select_market(market_id)
-            _dragging = false
+            _touches.erase(touch.index)
+            _pinch_distance = 0.0
+            if _touches.size() == 1:
+                var remaining_position: Vector2 = _first_touch_position()
+                _mouse_down = remaining_position
+                _drag_origin = remaining_position
+                _pan_origin = pan
+                _dragging = true
+            else:
+                _dragging = false
+                if _touches.is_empty(): _touch_gesture_consumed = false
         accept_event()
     elif event is InputEventScreenDrag:
         var drag := event as InputEventScreenDrag
-        if _dragging: pan += drag.relative; queue_redraw(); accept_event()
+        _touches[drag.index] = drag.position
+        if _touches.size() >= 2:
+            var points: Array[Vector2] = _first_two_touch_positions()
+            if points.size() == 2:
+                var current_distance: float = points[0].distance_to(points[1])
+                var center: Vector2 = (points[0] + points[1]) * 0.5
+                if _pinch_distance > 0.0 and current_distance > 0.0:
+                    _zoom_at(center, current_distance / _pinch_distance)
+                _pinch_distance = current_distance
+                _touch_gesture_consumed = true
+                _dragging = false
+            accept_event()
+        elif _dragging:
+            pan += drag.relative
+            if _mouse_down.distance_to(drag.position) >= 12.0: _touch_gesture_consumed = true
+            queue_redraw()
+            accept_event()
+
+func _begin_pinch() -> void:
+    var points: Array[Vector2] = _first_two_touch_positions()
+    if points.size() != 2: return
+    _pinch_distance = points[0].distance_to(points[1])
+    _touch_gesture_consumed = true
+    _dragging = false
+
+func _first_touch_position() -> Vector2:
+    for value: Variant in _touches.values():
+        return value as Vector2
+    return Vector2.ZERO
+
+func _first_two_touch_positions() -> Array[Vector2]:
+    var points: Array[Vector2] = []
+    var keys: Array = _touches.keys()
+    keys.sort()
+    for key: Variant in keys:
+        points.append(_touches[key] as Vector2)
+        if points.size() == 2: break
+    return points
 
 func _zoom_at(position: Vector2, factor: float) -> void:
     var old_zoom := zoom; zoom = clampf(zoom * factor, 0.75, 2.2)
