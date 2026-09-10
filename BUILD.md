@@ -204,3 +204,18 @@ Use the actual local filename/path rather than changing repository files to matc
 ## Phase boundary
 
 Phase F now includes strategic rival AI, scouting/knowledge growth, talent negotiation, recovery and shallow diplomacy. It intentionally does not claim deep careers/injuries, ownership succession, acquisitions, sophisticated alliances, advanced national media/PPV/streaming, sponsorship/merchandise/debt, production UI or final balance/content.
+
+## H→I adversarial persistence gate
+
+Before Phase I, run the Phase-H gates plus the dedicated persistence attack:
+
+```text
+python tools/static_repo_check.py
+godot --headless --path . --script res://tests/runner.gd
+godot --headless --path . --script res://tools/adversarial_runner/g2h_interaction_run.gd
+godot --headless --path . --script res://tools/adversarial_runner/h2i_persistence_run.gd
+```
+
+The H→I gate additionally requires the Phase-F competition regression, eight-run five-year soak, fresh editor/import, Android debug export/inspection when runtime code changes, and targeted physical Pixel evidence. See `docs/H2I_ACCEPTANCE.md`, `docs/H2I_FINDINGS.md`, `docs/H2I_RUNTIME_RESULT.md` and `docs/H2I_DEVICE_RESULT.md`.
+
+H→I persistence deliberately treats `.tmp` and `.previous` as recoverable transaction artifacts. Do not manually delete them as a startup strategy. A failed recovery must remain diagnosable rather than silently create a new campaign.

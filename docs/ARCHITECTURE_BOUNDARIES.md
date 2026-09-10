@@ -97,3 +97,9 @@ Phase H rules:
 The permanent G→H protections remain in force under touch input: setter coalescing, duplicate-month suppression, stale selection rejection, Chronicle transient-card ownership, cross-promotion authority rejection and knowledge-limited presentation.
 
 Physical Pixel 9a / Android 17 acceptance verified that this same authority graph survives direct touch, month advancement, background/resume, system Back, rotation and force-close/relaunch. The mobile layout may be redesigned in Phase I, but any such redesign must remain a client of these same seams.
+
+## H→I persistence/recovery boundary
+
+H→I does not create another save authority. `CampaignSession` still owns application lifecycle intent and `SaveService` still serializes the one authoritative CampaignState + Chronicle pair. Dot-prefixed `.tmp` and `.previous` directories are transactional artifacts of that same save model, not alternate timelines. Startup must settle or diagnose them before deciding a campaign is absent.
+
+Physical payload hashes detect storage corruption; they do not replace logical codecs, schema migration, Chronicle validation or domain invariants. Recovery candidates are accepted only through the same canonical decode/validation path. `last_good` and `older_good` are validated historical checkpoint copies, not resimulation inputs. No recovery path may execute MonthPipeline, RandomService, AI or presentation logic to reconstruct lost history.

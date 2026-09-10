@@ -25,10 +25,20 @@ func save(save_id: String, display_name: String, state: RefCounted, chronicle: R
     var target_abs: String = base_abs.path_join(save_id)
     var temp_abs: String = base_abs.path_join("." + save_id + ".tmp")
     var previous_abs: String = base_abs.path_join("." + save_id + ".previous")
+
+    # A stale interrupted transaction must be settled before starting another write. Never
+    # delete .previous/.tmp blindly: either may be the only surviving good campaign.
+    if DirAccess.dir_exists_absolute(temp_abs) or DirAccess.dir_exists_absolute(previous_abs):
+        var interrupted: Dictionary = recover_interrupted_transaction(save_id, str(state.get("content_fingerprint")))
+        if not bool(interrupted.get("passed", false)):
+            return interrupted
+
     _remove_tree(temp_abs)
-    _remove_tree(previous_abs)
     if DirAccess.make_dir_recursive_absolute(temp_abs.path_join("chronicle")) != OK:
         return _failure("SAVE001", "save", {"reason": "unable_to_create_temp_directory"})
+
+    var state_data: Dictionary = _state_to_json_safe(_state_codec.call("encode", state))
+    var chronicle_data: Dictionary = _float_exact_to_json_safe(_chronicle_codec.call("encode", chronicle))
     var manifest: Dictionary = _make_manifest(save_id, display_name, state, chronicle, metadata)
     var chronicle_manifest: Dictionary = {
         "chronicle_schema_version": CHRONICLE_SCHEMA_VERSION,
@@ -38,48 +48,86 @@ func save(save_id: String, display_name: String, state: RefCounted, chronicle: R
         "integrity": chronicle.call("counts"),
         "data_reference": "chronicle.json",
     }
-    if not _write_json(temp_abs.path_join("state.json"), _state_to_json_safe(_state_codec.call("encode", state))):
+
+    if not _write_json(temp_abs.path_join("state.json"), state_data):
         _remove_tree(temp_abs); return _failure("SAVE001", "state", {"reason": "temp_write_failed"})
-    if not _write_json(temp_abs.path_join("chronicle/chronicle.json"), _float_exact_to_json_safe(_chronicle_codec.call("encode", chronicle))):
+    if failure_injection_stage == "after_state_write":
+        return _failure("SAVE001", "state", {"reason": "injected_interruption_after_state_write"})
+    if not _write_json(temp_abs.path_join("chronicle/chronicle.json"), chronicle_data):
         _remove_tree(temp_abs); return _failure("SAVE001", "chronicle", {"reason": "temp_write_failed"})
+    if failure_injection_stage == "after_chronicle_write":
+        return _failure("SAVE001", "chronicle", {"reason": "injected_interruption_after_chronicle_write"})
+
+    # Hash physical payload bytes after the file is closed. Hashes are optional on legacy
+    # Phase-H saves, but mandatory on every save written from H->I onward.
+    manifest["state_sha256"] = _sha256_file(temp_abs.path_join("state.json"))
+    manifest["chronicle_data_sha256"] = _sha256_file(temp_abs.path_join("chronicle/chronicle.json"))
+    chronicle_manifest["data_sha256"] = manifest["chronicle_data_sha256"]
+
     if not _write_json(temp_abs.path_join("chronicle/manifest.json"), chronicle_manifest):
         _remove_tree(temp_abs); return _failure("SAVE001", "chronicle.manifest", {"reason": "temp_write_failed"})
+    if failure_injection_stage == "after_chronicle_manifest_write":
+        return _failure("SAVE001", "chronicle.manifest", {"reason": "injected_interruption_after_chronicle_manifest_write"})
     if not _write_json(temp_abs.path_join("manifest.json"), manifest):
         _remove_tree(temp_abs); return _failure("SAVE001", "manifest", {"reason": "temp_write_failed"})
+    if failure_injection_stage == "after_manifest_write":
+        return _failure("SAVE001", "manifest", {"reason": "injected_interruption_after_manifest_write"})
+
     var temp_load: Dictionary = _load_from_absolute(temp_abs, state.get("content_fingerprint"), false)
     if not bool(temp_load.get("passed", false)):
         _remove_tree(temp_abs); return temp_load
     if failure_injection_stage == "before_publish":
         _remove_tree(temp_abs)
         return _failure("SAVE001", "publish", {"reason": "injected_failure_before_publish"})
-    var previous_good_abs: String = ""
+
     if DirAccess.dir_exists_absolute(target_abs):
+        _remove_tree(previous_abs)
         var rename_old: Error = DirAccess.rename_absolute(target_abs, previous_abs)
         if rename_old != OK:
             _remove_tree(temp_abs); return _failure("SAVE001", "publish", {"reason": "unable_to_preserve_last_good", "error": rename_old})
-        previous_good_abs = _best_previous_snapshot(previous_abs, str(state.get("content_fingerprint")))
+    if failure_injection_stage == "after_preserve_previous":
+        # Models process death after the old primary left its canonical path but before the
+        # validated temp checkpoint is promoted. Artifacts are intentionally retained.
+        return _failure("SAVE001", "publish", {"reason": "injected_interruption_after_preserve_previous"})
+
     var publish_error: Error = DirAccess.rename_absolute(temp_abs, target_abs)
     if publish_error != OK:
-        if DirAccess.dir_exists_absolute(previous_abs): DirAccess.rename_absolute(previous_abs, target_abs)
+        if DirAccess.dir_exists_absolute(previous_abs) and not DirAccess.dir_exists_absolute(target_abs):
+            DirAccess.rename_absolute(previous_abs, target_abs)
         _remove_tree(temp_abs)
         return _failure("SAVE001", "publish", {"reason": "temp_publish_failed", "error": publish_error})
-    var recovery_available: bool = false
-    var recovery_warning: String = ""
-    if DirAccess.dir_exists_absolute(previous_abs):
-        if not previous_good_abs.is_empty():
-            recovery_available = _copy_snapshot(previous_good_abs, target_abs.path_join("backups/last_good"))
-            if not recovery_available:
-                recovery_warning = "last_good_snapshot_copy_failed"
-        else:
-            recovery_warning = "previous_save_and_nested_last_good_invalid"
-        _remove_tree(previous_abs)
-    return {"passed": true, "errors": [], "manifest": manifest, "path": root_path.path_join(save_id), "recovery_available": recovery_available, "recovery_warning": recovery_warning}
+    if failure_injection_stage == "after_publish":
+        # Models death after the new primary is live but before backup rotation/cleanup.
+        return _failure("SAVE001", "publish", {"reason": "injected_interruption_after_publish"})
+
+    var backup_result: Dictionary
+    if failure_injection_stage == "backup_copy_failure":
+        backup_result = {"passed": false, "warning": "injected_backup_copy_failure"}
+    else:
+        backup_result = _finalize_backup_roots([previous_abs], target_abs, str(state.get("content_fingerprint")))
+    if not bool(backup_result.get("passed", false)):
+        # The new primary is valid. Crucially, .previous remains untouched so the previous
+        # known-good source cannot be destroyed by a failed backup-copy/low-storage path.
+        return {
+            "passed": true,
+            "errors": [],
+            "manifest": manifest,
+            "path": root_path.path_join(save_id),
+            "recovery_available": has_last_good(save_id),
+            "recovery_warning": str(backup_result.get("warning", "backup_rotation_failed_previous_retained")),
+            "backup_retry_retained": DirAccess.dir_exists_absolute(previous_abs),
+        }
+    _remove_tree(previous_abs)
+    return {"passed": true, "errors": [], "manifest": manifest, "path": root_path.path_join(save_id), "recovery_available": has_last_good(save_id), "recovery_warning": ""}
 
 func has_save_artifact(save_id: String) -> bool:
     return DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(root_path).path_join(save_id))
 
 func has_last_good(save_id: String) -> bool:
     return DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(root_path).path_join(save_id).path_join("backups/last_good"))
+
+func has_older_good(save_id: String) -> bool:
+    return DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(root_path).path_join(save_id).path_join("backups/older_good"))
 
 func load_save(save_id: String, expected_content_fingerprint: String = "") -> Dictionary:
     var absolute: String = ProjectSettings.globalize_path(root_path).path_join(save_id)
@@ -88,6 +136,112 @@ func load_save(save_id: String, expected_content_fingerprint: String = "") -> Di
 func load_last_good(save_id: String, expected_content_fingerprint: String = "") -> Dictionary:
     var absolute: String = ProjectSettings.globalize_path(root_path).path_join(save_id).path_join("backups/last_good")
     return _load_from_absolute(absolute, expected_content_fingerprint, true)
+
+func load_older_good(save_id: String, expected_content_fingerprint: String = "") -> Dictionary:
+    var absolute: String = ProjectSettings.globalize_path(root_path).path_join(save_id).path_join("backups/older_good")
+    return _load_from_absolute(absolute, expected_content_fingerprint, true)
+
+func recover_interrupted_transaction(save_id: String, expected_content_fingerprint: String = "") -> Dictionary:
+    var base_abs: String = ProjectSettings.globalize_path(root_path)
+    var target_abs: String = base_abs.path_join(save_id)
+    var temp_abs: String = base_abs.path_join("." + save_id + ".tmp")
+    var previous_abs: String = base_abs.path_join("." + save_id + ".previous")
+    var staging_abs: String = base_abs.path_join("." + save_id + ".recovery_old")
+    var has_temp: bool = DirAccess.dir_exists_absolute(temp_abs)
+    var has_previous: bool = DirAccess.dir_exists_absolute(previous_abs)
+    if not has_temp and not has_previous:
+        return {"passed": true, "recovered": false, "disposition": "no_interrupted_artifacts"}
+
+    var target: Dictionary = _try_load_snapshot(target_abs, expected_content_fingerprint)
+    var temp: Dictionary = _try_load_snapshot(temp_abs, expected_content_fingerprint)
+    var previous: Dictionary = _try_load_snapshot(previous_abs, expected_content_fingerprint)
+
+    # A fully validated temp is a completed checkpoint. Promote it only when it is newer
+    # than the valid canonical primary, or when no valid primary survived.
+    var promote_temp: bool = bool(temp.get("passed", false)) and (
+        not bool(target.get("passed", false)) or _snapshot_is_newer(temp, target)
+    )
+    if promote_temp:
+        _remove_tree(staging_abs)
+        if DirAccess.dir_exists_absolute(target_abs):
+            if DirAccess.rename_absolute(target_abs, staging_abs) != OK:
+                return _failure("SAVE001", "recovery", {"reason": "unable_to_stage_existing_primary"})
+        var promote_error: Error = DirAccess.rename_absolute(temp_abs, target_abs)
+        if promote_error != OK:
+            if DirAccess.dir_exists_absolute(staging_abs) and not DirAccess.dir_exists_absolute(target_abs):
+                DirAccess.rename_absolute(staging_abs, target_abs)
+            return _failure("SAVE001", "recovery", {"reason": "unable_to_promote_valid_temp", "error": promote_error})
+        var roots: Array[String] = []
+        if DirAccess.dir_exists_absolute(staging_abs): roots.append(staging_abs)
+        if DirAccess.dir_exists_absolute(previous_abs): roots.append(previous_abs)
+        var backups: Dictionary = _finalize_backup_roots(roots, target_abs, expected_content_fingerprint)
+        if bool(backups.get("passed", false)):
+            _remove_tree(staging_abs)
+            _remove_tree(previous_abs)
+        return {
+            "passed": true,
+            "recovered": true,
+            "disposition": "promoted_valid_temp",
+            "backup_rotation_passed": bool(backups.get("passed", false)),
+            "backup_warning": str(backups.get("warning", "")),
+        }
+
+    if bool(target.get("passed", false)):
+        # The canonical primary already won publication. Finish any interrupted backup
+        # rotation, then discard only an invalid/equal-or-older temp.
+        var roots: Array[String] = []
+        if has_previous: roots.append(previous_abs)
+        var backups: Dictionary = _finalize_backup_roots(roots, target_abs, expected_content_fingerprint)
+        if bool(backups.get("passed", false)):
+            _remove_tree(previous_abs)
+        if has_temp and (not bool(temp.get("passed", false)) or not _snapshot_is_newer(temp, target)):
+            _remove_tree(temp_abs)
+        return {
+            "passed": true,
+            "recovered": has_previous,
+            "disposition": "primary_valid_interrupted_cleanup",
+            "backup_rotation_passed": bool(backups.get("passed", true)),
+            "backup_warning": str(backups.get("warning", "")),
+        }
+
+    # No valid primary/temp survived. Recover the best validated previous transaction,
+    # including backups nested inside .previous. Never interpret these artifacts as a new game.
+    var candidates: Array[Dictionary] = _collect_snapshot_candidates([previous_abs], expected_content_fingerprint)
+    if not candidates.is_empty():
+        var chosen: Dictionary = candidates[0]
+        _remove_tree(target_abs)
+        if not _copy_snapshot(str(chosen.get("path", "")), target_abs):
+            return _failure("SAVE001", "recovery", {"reason": "unable_to_restore_previous_snapshot"})
+        var backups: Dictionary = _finalize_backup_roots([previous_abs], target_abs, expected_content_fingerprint)
+        if bool(backups.get("passed", false)):
+            _remove_tree(previous_abs)
+        _remove_tree(temp_abs)
+        return {
+            "passed": true,
+            "recovered": true,
+            "disposition": "restored_previous_snapshot",
+            "source": str(chosen.get("label", "previous")),
+            "backup_rotation_passed": bool(backups.get("passed", false)),
+            "backup_warning": str(backups.get("warning", "")),
+        }
+
+    # If the primary itself is corrupt but still contains a valid normal backup, leave it
+    # intact so start_or_resume can perform the ordinary last_good/older_good recovery path.
+    var target_backups: Array[Dictionary] = _collect_snapshot_candidates([
+        target_abs.path_join("backups/last_good"),
+        target_abs.path_join("backups/older_good"),
+    ], expected_content_fingerprint, false)
+    if not target_backups.is_empty():
+        _remove_tree(temp_abs)
+        _remove_tree(previous_abs)
+        return {"passed": true, "recovered": false, "disposition": "defer_to_primary_backup"}
+
+    return _failure("SAVE001", "recovery", {
+        "reason": "interrupted_artifacts_unrecoverable",
+        "target_exists": DirAccess.dir_exists_absolute(target_abs),
+        "temp_exists": has_temp,
+        "previous_exists": has_previous,
+    })
 
 func safe_checkpoint(save_id: String, display_name: String, state: RefCounted, chronicle: RefCounted, metadata: Dictionary = {}) -> Dictionary:
     return save(save_id, display_name, state, chronicle, metadata)
@@ -98,20 +252,60 @@ func _load_from_absolute(absolute: String, expected_content_fingerprint: String,
     var manifest: Dictionary = manifest_result["data"]
     var manifest_validation: Dictionary = _validate_manifest(manifest, expected_content_fingerprint if enforce_compatibility else "")
     if not bool(manifest_validation["passed"]): return manifest_validation
-    var state_result: Dictionary = _read_json(absolute.path_join(str(manifest.get("state_reference", "state.json"))))
+
+    var state_path: String = absolute.path_join(str(manifest.get("state_reference", "state.json")))
+    var chronicle_manifest_path: String = absolute.path_join(str(manifest.get("chronicle_manifest_reference", "chronicle/manifest.json")))
+    var state_result: Dictionary = _read_json(state_path)
     if not bool(state_result["passed"]): return state_result
-    var chronicle_result: Dictionary = _read_json(absolute.path_join(str(manifest.get("chronicle_manifest_reference", "chronicle/manifest.json"))))
+    var chronicle_result: Dictionary = _read_json(chronicle_manifest_path)
     if not bool(chronicle_result["passed"]): return chronicle_result
     var chronicle_manifest: Dictionary = chronicle_result["data"]
-    var chronicle_data_result: Dictionary = _read_json(absolute.path_join("chronicle/").path_join(str(chronicle_manifest.get("data_reference", "chronicle.json"))))
+    var chronicle_data_path: String = absolute.path_join("chronicle/").path_join(str(chronicle_manifest.get("data_reference", "chronicle.json")))
+    var chronicle_data_result: Dictionary = _read_json(chronicle_data_path)
     if not bool(chronicle_data_result["passed"]): return chronicle_data_result
+
+    # H->I physical-integrity fields are optional for backward compatibility with accepted
+    # Phase-H saves. When present they are authoritative and must match exactly.
+    var hashes_enforced: bool = str(manifest.get("architecture_version", "")) == ProjectVersion.ARCHITECTURE_VERSION
+    var expected_state_hash: String = str(manifest.get("state_sha256", ""))
+    if hashes_enforced and not expected_state_hash.is_empty() and _sha256_file(state_path) != expected_state_hash:
+        return _failure("SAVE001", "state.json", {"reason": "payload_hash_mismatch"})
+    var expected_chronicle_hash: String = str(manifest.get("chronicle_data_sha256", chronicle_manifest.get("data_sha256", "")))
+    if hashes_enforced and not expected_chronicle_hash.is_empty() and _sha256_file(chronicle_data_path) != expected_chronicle_hash:
+        return _failure("SAVE001", "chronicle/chronicle.json", {"reason": "payload_hash_mismatch"})
+    var chronicle_manifest_hash: String = str(chronicle_manifest.get("data_sha256", ""))
+    if hashes_enforced and not chronicle_manifest_hash.is_empty() and chronicle_manifest_hash != _sha256_file(chronicle_data_path):
+        return _failure("SAVE001", "chronicle.manifest.data_sha256", {"reason": "payload_hash_mismatch"})
+
     var decoded_state: Dictionary = _state_codec.call("decode", _state_from_json_safe(state_result["data"]))
     if not bool(decoded_state["passed"]): return {"passed": false, "errors": decoded_state["errors"]}
     var decoded_chronicle: Dictionary = _chronicle_codec.call("decode", _float_exact_from_json_safe(chronicle_data_result["data"]))
     if not bool(decoded_chronicle["passed"]): return {"passed": false, "errors": decoded_chronicle["errors"]}
-    if str(decoded_chronicle["chronicle"].get("head_date")) != str(manifest.get("chronicle_head_date")) or int(decoded_chronicle["chronicle"].get("head_sequence")) != int(manifest.get("chronicle_head_sequence")):
+    var state: RefCounted = decoded_state["state"]
+    var chronicle: RefCounted = decoded_chronicle["chronicle"]
+
+    if str(chronicle.get("head_date")) != str(manifest.get("chronicle_head_date")) or int(chronicle.get("head_sequence")) != int(manifest.get("chronicle_head_sequence")):
         return _failure("SAVE001", "manifest.chronicle_head", {"reason": "head_mismatch"})
-    return {"passed": true, "errors": [], "state": decoded_state["state"], "chronicle": decoded_chronicle["chronicle"], "manifest": manifest, "migrations_applied": decoded_state.get("migrations_applied", [])}
+    if int(chronicle.get("checkpoint_generation")) != int(manifest.get("checkpoint_generation", -1)):
+        return _failure("SAVE001", "manifest.checkpoint_generation", {"reason": "checkpoint_generation_mismatch"})
+    if str(state.get("current_date")) != str(manifest.get("in_game_date", "")):
+        return _failure("SAVE001", "manifest.in_game_date", {"reason": "state_date_mismatch"})
+    if str(state.get("ownership_seat").get("promotion_id")) != str(manifest.get("player_promotion_id", "")):
+        return _failure("SAVE001", "manifest.player_promotion_id", {"reason": "ownership_mismatch"})
+    if str(chronicle.get("head_date")) != "" and str(chronicle.get("head_date")) != str(state.get("current_date")):
+        return _failure("SAVE001", "state_chronicle", {"reason": "current_state_chronicle_date_mismatch"})
+
+    var actual_counts: Dictionary = chronicle.call("counts")
+    var recorded_counts: Variant = manifest.get("chronicle_integrity_summary", {})
+    if recorded_counts is Dictionary and not (recorded_counts as Dictionary).is_empty() and not _semantic_equal(actual_counts, recorded_counts):
+        return _failure("SAVE001", "manifest.chronicle_integrity_summary", {"reason": "integrity_count_mismatch", "expected": recorded_counts, "actual": actual_counts})
+    var cm_counts: Variant = chronicle_manifest.get("integrity", {})
+    if cm_counts is Dictionary and not (cm_counts as Dictionary).is_empty() and not _semantic_equal(actual_counts, cm_counts):
+        return _failure("SAVE001", "chronicle.manifest.integrity", {"reason": "integrity_count_mismatch", "expected": cm_counts, "actual": actual_counts})
+    if str(chronicle_manifest.get("head_date", "")) != str(chronicle.get("head_date")) or int(chronicle_manifest.get("head_sequence", -1)) != int(chronicle.get("head_sequence")) or int(chronicle_manifest.get("checkpoint_generation", -1)) != int(chronicle.get("checkpoint_generation")):
+        return _failure("SAVE001", "chronicle.manifest", {"reason": "chronicle_manifest_mismatch"})
+
+    return {"passed": true, "errors": [], "state": state, "chronicle": chronicle, "manifest": manifest, "migrations_applied": decoded_state.get("migrations_applied", [])}
 
 func _make_manifest(save_id: String, display_name: String, state: RefCounted, chronicle: RefCounted, metadata: Dictionary) -> Dictionary:
     var rng: RefCounted = state.get("rng_state")
@@ -269,16 +463,64 @@ func _read_json(path: String) -> Dictionary:
         return _failure("SAVE001", path, {"reason": "invalid_json", "line": json.get_error_line(), "message": json.get_error_message()})
     return {"passed": true, "errors": [], "data": json.data}
 
-func _best_previous_snapshot(previous_abs: String, expected_content_fingerprint: String) -> String:
-    var primary: Dictionary = _load_from_absolute(previous_abs, expected_content_fingerprint, true)
-    if bool(primary.get("passed", false)):
-        return previous_abs
-    var nested: String = previous_abs.path_join("backups/last_good")
-    if DirAccess.dir_exists_absolute(nested):
-        var nested_result: Dictionary = _load_from_absolute(nested, expected_content_fingerprint, true)
-        if bool(nested_result.get("passed", false)):
-            return nested
-    return ""
+func _try_load_snapshot(path: String, expected_content_fingerprint: String) -> Dictionary:
+    if not DirAccess.dir_exists_absolute(path):
+        return {"passed": false, "path": path, "missing": true}
+    var loaded: Dictionary = _load_from_absolute(path, expected_content_fingerprint, true)
+    loaded["path"] = path
+    return loaded
+
+func _snapshot_rank(loaded: Dictionary) -> Array[int]:
+    if not bool(loaded.get("passed", false)): return [-1, -1, -1]
+    var state: RefCounted = loaded.get("state")
+    var chronicle: RefCounted = loaded.get("chronicle")
+    return [int(state.get("turn_number")), int(chronicle.get("head_sequence")), int(chronicle.get("checkpoint_generation"))]
+
+func _snapshot_is_newer(left: Dictionary, right: Dictionary) -> bool:
+    var a: Array[int] = _snapshot_rank(left)
+    var b: Array[int] = _snapshot_rank(right)
+    for index: int in range(mini(a.size(), b.size())):
+        if a[index] != b[index]: return a[index] > b[index]
+    return false
+
+func _collect_snapshot_candidates(roots: Array[String], expected_content_fingerprint: String, include_nested: bool = true) -> Array[Dictionary]:
+    var candidates: Array[Dictionary] = []
+    var seen: Dictionary = {}
+    for root: String in roots:
+        var paths: Array[String] = [root]
+        if include_nested:
+            paths.append(root.path_join("backups/last_good"))
+            paths.append(root.path_join("backups/older_good"))
+        for path: String in paths:
+            if seen.has(path): continue
+            seen[path] = true
+            var loaded: Dictionary = _try_load_snapshot(path, expected_content_fingerprint)
+            if not bool(loaded.get("passed", false)): continue
+            loaded["label"] = path.get_file()
+            candidates.append(loaded)
+    candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return _snapshot_is_newer(a, b))
+    return candidates
+
+func _finalize_backup_roots(roots: Array[String], target_abs: String, expected_content_fingerprint: String) -> Dictionary:
+    if roots.is_empty(): return {"passed": true, "copied": 0}
+    var candidates: Array[Dictionary] = _collect_snapshot_candidates(roots, expected_content_fingerprint)
+    if candidates.is_empty():
+        # No valid predecessor is not fatal for the new primary, but interrupted material
+        # must be retained/diagnosable rather than silently erased.
+        var any_root: bool = false
+        for root: String in roots:
+            any_root = any_root or DirAccess.dir_exists_absolute(root)
+        if any_root: return {"passed": false, "warning": "no_valid_predecessor_snapshot"}
+        return {"passed": true, "copied": 0}
+    var copied: int = 0
+    if not _copy_snapshot(str(candidates[0].get("path", "")), target_abs.path_join("backups/last_good")):
+        return {"passed": false, "warning": "last_good_snapshot_copy_failed"}
+    copied += 1
+    if candidates.size() > 1:
+        if not _copy_snapshot(str(candidates[1].get("path", "")), target_abs.path_join("backups/older_good")):
+            return {"passed": false, "warning": "older_good_snapshot_copy_failed"}
+        copied += 1
+    return {"passed": true, "copied": copied}
 
 func _copy_snapshot(source_abs: String, target_abs: String) -> bool:
     _remove_tree(target_abs)
@@ -297,6 +539,32 @@ func _copy_snapshot(source_abs: String, target_abs: String) -> bool:
             _remove_tree(target_abs)
             return false
     return true
+
+func _sha256_file(path: String) -> String:
+    if not FileAccess.file_exists(path): return ""
+    var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+    if file == null: return ""
+    var context: HashingContext = HashingContext.new()
+    context.start(HashingContext.HASH_SHA256)
+    while file.get_position() < file.get_length():
+        context.update(file.get_buffer(mini(65536, file.get_length() - file.get_position())))
+    file.close()
+    return context.finish().hex_encode()
+
+func _semantic_equal(left: Variant, right: Variant) -> bool:
+    if (left is int or left is float) and (right is int or right is float):
+        return float(left) == float(right)
+    if left is Dictionary and right is Dictionary:
+        if (left as Dictionary).size() != (right as Dictionary).size(): return false
+        for key: Variant in (left as Dictionary).keys():
+            if not (right as Dictionary).has(key) or not _semantic_equal((left as Dictionary)[key], (right as Dictionary)[key]): return false
+        return true
+    if left is Array and right is Array:
+        if (left as Array).size() != (right as Array).size(): return false
+        for index: int in range((left as Array).size()):
+            if not _semantic_equal((left as Array)[index], (right as Array)[index]): return false
+        return true
+    return left == right
 
 func _remove_tree(path: String) -> void:
     if not DirAccess.dir_exists_absolute(path): return

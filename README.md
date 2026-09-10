@@ -2,7 +2,7 @@
 
 **The Business** is the working repository for the Wrestling Empire game project: an offline, simulation-first wrestling-promotion strategy game built in Godot.
 
-This repository has **verified Phase H: Pixel / Android Target Build and Integration**. The accepted Phase G/G→H map-first client now builds as a real arm64 Android APK and has passed physical Google Pixel 9a acceptance on Android 17, while simulation/application/persistence authority remains unchanged. Phase I has not begun.
+This repository has **verified Phase H: Pixel / Android Target Build and Integration** and is executing the mandatory **H→I adversarial device/persistence gate**. H→I has reproduced and repaired real interrupted-save and corruption-detection defects; final Android/Pixel gate evidence is still required before Phase I may begin.
 
 ## Current baseline
 
@@ -32,7 +32,7 @@ The original standalone Phase 0 machine-readable schema package referenced by th
 
 ## Start here
 
-1. Read `BUILD.md`, `docs/PHASE_H_ACCEPTANCE.md`, `docs/PHASE_H_RUNTIME_RESULT.md`, `docs/PHASE_H_DEVICE_RESULT.md`, `docs/G2H_ACCEPTANCE.md`, `docs/G2H_FINDINGS.md`, and `docs/PHASE_G_ACCEPTANCE.md`.
+1. Read `BUILD.md`, `docs/H2I_ACCEPTANCE.md`, `docs/H2I_FINDINGS.md`, `docs/H2I_RUNTIME_RESULT.md`, `docs/H2I_DEVICE_RESULT.md`, then the retained Phase-H/G→H records.
 2. Run `python tools/static_repo_check.py`.
 3. Run the stock-Godot headless test gate:
 
@@ -42,11 +42,15 @@ The original standalone Phase 0 machine-readable schema package referenced by th
 
    `godot --headless --path . --script res://tools/adversarial_runner/g2h_interaction_run.gd`
 
-5. Run the three-promotion competition regression and the repeated/varied-seed five-year soak commands documented in `BUILD.md`.
-6. With the matching Godot 4.7.2 Android export templates and Android SDK installed, export the Phase-H debug APK:
+5. Run the H→I persistence attack:
+
+   `godot --headless --path . --script res://tools/adversarial_runner/h2i_persistence_run.gd`
+
+6. Run the three-promotion competition regression and the repeated/varied-seed five-year soak commands documented in `BUILD.md`.
+7. With the matching Godot 4.7.2 Android export templates and Android SDK installed, export the Phase-H debug APK:
 
    `godot --headless --path . --export-debug "Android Debug" build/android/the-business-phase-h-debug.apk`
 
-7. Phase H is certified only with the Android export evidence and completed physical Pixel checklist recorded in `docs/PHASE_H_DEVICE_RESULT.md`.
+8. H→I closes only after final Android export evidence and the targeted physical Pixel abuse result are recorded in `docs/H2I_DEVICE_RESULT.md`.
 
 The full governing documents are preserved under `docs/governing/`.

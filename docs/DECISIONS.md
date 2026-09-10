@@ -247,3 +247,23 @@ This file records implementation decisions made while translating the governing 
 **Status:** Accepted and verified in Phase H
 **Decision:** The development preset uses package ID `com.mcburgs.thebusiness.dev`, application name `The Business`, debug signing and `arm64-v8a` only. No production keystore, Play Store release configuration, cloud service or native/Gradle customization is introduced.
 **Reason:** Phase H needs an installable target-device build, not a premature commercial identity/signing decision or broad device matrix.
+
+## H→I adversarial persistence decisions
+
+### ADR-H2I-001 - interrupted save artifacts are recoverable transaction state, never evidence of a new campaign
+
+**Status:** Accepted for H→I candidate
+**Decision:** `SaveService` settles `.tmp` / `.previous` transaction artifacts before `CampaignSession` may conclude that no persistent campaign exists. Fully validated newer temp state may be promoted, previous state may be restored, and unrecoverable artifacts fail closed with structured `SAVE001` diagnostics.
+**Reason:** H2I-001 reproduced silent turn-zero replacement of a recoverable campaign when process death occurred between directory publication renames.
+
+### ADR-H2I-002 - physical save payloads carry corruption-detection hashes plus cross-manifest invariants
+
+**Status:** Accepted for H→I candidate
+**Decision:** Current-architecture checkpoints write SHA-256 for CampaignState and Chronicle payloads and load cross-validates state date/ownership, Chronicle head/sequence/generation and integrity counts. Historical compatible saves remain readable and gain hashes at their next current checkpoint.
+**Reason:** H2I-002 proved schema-valid state/history corruption could otherwise survive codec validation and be accepted as ordinary truth.
+
+### ADR-H2I-003 - recovery rotation never destroys its source on copy failure
+
+**Status:** Accepted for H→I candidate
+**Decision:** A failed `last_good`/`older_good` materialization leaves `.previous` intact for retry. Normal publication maintains two prior validated generations, while current primary remains authoritative.
+**Reason:** Recovery durability must improve monotonically across successful publication; low-storage/error handling may not delete the only previous-good source.

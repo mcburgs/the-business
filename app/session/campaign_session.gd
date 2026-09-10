@@ -64,6 +64,14 @@ func start_or_resume(campaign_directory: String, save_id: String, seed: int = 42
     _save_service = SaveService.new()
     _save_service.set("root_path", save_root)
     var expected_fingerprint: String = str(_state.get("content_fingerprint"))
+    var interrupted_recovery: Dictionary = _save_service.call("recover_interrupted_transaction", _save_id, expected_fingerprint)
+    if not bool(interrupted_recovery.get("passed", false)):
+        return {
+            "passed": false,
+            "errors": interrupted_recovery.get("errors", []),
+            "details": {"reason": "interrupted_save_recovery_failed"},
+            "interrupted_recovery": interrupted_recovery,
+        }
 
     if bool(_save_service.call("has_save_artifact", _save_id)):
         var primary: Dictionary = _save_service.call("load_save", _save_id, expected_fingerprint)
@@ -71,16 +79,22 @@ func start_or_resume(campaign_directory: String, save_id: String, seed: int = 42
             _adopt_loaded_save(primary)
             _last_checkpoint_signature = _checkpoint_signature()
             _last_checkpoint_result = {"passed": true, "disposition": "loaded_primary"}
+            var interrupted_was_recovered: bool = bool(interrupted_recovery.get("recovered", false))
             return {
                 "passed": true,
                 "errors": [],
                 "projection": current_projection(),
-                "start_mode": "resumed",
-                "recovered": false,
+                "start_mode": "recovered_interrupted_transaction" if interrupted_was_recovered else "resumed",
+                "recovered": interrupted_was_recovered,
+                "recovery_source": interrupted_recovery.get("disposition", ""),
                 "manifest": primary.get("manifest", {}),
             }
 
         var recovery: Dictionary = _save_service.call("load_last_good", _save_id, expected_fingerprint)
+        var recovery_source: String = "last_good"
+        if not bool(recovery.get("passed", false)):
+            recovery = _save_service.call("load_older_good", _save_id, expected_fingerprint)
+            recovery_source = "older_good"
         if bool(recovery.get("passed", false)):
             _adopt_loaded_save(recovery)
             _last_checkpoint_signature = ""
@@ -96,8 +110,9 @@ func start_or_resume(campaign_directory: String, save_id: String, seed: int = 42
                 "passed": true,
                 "errors": [],
                 "projection": current_projection(),
-                "start_mode": "recovered_last_good",
+                "start_mode": "recovered_" + recovery_source,
                 "recovered": true,
+                "recovery_source": recovery_source,
                 "manifest": recovery.get("manifest", {}),
                 "primary_errors": primary.get("errors", []),
                 "checkpoint": restored,

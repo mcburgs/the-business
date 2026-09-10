@@ -1,0 +1,226 @@
+name: H-to-I Android CI build candidate
+
+on:
+  push:
+    branches:
+      - h2i-ci-staging-20260910
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-build:
+    name: Verify and build arm64 debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GODOT_VERSION: 4.7.2-stable
+      GODOT_EXPECTED_RUNTIME: 4.7.2.stable.official.ed1daf0bf
+      GODOT_EDITOR_URL: https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+      GODOT_EDITOR_SHA256: cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4
+      GODOT_TEMPLATES_URL: https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+      GODOT_TEMPLATES_SHA256: f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011
+      APK_PATH: build/android/the-business-phase-h-debug.apk
+      PACKAGE_ID: com.mcburgs.thebusiness.dev
+
+    steps:
+      - name: Checkout temporary H-to-I CI branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up OpenJDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android command-line tools
+        uses: android-actions/setup-android@v3
+
+      - name: Install pinned Android SDK packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +o pipefail
+          yes | sdkmanager --licenses >/dev/null
+          set -o pipefail
+          sdkmanager --sdk_root="$ANDROID_HOME" \
+            "platform-tools" \
+            "build-tools;35.0.1" \
+            "platforms;android-35" \
+            "cmdline-tools;latest" \
+            "cmake;3.10.2.4988404" \
+            "ndk;28.1.13356709"
+          test -x "$ANDROID_HOME/platform-tools/adb"
+          test -x "$ANDROID_HOME/build-tools/35.0.1/apksigner"
+          test -x "$ANDROID_HOME/build-tools/35.0.1/aapt"
+          test -d "$ANDROID_HOME/platforms/android-35"
+          test -d "$ANDROID_HOME/ndk/28.1.13356709"
+          test -d "$ANDROID_HOME/cmake/3.10.2.4988404"
+
+      - name: Install pinned Godot 4.7.2 editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 5 --retry-delay 2 "$GODOT_EDITOR_URL" -o /tmp/godot.zip
+          echo "$GODOT_EDITOR_SHA256  /tmp/godot.zip" | sha256sum --check --strict
+          unzip -q /tmp/godot.zip -d /tmp/godot-editor
+          install -m 0755 /tmp/godot-editor/Godot_v4.7.2-stable_linux.x86_64 "$RUNNER_TEMP/godot"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Install matching Godot 4.7.2 Android export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 5 --retry-delay 2 "$GODOT_TEMPLATES_URL" -o /tmp/godot-templates.tpz
+          echo "$GODOT_TEMPLATES_SHA256  /tmp/godot-templates.tpz" | sha256sum --check --strict
+          TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          mkdir -p "$TEMPLATE_DIR"
+          unzip -j -q /tmp/godot-templates.tpz \
+            templates/android_debug.apk \
+            templates/android_release.apk \
+            -d "$TEMPLATE_DIR"
+          test -s "$TEMPLATE_DIR/android_debug.apk"
+          test -s "$TEMPLATE_DIR/android_release.apk"
+          ls -lh "$TEMPLATE_DIR/android_debug.apk" "$TEMPLATE_DIR/android_release.apk"
+
+      - name: Create ephemeral debug keystore outside repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE_DIR="$HOME/.local/share/godot/keystores"
+          mkdir -p "$KEYSTORE_DIR"
+          keytool -genkeypair \
+            -keystore "$KEYSTORE_DIR/debug.keystore" \
+            -storepass android \
+            -keypass android \
+            -alias androiddebugkey \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=The Business H2I,C=CA"
+          test -s "$KEYSTORE_DIR/debug.keystore"
+
+      - name: Record and verify toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/android
+          {
+            echo "commit=$(git rev-parse HEAD)"
+            echo "tree=$(git rev-parse HEAD^{tree})"
+            echo "godot=$(godot --version)"
+            echo "java_home=$JAVA_HOME"
+            java -version 2>&1 | sed 's/^/java=/'
+            echo "android_home=$ANDROID_HOME"
+            adb version | sed 's/^/adb=/'
+            sdkmanager --version | sed 's/^/sdkmanager=/'
+            "$ANDROID_HOME/build-tools/35.0.1/apksigner" version | sed 's/^/apksigner=/'
+          } | tee build/android/toolchain.txt
+          test "$(godot --version)" = "$GODOT_EXPECTED_RUNTIME"
+
+      - name: Run H-to-I static gate
+        run: python tools/static_repo_check.py
+
+      - name: Run complete automated suite
+        run: godot --headless --path . --script res://tests/runner.gd
+
+      - name: Run retained G-to-H hostile interaction harness
+        run: godot --headless --path . --script res://tools/adversarial_runner/g2h_interaction_run.gd
+
+      - name: Run H-to-I persistence adversarial harness
+        run: godot --headless --path . --script res://tools/adversarial_runner/h2i_persistence_run.gd
+
+      - name: Run retained Phase F competition regression
+        run: >-
+          godot --headless --path . --script res://tools/simulation_cli/run.gd --
+          --campaign fixture:phase_f_competition
+          --years 2
+          --seed 424242
+          --save-roundtrip
+          --save-id=h2i_ci_competition
+
+      - name: Run eight-run five-year deterministic soak
+        run: >-
+          godot --headless --path . --script res://tools/simulation_cli/phase_f_soak.gd --
+          --years=5
+          --seeds=424242,424242,424243,424244,424245,424246,424247,424248
+          --output=res://tests/output/h2i_ci_5_year_soak.json
+
+      - name: Fresh editor/import gate
+        run: godot --headless --editor --path . --quit-after 120
+
+      - name: Confirm tests did not mutate tracked source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          test -z "$(git status --porcelain --untracked-files=no)"
+
+      - name: Export arm64 Android debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$APK_PATH")"
+          godot --headless --path . --export-debug "Android Debug" "$APK_PATH" 2>&1 | tee build/android/export.log
+          test -s "$APK_PATH"
+
+      - name: Inspect APK identity, ABI, permissions and signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          AAPT="$ANDROID_HOME/build-tools/35.0.1/aapt"
+          APKSIGNER="$ANDROID_HOME/build-tools/35.0.1/apksigner"
+          "$AAPT" dump badging "$APK_PATH" | tee build/android/apk_badging.txt
+          "$AAPT" dump permissions "$APK_PATH" | tee build/android/apk_permissions.txt
+          "$APKSIGNER" verify --verbose --print-certs "$APK_PATH" | tee build/android/apk_signing.txt
+          unzip -l "$APK_PATH" | tee build/android/apk_contents.txt >/dev/null
+
+          grep -Fq "package: name='$PACKAGE_ID'" build/android/apk_badging.txt
+          grep -Fq "lib/arm64-v8a/" build/android/apk_contents.txt
+          if grep -Eq 'lib/(armeabi-v7a|x86|x86_64)/' build/android/apk_contents.txt; then
+            echo "Unexpected non-arm64 native ABI found in APK." >&2
+            exit 1
+          fi
+          if grep -Fq 'android.permission.INTERNET' build/android/apk_permissions.txt; then
+            echo "Unexpected INTERNET permission found in offline-first Phase H APK." >&2
+            exit 1
+          fi
+
+          APK_SHA256=$(sha256sum "$APK_PATH" | awk '{print $1}')
+          APK_SIZE=$(stat -c '%s' "$APK_PATH")
+          {
+            echo "apk=$(basename "$APK_PATH")"
+            echo "size_bytes=$APK_SIZE"
+            echo "sha256=$APK_SHA256"
+            echo "package_id=$PACKAGE_ID"
+            echo "abi=arm64-v8a"
+            echo "source_commit=$(git rev-parse HEAD)"
+            echo "source_tree=$(git rev-parse HEAD^{tree})"
+            echo "godot=$(godot --version)"
+            echo "android_platform=35"
+            echo "android_build_tools=35.0.1"
+            echo "android_ndk=28.1.13356709"
+            echo "android_cmake=3.10.2.4988404"
+            echo "jdk=$(java -version 2>&1 | head -1)"
+            echo "signing=ephemeral_debug_keystore"
+          } | tee build/android/H2I_ANDROID_BUILD.txt
+
+      - name: Upload APK and build evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: the-business-h2i-android-debug
+          path: |
+            build/android/the-business-phase-h-debug.apk
+            build/android/H2I_ANDROID_BUILD.txt
+            build/android/toolchain.txt
+            build/android/export.log
+            build/android/apk_badging.txt
+            build/android/apk_permissions.txt
+            build/android/apk_signing.txt
+            build/android/apk_contents.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7

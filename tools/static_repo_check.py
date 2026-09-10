@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase H repository/content/architecture checks that do not require Godot."""
+"""H→I repository/content/architecture checks that do not require Godot."""
 from __future__ import annotations
 
 import json
@@ -120,6 +120,9 @@ REQUIRED_FILES = [
     "tests/integration/test_phase_h_lifecycle_save_recovery.gd",
     "tests/integration/test_phase_h_touch_responsive.gd",
     "docs/PHASE_H_ACCEPTANCE.md", "docs/PHASE_H_RUNTIME_RESULT.md", "docs/PHASE_H_DEVICE_RESULT.md",
+    "tests/integration/test_phase_h_to_i_persistence_adversarial.gd",
+    "tools/adversarial_runner/h2i_persistence_run.gd",
+    "docs/H2I_ACCEPTANCE.md", "docs/H2I_FINDINGS.md", "docs/H2I_RUNTIME_RESULT.md", "docs/H2I_DEVICE_RESULT.md",
 ]
 
 FORBIDDEN_DOMAIN_TOKENS = [
@@ -830,6 +833,55 @@ def check() -> dict:
     except OSError as exc:
         failures.append(f"unable to inspect G->H interaction scar tissue: {exc}")
 
+    # H->I adversarial persistence scar tissue. These are architecture/recovery invariants,
+    # not scenario-specific behavior, and must survive later content/polish work.
+    try:
+        save_text = (ROOT / "persistence/services/save_service.gd").read_text(encoding="utf-8")
+        for token in (
+            "recover_interrupted_transaction", "state_sha256", "chronicle_data_sha256",
+            "load_older_good", "backups/older_good", "backup_copy_failure",
+            "interrupted_artifacts_unrecoverable", "payload_hash_mismatch",
+        ):
+            if token not in save_text:
+                failures.append(f"H->I SaveService missing adversarial persistence scar-tissue token: {token}")
+        if "android" in save_text.lower() or "com.mcburgs.thebusiness" in save_text.lower():
+            failures.append("H->I persistence recovery must remain platform-neutral")
+
+        session_text = (ROOT / "app/session/campaign_session.gd").read_text(encoding="utf-8")
+        for token in ("recover_interrupted_transaction", "recovered_interrupted_transaction", "load_older_good", "recovery_source"):
+            if token not in session_text:
+                failures.append(f"H->I CampaignSession missing recovery-boundary token: {token}")
+        if "android" in session_text.lower() or "os.get_name" in session_text.lower():
+            failures.append("H->I CampaignSession must remain platform-neutral application logic")
+
+        regression_text = (ROOT / "tests/integration/test_phase_h_to_i_persistence_adversarial.gd").read_text(encoding="utf-8")
+        for token in (
+            "after_preserve_previous", "after_state_write", "backup_copy_failure",
+            "older_good", "unrecoverable interrupted artifacts",
+        ):
+            if token.lower() not in regression_text.lower():
+                failures.append(f"H->I retained persistence regression missing attack token: {token}")
+
+        harness_text = (ROOT / "tools/adversarial_runner/h2i_persistence_run.gd").read_text(encoding="utf-8")
+        for token in (
+            "we.h2i.persistence.v1", "injected_interruptions", "recovered_interruptions",
+            "historical_projections_checked", "last_good_validations",
+        ):
+            if token not in harness_text:
+                failures.append(f"H->I persistence harness missing required token: {token}")
+
+        decisions_text = (ROOT / "docs/DECISIONS.md").read_text(encoding="utf-8")
+        boundaries_text = (ROOT / "docs/ARCHITECTURE_BOUNDARIES.md").read_text(encoding="utf-8")
+        findings_text = (ROOT / "docs/H2I_FINDINGS.md").read_text(encoding="utf-8")
+        for token in ("H2I-001", "H2I-002", "H2I-003"):
+            if token not in findings_text:
+                failures.append(f"H->I governed findings missing retained defect record: {token}")
+        for token in ("interrupted", "older_good", "sha-256"):
+            if token not in (decisions_text + "\n" + boundaries_text).lower():
+                failures.append(f"H->I architecture records missing recovery/integrity decision token: {token}")
+    except OSError as exc:
+        failures.append(f"unable to inspect H->I persistence scar tissue: {exc}")
+
     for case_name, code in INVALID_CASES.items():
         case_dir = ROOT / "tests/fixtures/phase_b/invalid" / case_name
         expected = load_json(case_dir / "expected.json", failures)
@@ -847,7 +899,7 @@ def check() -> dict:
             failures.append(f"generated/cache path is tracked by Git: {path}")
 
     return {
-        "schema": "we.phase_h.static_check.v1",
+        "schema": "we.h2i.static_check.v1",
         "passed": not failures,
         "failures": failures,
         "warnings": warnings,
